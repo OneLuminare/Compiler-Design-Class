@@ -1,0 +1,16 @@
+C:\Users\Nathan\Documents\Visual Studio 2008\Projects\CompilerInterface\CompilerInterface\bin\Debug\CompilerInterface.exe
+C:\Users\Nathan\Documents\Visual Studio 2008\Projects\CompilerInterface\CompilerInterface\bin\Debug\CompilerInterface.pdb
+C:\Users\Nathan\Documents\Visual Studio 2008\Projects\CompilerInterface\CompilerInterface\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Nathan\Documents\Visual Studio 2008\Projects\CompilerInterface\CompilerInterface\obj\Debug\CompilerInterface.CompilerInterfaceForm.resources
+C:\Users\Nathan\Documents\Visual Studio 2008\Projects\CompilerInterface\CompilerInterface\obj\Debug\CompilerInterface.Properties.Resources.resources
+C:\Users\Nathan\Documents\Visual Studio 2008\Projects\CompilerInterface\CompilerInterface\obj\Debug\CompilerInterface.csproj.GenerateResource.Cache
+C:\Users\Nathan\Documents\Visual Studio 2008\Projects\CompilerInterface\CompilerInterface\obj\Debug\CompilerInterface.exe
+C:\Users\Nathan\Documents\Visual Studio 2008\Projects\CompilerInterface\CompilerInterface\obj\Debug\CompilerInterface.pdb
+C:\test\CompilerInterface\CompilerInterface\obj\Debug\CompilerInterface.exe
+C:\test\CompilerInterface\CompilerInterface\obj\Debug\CompilerInterface.pdb
+C:\test\CompilerInterface\CompilerInterface\bin\Debug\CompilerInterface.exe
+C:\test\CompilerInterface\CompilerInterface\bin\Debug\CompilerInterface.pdb
+C:\test\CompilerInterface\CompilerInterface\obj\Debug\ResolveAssemblyReference.cache
+C:\test\CompilerInterface\CompilerInterface\obj\Debug\CompilerInterface.CompilerInterfaceForm.resources
+C:\test\CompilerInterface\CompilerInterface\obj\Debug\CompilerInterface.Properties.Resources.resources
+C:\test\CompilerInterface\CompilerInterface\obj\Debug\CompilerInterface.csproj.GenerateResource.Cache
