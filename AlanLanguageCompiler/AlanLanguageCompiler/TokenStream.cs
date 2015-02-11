@@ -59,9 +59,9 @@ namespace AlanLanguageCompiler
             tokenList.Remove(token);
         }
 
-        public void AddToken(Token token)
+        public int AddToken(Token token)
         {
-            tokenList.Add(token);
+            return tokenList.Add(token);
         }
 
         public void ClearTokens()

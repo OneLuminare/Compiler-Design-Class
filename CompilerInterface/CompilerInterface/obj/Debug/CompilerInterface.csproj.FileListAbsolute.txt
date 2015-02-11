@@ -14,3 +14,5 @@ C:\test\CompilerInterface\CompilerInterface\obj\Debug\ResolveAssemblyReference.c
 C:\test\CompilerInterface\CompilerInterface\obj\Debug\CompilerInterface.CompilerInterfaceForm.resources
 C:\test\CompilerInterface\CompilerInterface\obj\Debug\CompilerInterface.Properties.Resources.resources
 C:\test\CompilerInterface\CompilerInterface\obj\Debug\CompilerInterface.csproj.GenerateResource.Cache
+C:\Users\Nathan\Documents\Visual Studio 2008\Projects\CompilerInterface\CompilerInterface\bin\Debug\AlanLanguageCompiler.dll
+C:\Users\Nathan\Documents\Visual Studio 2008\Projects\CompilerInterface\CompilerInterface\bin\Debug\AlanLanguageCompiler.pdb

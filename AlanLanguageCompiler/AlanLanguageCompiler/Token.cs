@@ -11,10 +11,28 @@ namespace AlanLanguageCompiler
         {
             TK_ID,
             TK_INT,
-            TK_DEC,
-            TK_LPAREN,
-            TK_RPAREN,
-            TK_WARNING,
+            TK_PRINT,
+            TK_WHILE,
+            TK_IF,
+            TK_STRING,
+            TK_BOOLEAN,
+            TK_BOOL_TRUE,
+            TK_BOOL_FALSE,
+            TK_INT_LITERAL,
+            TK_STRING_LITERAL,
+            TK_SPACE,
+            //TK_DECIMAL_LITERAL,
+            //TK_DECIMAL,
+            TK_LPARAM,
+            TK_RPARAM,
+            TK_LBRACE,
+            TK_RBRACE,
+            TK_ASSIGN,
+            TK_BOOL_OP_EQUALS,
+            TK_BOOL_OP_NOT_EQUALS,
+            TK_BOOL_OP_LESS_THAN,
+            TK_BOOL_OP_GREATER_THAN,
+            TK_EOF,
             TK_INVALID
         }
 
@@ -24,7 +42,7 @@ namespace AlanLanguageCompiler
         public String Value { get; set; }
 
         public Token() 
-            : this(TokenType.TK_WARNING,0,0,"")
+            : this(TokenType.TK_INVALID,0,0,"")
         {
         }
 
