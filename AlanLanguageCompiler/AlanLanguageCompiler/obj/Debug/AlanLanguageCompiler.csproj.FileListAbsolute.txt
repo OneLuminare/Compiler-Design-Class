@@ -1,8 +1,0 @@
-C:\Users\Nathan\Documents\Visual Studio 2008\Projects\AlanLanguageCompiler\AlanLanguageCompiler\bin\Debug\AlanLanguageCompiler.dll
-C:\Users\Nathan\Documents\Visual Studio 2008\Projects\AlanLanguageCompiler\AlanLanguageCompiler\bin\Debug\AlanLanguageCompiler.pdb
-C:\Users\Nathan\Documents\Visual Studio 2008\Projects\AlanLanguageCompiler\AlanLanguageCompiler\obj\Debug\ResolveAssemblyReference.cache
-C:\Users\Nathan\Documents\Visual Studio 2008\Projects\AlanLanguageCompiler\AlanLanguageCompiler\obj\Debug\AlanLanguageCompiler.dll
-C:\Users\Nathan\Documents\Visual Studio 2008\Projects\AlanLanguageCompiler\AlanLanguageCompiler\obj\Debug\AlanLanguageCompiler.pdb
-C:\test\AlanLanguageCompiler\AlanLanguageCompiler\obj\Debug\ResolveAssemblyReference.cache
-C:\test\AlanLanguageCompiler\AlanLanguageCompiler\obj\Debug\AlanLanguageCompiler.dll
-C:\test\AlanLanguageCompiler\AlanLanguageCompiler\obj\Debug\AlanLanguageCompiler.pdb

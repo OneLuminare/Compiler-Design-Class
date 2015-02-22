@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompilerInterface", "CompilerInterface\CompilerInterface.csproj", "{0AAD7C2F-83EE-4DA2-ADC6-ADF79B54FA46}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NFLanguageCompiler", "..\NFLanguageCompiler\NFLanguageCompiler\NFLanguageCompiler.csproj", "{DFB680E6-C9C5-4BFE-B6B3-F57E4441B532}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0AAD7C2F-83EE-4DA2-ADC6-ADF79B54FA46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AAD7C2F-83EE-4DA2-ADC6-ADF79B54FA46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AAD7C2F-83EE-4DA2-ADC6-ADF79B54FA46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AAD7C2F-83EE-4DA2-ADC6-ADF79B54FA46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFB680E6-C9C5-4BFE-B6B3-F57E4441B532}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFB680E6-C9C5-4BFE-B6B3-F57E4441B532}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFB680E6-C9C5-4BFE-B6B3-F57E4441B532}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFB680E6-C9C5-4BFE-B6B3-F57E4441B532}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

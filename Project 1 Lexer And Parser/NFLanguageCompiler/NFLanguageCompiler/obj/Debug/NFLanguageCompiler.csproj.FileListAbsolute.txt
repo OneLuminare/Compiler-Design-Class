@@ -1,0 +1,5 @@
+C:\Users\Nathan\Documents\Visual Studio 2008\Projects\NFLanguageCompiler\NFLanguageCompiler\bin\Debug\NFLanguageCompiler.dll
+C:\Users\Nathan\Documents\Visual Studio 2008\Projects\NFLanguageCompiler\NFLanguageCompiler\bin\Debug\NFLanguageCompiler.pdb
+C:\Users\Nathan\Documents\Visual Studio 2008\Projects\NFLanguageCompiler\NFLanguageCompiler\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Nathan\Documents\Visual Studio 2008\Projects\NFLanguageCompiler\NFLanguageCompiler\obj\Debug\NFLanguageCompiler.dll
+C:\Users\Nathan\Documents\Visual Studio 2008\Projects\NFLanguageCompiler\NFLanguageCompiler\obj\Debug\NFLanguageCompiler.pdb
