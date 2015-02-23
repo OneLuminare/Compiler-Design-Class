@@ -396,7 +396,7 @@ namespace CompilerInterface
             //Clear last output messages
             ResetAllTabs(false);
 
-            //Lex from source
+            //Compile from source
             compiler.Compile(textBoxSource.Text);
 
             //Check if lex returned errors
@@ -440,7 +440,49 @@ namespace CompilerInterface
             //Check if no errors or nocomplete to parse
             if (!error && !noComplete)
             {
-                //TODO PARSE
+                //Check if parser returned errors
+                if (compiler.ParserReturnValue == ProcessReturnValue.PRV_ERRORS)
+                {
+                    //Set error flag to true
+                    error = true;
+                }
+                //Check if no parse due to empty token stream
+                else if (compiler.ParserReturnValue == ProcessReturnValue.PRV_NONE)
+                {
+                    //Set no complete flag to true
+                    noComplete = true;
+                }
+
+                //If complete, output token stream and errors
+                if (!noComplete)
+                {
+                    //<LEFT OFF HERE>//
+                    //<SEC TODO>//
+                    //---------------//
+
+                    //Output token stream
+                    //OutputTokenSteam();
+
+                    //Ouput general warnings and errors
+                   // OutputGeneralWarningsAndErrors();
+
+                    //Output lex warning and errors
+                    //OutputLexerWarningsAndErrors();
+
+                    //-------------------------------//
+
+                    //Set lex complete
+                    checkBoxParserSuccess.Checked = true;
+
+                    //Increment phase
+                    phase = 2;
+                }
+                //If not complete empty source, message user
+                else
+                {
+                    //Message user
+                    MessageBox.Show("Empty token stream. No program can be created.", "Parse Error");
+                }
             }
             
             //Check if at least lex passed
@@ -468,6 +510,33 @@ namespace CompilerInterface
                 {
                     labelLexerReturnValue.Text = "Lexer completed successfully.";
                     labelCompilerReturnValue.Text = "Lexer completed successfully.";
+                }
+            }
+
+            //Check if parse and lex passed
+            if (phase < 3)
+            {
+                //Output lex warnings and error count
+                labelParserWarningTotal.Text = String.Format("{0,2}", compiler.Parser.WarningCount);
+                labelParserErrorTotal.Text = String.Format("{0,2}", compiler.Parser.ErrorCount);
+
+                //Ouput lex return value with errors
+                if (compiler.ParserReturnValue == ProcessReturnValue.PRV_ERRORS)
+                {
+                    labelParserReturnValue.Text = "Parse returned with errors.";
+                    labelCompilerReturnValue.Text = "Parse returned with errors.\n Cannot Parse.";
+                }
+                //Else if warnings output lex return value with warnings
+                else if (compiler.ParserReturnValue == ProcessReturnValue.PRV_WARNINGS)
+                {
+                    labelParserReturnValue.Text = "Parse returned with warnings.";
+                    labelCompilerReturnValue.Text = "Parse returned with warnings.";
+                }
+                //Else if warnings output lex return value with warnings
+                else if (compiler.ParserReturnValue == ProcessReturnValue.PRV_OK)
+                {
+                    labelParserReturnValue.Text = "Parse completed successfully.";
+                    labelCompilerReturnValue.Text = "Parse completed successfully.";
                 }
             }
 

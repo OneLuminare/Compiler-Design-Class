@@ -1,0 +1,60 @@
+ private bool ParseCopy()
+        {
+            //Inits
+            DynamicBranchTreeNode<CSTValue> parentNode = CurCSTNode;
+            GrammarProcess parentPhase = CurPhase;
+            bool ret = false;
+
+            //Set current phase
+            CurPhase = GrammarProcess.GP_#;
+
+            //Create current node and set value
+            CurCSTNode.Data = new CSTValue(CurPhase);
+
+            //Send message
+            SendMessage("Parsing #...");
+
+            //---------------------------
+
+            //Send message appropriate to succes or failure
+            if (ret)
+                SendMessage("Successfully parsed #.");
+            else
+                SendMessage("Parse # failed.");
+
+            //Set parent phase
+            CurPhase = parentPhase;
+
+            return ret;
+        }
+        
+      private bool PeekCopy()
+        {
+            //Inits
+            bool ret = false;
+
+            //Send message
+            SendMessage("Peeking for #...");
+
+            // Peek for TK_
+            if( PeekToken(Token.TokenType.TK_INVALID))
+            {
+                //Send msg
+                SendMessage("Peek found #.");
+
+                //Set return value
+                ret = true;
+            }
+            else
+            {
+                //Send msg
+                SendMessage("Peek did not find #.");
+
+                //Set return value
+                ret = false;
+            }
+
+            //Return set value
+            return ret;
+        }
+

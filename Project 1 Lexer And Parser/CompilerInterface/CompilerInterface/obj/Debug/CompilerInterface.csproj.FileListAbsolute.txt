@@ -18,3 +18,13 @@ C:\Users\Nathan\Documents\Visual Studio 2008\Projects\CompilerInterface\Compiler
 C:\Users\Nathan\Documents\Visual Studio 2008\Projects\CompilerInterface\CompilerInterface\bin\Debug\NFLanguageCompiler.pdb
 C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\CompilerInterface\CompilerInterface\obj\Debug\CompilerInterface.exe
 C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\CompilerInterface\CompilerInterface\obj\Debug\CompilerInterface.pdb
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\CompilerInterface\CompilerInterface\bin\Debug\CompilerInterface.exe
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\CompilerInterface\CompilerInterface\bin\Debug\CompilerInterface.pdb
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\CompilerInterface\CompilerInterface\bin\Debug\NFLanguageCompiler.dll
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\CompilerInterface\CompilerInterface\bin\Debug\NFLanguageCompiler.pdb
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\CompilerInterface\CompilerInterface\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\CompilerInterface\CompilerInterface\obj\Debug\CompilerInterface.CompilerInterfaceForm.resources
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\CompilerInterface\CompilerInterface\obj\Debug\CompilerInterface.Properties.Resources.resources
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\CompilerInterface\CompilerInterface\obj\Debug\CompilerInterface.csproj.GenerateResource.Cache
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\CompilerInterface\CompilerInterface\bin\Debug\DynamicBranchTree.dll
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\CompilerInterface\CompilerInterface\bin\Debug\DynamicBranchTree.pdb

@@ -25,6 +25,35 @@ namespace NFLanguageCompiler
         PRV_NONE
     }
 
+    // Describes grammer process
+    public enum GrammarProcess
+    {
+        GP_PROGRAM,
+        GP_BLOCK,
+        GP_STATEMENT,
+        GP_STATEMENTLIST,
+        GP_PRINTSTATEMENT,
+        GP_ASSIGNMENTSTATEMENT,
+        GP_VARDEC,
+        GP_WHILESTATEMENT,
+        GP_IFSTATEMENT,
+        GP_EXPR,
+        GP_INTEXPR,
+        GP_STRINGEXPR,
+        GP_BOOLEANEXPR,
+        GP_ID,
+        GP_CHARLIST,
+        GP_TYPE,
+        GP_CHAR,
+        GP_SPACE,
+        GP_DIGIT,
+        GP_BOOLOP,
+        GP_INTOP,
+        GP_BOOLVAL,
+        GP_LAMDA,
+        GP_NONE
+    }
+
     #endregion
 
     #region Delegates
@@ -132,7 +161,7 @@ namespace NFLanguageCompiler
 
         #region Warning and Error Access Methods
 
-        // Add warning to list
+        // Add warning to list from lexer
         public void AddWarning(Message message)
         {
             WarningList.Add(message);
