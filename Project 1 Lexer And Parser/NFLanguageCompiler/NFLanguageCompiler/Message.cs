@@ -41,8 +41,13 @@ namespace NFLanguageCompiler
 
         // Input constructor for parser
         public Message(String message, SystemType system,GrammarProcess grammar,Token token, int tokenIndex)
-            : this(message, -1,-1, system, GrammarProcess.GP_NONE, null, -1)
+            : this(message, -1,-1, system, grammar,token, tokenIndex)
         {
+            if (token !=  null )
+            {
+                Line = token.Line;
+                Column = token.Column;
+            }
         }
 
         //Base input constructor, has all values
@@ -55,6 +60,7 @@ namespace NFLanguageCompiler
             Grammar = grammar;
             Token = token;
             TokenIndex = tokenIndex;
+
         }
 
         // Deserialization constructor

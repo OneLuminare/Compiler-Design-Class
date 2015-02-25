@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using NFLanguageCompiler;
+using DynamicBranchTree;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -75,6 +76,8 @@ namespace CompilerInterface
             //Inits
             NFLanguageCompiler.Message msg = null;
             ListViewItem item = null;
+            SystemType proc = SystemType.ST_NONE;
+            
 
             //Clear warnings and errors
             listViewGeneralWarningsAndErrors.Items.Clear();
@@ -85,12 +88,38 @@ namespace CompilerInterface
                 //Get Message object
                 msg = compiler.GetWarning(i);
 
-                //Create listview item
-                item = new ListViewItem(msg.System.ToString());
-                item.SubItems.Add("Warning");
-                item.SubItems.Add(msg.Line.ToString());
-                item.SubItems.Add(msg.Column.ToString());
-                item.SubItems.Add(msg.Text);
+                //Get system type
+                proc = msg.System;
+
+                //Output lexer warnings 
+                if (proc == SystemType.ST_LEXER)
+                {
+                    //Create listview item
+                    item = new ListViewItem(proc.ToString());
+                    item.SubItems.Add("Warning");
+                    item.SubItems.Add(msg.Line.ToString());
+                    item.SubItems.Add(msg.Column.ToString());
+                    item.SubItems.Add("");
+                    item.SubItems.Add("");
+                    item.SubItems.Add("");
+                    item.SubItems.Add(msg.Text);
+                }
+                else if( proc == SystemType.ST_PARSER )
+                {
+                    //Create listview item
+                    item = new ListViewItem(proc.ToString());
+                    item.SubItems.Add("Warning");
+                    item.SubItems.Add("");
+                    item.SubItems.Add("");
+                    item.SubItems.Add(msg.Grammar.ToString());
+                    if (msg.Token != null)
+                        item.SubItems.Add(msg.Token.Type.ToString());
+                    else
+                        item.SubItems.Add("");
+      
+                    item.SubItems.Add(msg.TokenIndex.ToString());
+                    item.SubItems.Add(msg.Text);
+                }
 
                 //Add item to list
                 listViewGeneralWarningsAndErrors.Items.Add(item);
@@ -102,12 +131,37 @@ namespace CompilerInterface
                 //Get Message object
                 msg = compiler.GetError(i);
 
-                //Create listviewitem
-                item = new ListViewItem(msg.System.ToString());
-                item.SubItems.Add("Error");
-                item.SubItems.Add(msg.Line.ToString());
-                item.SubItems.Add(msg.Column.ToString());
-                item.SubItems.Add(msg.Text);
+                //Get system type
+                proc = msg.System;
+
+                //Output lexer warnings 
+                if (proc == SystemType.ST_LEXER)
+                {
+                    //Create listview item
+                    item = new ListViewItem(proc.ToString());
+                    item.SubItems.Add("Error");
+                    item.SubItems.Add(msg.Line.ToString());
+                    item.SubItems.Add(msg.Column.ToString());
+                    item.SubItems.Add("");
+                    item.SubItems.Add("");
+                    item.SubItems.Add("");
+                    item.SubItems.Add(msg.Text);
+                }
+                else if (proc == SystemType.ST_PARSER)
+                {
+                    //Create listview item
+                    item = new ListViewItem(proc.ToString());
+                    item.SubItems.Add("Error");
+                    item.SubItems.Add("");
+                    item.SubItems.Add("");
+                    item.SubItems.Add(msg.Grammar.ToString());
+                    if (msg.Token != null)
+                        item.SubItems.Add(msg.Token.Type.ToString());
+                    else
+                        item.SubItems.Add("");
+                    item.SubItems.Add(msg.TokenIndex.ToString());
+                    item.SubItems.Add(msg.Text);
+                }
 
                 //Add to list
                 listViewGeneralWarningsAndErrors.Items.Add(item);
@@ -186,8 +240,12 @@ namespace CompilerInterface
                 {
                     //Create list view item
                     item = new ListViewItem("Warning");
-                    item.SubItems.Add(msg.Line.ToString());
-                    item.SubItems.Add(msg.Column.ToString());
+                    item.SubItems.Add(msg.Grammar.ToString());
+                    if (msg.Token != null)
+                        item.SubItems.Add(msg.Token.Type.ToString());
+                    else
+                        item.SubItems.Add("");
+                    item.SubItems.Add(msg.TokenIndex.ToString());
                     item.SubItems.Add(msg.Text);
 
                     //Add item
@@ -206,8 +264,12 @@ namespace CompilerInterface
                 {
                     //Createl list view item
                     item = new ListViewItem("Error");
-                    item.SubItems.Add(msg.Line.ToString());
-                    item.SubItems.Add(msg.Column.ToString());
+                    item.SubItems.Add(msg.Grammar.ToString());
+                    if (msg.Token != null)
+                        item.SubItems.Add(msg.Token.Type.ToString());
+                    else
+                        item.SubItems.Add("");
+                    item.SubItems.Add(msg.TokenIndex.ToString());
                     item.SubItems.Add(msg.Text);
 
                     //Add item to list
@@ -259,7 +321,6 @@ namespace CompilerInterface
             checkBoxCodeGenSuccess.Checked = false;
         }
 
-
         //Reset all lex tab controls
         private void ResetLexOutput()
         {
@@ -308,6 +369,60 @@ namespace CompilerInterface
 
                 //Add list item to list
                 listViewTokenList.Items.Add(item);
+            }
+        }
+
+        //Output CST to treeViewCST
+        private void OutputCST()
+        {
+            //Inits
+            DynamicBranchTreeNode<CSTValue> curNode = null;
+
+            //Get root node
+            curNode = compiler.Parser.CSTRootNode;
+
+            //Begin tree view update
+            treeViewCST.BeginUpdate();
+
+            //Reset tree control
+            treeViewCST.Nodes.Clear();
+
+            //Start recursive output cst node
+            treeViewCST.Nodes.Add(curNode.Data.ToString());
+            OutputCSTNode(curNode, treeViewCST.Nodes[0]);
+
+            //Expand all
+            treeViewCST.ExpandAll();
+
+            //End update(suppress paint)
+            treeViewCST.EndUpdate();
+        }
+
+        //Recursive output tree view child nodes
+        private void OutputCSTNode(DynamicBranchTreeNode<CSTValue> CSTNode,TreeNode treeNode)
+        {
+            //Inits
+            int children = 0;
+            DynamicBranchTreeNode<CSTValue> childNode = null;
+            TreeNode parentTreeNode = null;
+
+            //Get number of children
+            
+            children = CSTNode.NodeCount;
+
+            
+
+            //Cycle through children and add nodes
+            for(int i = 0; i < children; i++)
+            {
+                //Get child node
+                childNode = CSTNode.GetChild(i);
+
+                //Add node
+                parentTreeNode = treeNode.Nodes.Add(childNode.Data.ToString());
+
+                //Add nodes children
+                OutputCSTNode(childNode, parentTreeNode);
             }
         }
 
@@ -456,20 +571,12 @@ namespace CompilerInterface
                 //If complete, output token stream and errors
                 if (!noComplete)
                 {
-                    //<LEFT OFF HERE>//
-                    //<SEC TODO>//
-                    //---------------//
 
-                    //Output token stream
-                    //OutputTokenSteam();
+                    //Output CST
+                    OutputCST();
 
                     //Ouput general warnings and errors
-                   // OutputGeneralWarningsAndErrors();
-
-                    //Output lex warning and errors
-                    //OutputLexerWarningsAndErrors();
-
-                    //-------------------------------//
+                    OutputParserWarningsAndErrors();
 
                     //Set lex complete
                     checkBoxParserSuccess.Checked = true;
@@ -524,7 +631,7 @@ namespace CompilerInterface
                 if (compiler.ParserReturnValue == ProcessReturnValue.PRV_ERRORS)
                 {
                     labelParserReturnValue.Text = "Parse returned with errors.";
-                    labelCompilerReturnValue.Text = "Parse returned with errors.\n Cannot Parse.";
+                    labelCompilerReturnValue.Text = "Parse returned with errors.";
                 }
                 //Else if warnings output lex return value with warnings
                 else if (compiler.ParserReturnValue == ProcessReturnValue.PRV_WARNINGS)

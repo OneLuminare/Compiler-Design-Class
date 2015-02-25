@@ -80,6 +80,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\DynamicBranchTree\DynamicBranchTree\DynamicBranchTree.csproj">
+      <Project>{632C4911-5678-4ACF-AF2D-3C2B127678FE}</Project>
+      <Name>DynamicBranchTree</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\NFLanguageCompiler\NFLanguageCompiler\NFLanguageCompiler.csproj">
       <Project>{DFB680E6-C9C5-4BFE-B6B3-F57E4441B532}</Project>
       <Name>NFLanguageCompiler</Name>

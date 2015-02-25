@@ -33,6 +33,14 @@ namespace NFLanguageCompiler
 
         #region Properties
 
+        //CST Public
+        public DynamicBranchTreeNode<CSTValue> CSTRootNode
+        {
+            get
+            {
+                return CSTRoot;
+            }
+        }
         //Warning count
         public int WarningCount
         {
@@ -84,16 +92,20 @@ namespace NFLanguageCompiler
         public ProcessReturnValue Parse(TokenStream tokenStream)
         {
             //Inits
-            ProcessReturnValue ret;
+            ProcessReturnValue ret = ProcessReturnValue.PRV_NONE;
 
             //Clear CST tree, warning count, and error count
             CSTRoot.Clear();
             WarningCount = 0;
             ErrorCount = 0;
             CurTokenIndex = 0;
+            
+
+            //Reset current node
+            CurCSTNode = CSTRoot;
 
             //Set working token stream
-            TokenStream CurTokenStream = tokenStream;
+            CurTokenStream = tokenStream;
 
             //Send exception if token stream is null
             if( tokenStream == null )
@@ -170,7 +182,7 @@ namespace NFLanguageCompiler
                 SendMessage(String.Format("Peeking for {0}...", tokenType.ToString()));
 
                 //Peek token type
-                if (CurTokenStream.GetToken(CurTokenIndex + 1).Type == tokenType)
+                if (CurTokenStream.GetToken(CurTokenIndex ).Type == tokenType)
                 {
                     //Send message
                     SendMessage(String.Format("Found {0}.", tokenType.ToString()));
@@ -183,7 +195,7 @@ namespace NFLanguageCompiler
                 {
                     //Send message
                     SendMessage(String.Format("Peeking for {0} failed, found {1}.", tokenType.ToString()
-                        , CurTokenStream.GetToken(CurTokenIndex + 1).Type.ToString()));
+                        , CurTokenStream.GetToken(CurTokenIndex ).Type.ToString()));
 
                     ret = false;
                 }
@@ -287,7 +299,13 @@ namespace NFLanguageCompiler
             }
             //Else send uncessfull parse
             else
-                SendMessage("Parse PROGRAM failed.");
+            {
+                //Send error msg
+                SendMessage("Error: Parse PROGRAM failed.");
+
+                //Send error
+                SendError("Parse Program failed.", CurPhase, GetLastToken(), CurTokenIndex - 1);
+            }
         }
 
         private bool ParseBlock(bool firstBlock)
@@ -296,6 +314,7 @@ namespace NFLanguageCompiler
             DynamicBranchTreeNode<CSTValue> parentNode = CurCSTNode;
             GrammarProcess parentPhase = CurPhase;
             bool ret = false;
+
 
             //Set current phase
             CurPhase = GrammarProcess.GP_BLOCK;
@@ -321,6 +340,7 @@ namespace NFLanguageCompiler
                     ret = true;
 
                 }
+
             }
    
 
@@ -350,13 +370,21 @@ namespace NFLanguageCompiler
                     //Set ret
                     ret = true;
                 }
+
             }
 
             //Send appropriate message
-            if( ret )
+            if (ret)
                 SendMessage("Successfully parsed BLOCK.");
             else
-                SendMessage("Parse BLOCK failed.");
+            {
+                //Send error msg
+                SendMessage("Error: Parse BLOCK failed.");
+
+                //Send error
+                SendError("Parse BLOCK failed.", CurPhase, GetLastToken(), CurTokenIndex - 1);
+
+            }
 
             //Reset current phase
             CurPhase = parentPhase;
@@ -418,7 +446,13 @@ namespace NFLanguageCompiler
             if (ret)
                 SendMessage("Successfully parsed STATEMENT.");
             else
-                SendMessage("Parse STATEMENT failed.");
+            {
+                //Send mesage
+                SendMessage("Error: Parse STATEMENT failed.");
+
+                //Send error 
+                SendError("Parse STATEMENT failed.", CurPhase, GetLastToken(), CurTokenIndex - 1);
+            }
 
             //Set parent phase
             CurPhase = parentPhase;
@@ -512,7 +546,13 @@ namespace NFLanguageCompiler
             if (ret)
                 SendMessage("Successfully parsed STATEMENT.");
             else
-                SendMessage("Parse STATEMENT failed.");
+            {
+                //Send error msg
+                SendMessage("Error: Parse STATEMENT failed.");
+
+                //Send error 
+                SendError("Parse STATEMENT failed.", CurPhase, GetLastToken(), CurTokenIndex - 1);
+            }
 
             //Set parent phase
             CurPhase = parentPhase;
@@ -582,7 +622,13 @@ namespace NFLanguageCompiler
             if (ret)
                 SendMessage("Successfully parsed PRINTSTATEMENT.");
             else
-                SendMessage("Parse PRINTSTATEMENT failed.");
+            {
+                //Send error msg
+                SendMessage("Error: Parse PRINTSTATEMENT failed.");
+
+                //Send error 
+                SendError("Parse PRINTSTATEMENT failed.", CurPhase, GetLastToken(), CurTokenIndex - 1);
+            }
 
             //Set parent phase
             CurPhase = parentPhase;
@@ -658,7 +704,13 @@ namespace NFLanguageCompiler
             if (ret)
                 SendMessage("Successfully parsed EXPR.");
             else
-                SendMessage("Parse EXPR failed.");
+            {
+                //Send error msg
+                SendMessage("Error: Parse EXPR failed.");
+
+                //Send error 
+                SendError("Parse EXPR failed.", CurPhase, GetLastToken(), CurTokenIndex - 1);
+            }
 
             //Set parent phase
             CurPhase = parentPhase;
@@ -715,7 +767,13 @@ namespace NFLanguageCompiler
             if (ret)
                 SendMessage("Successfully parsed INTEXPR.");
             else
-                SendMessage("Parse INTEXPR failed.");
+            {
+                //Send error msg
+                SendMessage("Error: Parse INTEXPR failed.");
+
+                //Send error 
+                SendError("Parse INTEXPR failed.", CurPhase, GetLastToken(), CurTokenIndex - 1);
+            }
 
             //Set parent phase
             CurPhase = parentPhase;
@@ -776,7 +834,13 @@ namespace NFLanguageCompiler
             if (ret)
                 SendMessage("Successfully parsed STRINGEXPR.");
             else
-                SendMessage("Parse STRINGEXPR failed.");
+            {
+                //Send error msg
+                SendMessage("Error: Parse STRINGEXPR failed.");
+
+                //Send error 
+                SendError("Parse STRINGEXPR failed.", CurPhase, GetLastToken(), CurTokenIndex - 1);
+            }
 
             //Set parent phase
             CurPhase = parentPhase;
@@ -848,7 +912,13 @@ namespace NFLanguageCompiler
             if (ret)
                 SendMessage("Successfully parsed CHARLIST.");
             else
-                SendMessage("Parse CHARLIST failed.");
+            {
+                //Send error msg
+                SendMessage("Error: Parse CHARLIST failed.");
+
+                //Send error 
+                SendError("Parse CHARLIST failed.", CurPhase, GetLastToken(), CurTokenIndex - 1);
+            }
 
             //Set parent phase
             CurPhase = parentPhase;
@@ -898,6 +968,9 @@ namespace NFLanguageCompiler
                     //Create child for ==
                     CurCSTNode = new DynamicBranchTreeNode<CSTValue>(new CSTValue(GrammarProcess.GP_NONE,GetLastToken()));
                     parentNode.AddChild(CurCSTNode);
+
+                    //Set ret true
+                    ret = true;
                 }
                 else if( ret && PeekToken(Token.TokenType.TK_BOOL_OP_NOT_EQUALS) )
                 {
@@ -907,6 +980,34 @@ namespace NFLanguageCompiler
                     //Create child for !=
                     CurCSTNode = new DynamicBranchTreeNode<CSTValue>(new CSTValue(GrammarProcess.GP_NONE,GetLastToken()));
                     parentNode.AddChild(CurCSTNode);
+
+                    //Set ret true
+                    ret = true;
+                }
+
+                //Create child for expr
+                CurCSTNode = new DynamicBranchTreeNode<CSTValue>();
+                parentNode.AddChild(CurCSTNode);
+
+                // Parse expersion
+                ret = ParseExpr();
+
+                // Verify success
+                if( ret )
+                {
+                    //Match RPARAM
+                    if (MatchToken(Token.TokenType.TK_RPARAM))
+                    {
+                        //Create child for TK_RPARAM
+                        CurCSTNode = new DynamicBranchTreeNode<CSTValue>(new CSTValue(GrammarProcess.GP_NONE, GetLastToken()));
+                        parentNode.AddChild(CurCSTNode);
+
+                        //Set ret true
+                        ret = true;
+                    }
+                    //Else set ret
+                    else
+                        ret = false;
                 }
             }
 
@@ -942,7 +1043,12 @@ namespace NFLanguageCompiler
             if (ret)
                 SendMessage("Successfully parsed BOOLEXPR.");
             else
-                SendMessage("Parse BOOLEXPR failed.");
+            {
+                SendMessage("Errror: Parse BOOLEXPR failed.");
+
+                //Send error
+                SendError("Parse BOOLEXPR failed.", CurPhase, GetLastToken(), CurTokenIndex - 1);
+            }
 
             //Set parent phase
             CurPhase = parentPhase;
@@ -1003,7 +1109,13 @@ namespace NFLanguageCompiler
             if (ret)
                 SendMessage("Successfully parsed ASSIGNMENTSTATEMENT.");
             else
+            {
+                //Send error msg
                 SendMessage("Parse ASSIGNMENTSTATEMENT failed.");
+
+                //Send error 
+                SendError("Parse ASSIGNMENTSTATEMENT failed.", CurPhase, GetLastToken(), CurTokenIndex - 1);
+            }
 
             //Set parent phase
             CurPhase = parentPhase;
@@ -1049,7 +1161,13 @@ namespace NFLanguageCompiler
             if (ret)
                 SendMessage("Successfully parsed VARDEC.");
             else
-                SendMessage("Parse VARDEC failed.");
+            {
+                //Send error msg
+                SendMessage("Error: Parse VARDEC failed.");
+
+                //Send error 
+                SendError("Parse VARDEC failed.", CurPhase, GetLastToken(), CurTokenIndex - 1);
+            }
 
             //Set parent phase
             CurPhase = parentPhase;
@@ -1119,7 +1237,13 @@ namespace NFLanguageCompiler
             if (ret)
                 SendMessage("Successfully parsed TYPE.");
             else
-                SendMessage("Parse TYPE failed.");
+            {
+                //Send error msg
+                SendMessage("Error: Parse TYPE failed.");
+
+                //Send error 
+                SendError("Parse TYPE failed.", CurPhase, GetLastToken(), CurTokenIndex - 1);
+            }
 
             //Set parent phase
             CurPhase = parentPhase;
@@ -1180,7 +1304,13 @@ namespace NFLanguageCompiler
             if (ret)
                 SendMessage("Successfully parsed WHILESTATEMENT.");
             else
-                SendMessage("Parse WHILESTATEMENT failed.");
+            {
+                //Send error msg
+                SendMessage("Error: Parse WHILESTATEMENT failed.");
+
+                //Send error 
+                SendError("Parse WHILESTATEMENT failed.", CurPhase, GetLastToken(), CurTokenIndex - 1);
+            }
 
             //Set parent phase
             CurPhase = parentPhase;
@@ -1241,7 +1371,13 @@ namespace NFLanguageCompiler
             if (ret)
                 SendMessage("Successfully parsed IFSTATEMENT.");
             else
-                SendMessage("Parse IFSTATEMENT failed.");
+            {
+                //Send error msg
+                SendMessage("Error: Parse IFSTATEMENT failed.");
+
+                //Send error 
+                SendError("Parse IFSTATEMENT failed.", CurPhase, GetLastToken(), CurTokenIndex - 1);
+            }
 
             //Set parent phase
             CurPhase = parentPhase;
@@ -1324,13 +1460,13 @@ namespace NFLanguageCompiler
             bool ret = false;
 
             //Send message
-            SendMessage("Peeking for PRINTSTATEMENT...");
+            SendMessage("Peeking for ASSIGNMENTSTATEMENT...");
 
             //Peek of TK_ID
             if (PeekToken(Token.TokenType.TK_ID))
             {
                 //Send msg
-                SendMessage("Peek found PRINTSTATEMENT.");
+                SendMessage("Peek found ASSIGNMENTSTATEMENT.");
 
                 //Set return value
                 ret = true;
@@ -1338,7 +1474,7 @@ namespace NFLanguageCompiler
             else
             {
                 //Send msg
-                SendMessage("Peek did not find PRINTSTATEMENT.");
+                SendMessage("Peek did not find ASSIGNMENTSTATEMENT.");
 
                 //Set return value
                 ret = false;
@@ -1620,7 +1756,11 @@ namespace NFLanguageCompiler
         {
             if (ParserErrorEvent != null)
             {
-                ParserErrorEvent(new Message(msg, SystemType.ST_PARSER, grammar, token, tokenIndex));
+                if( token != null )
+                    ParserErrorEvent(new Message(msg, token.Line,token.Column, SystemType.ST_PARSER, grammar
+                        , token, tokenIndex));
+                else
+                    ParserErrorEvent(new Message(msg, SystemType.ST_PARSER, grammar, token, tokenIndex));
             }
 
             //Incrment error count

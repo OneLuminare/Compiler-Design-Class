@@ -35,11 +35,14 @@
             this.buttonBrowse = new System.Windows.Forms.Button();
             this.labelSource = new System.Windows.Forms.Label();
             this.listViewGeneralWarningsAndErrors = new System.Windows.Forms.ListView();
-            this.columnHeaderGeneralSystem = new System.Windows.Forms.ColumnHeader();
-            this.columnHeadGeneralType = new System.Windows.Forms.ColumnHeader();
-            this.columnHeaderGeneralLine = new System.Windows.Forms.ColumnHeader();
-            this.columnHeaderGeneralCol = new System.Windows.Forms.ColumnHeader();
-            this.columnHeaderGeneralMsg = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderGeneralSystem = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeadGeneralType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderGeneralLine = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderGeneralCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderGeneralGrammar = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderGeneralToken = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderGeneralTokenIndex = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderGeneralMsg = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.labelWarningError = new System.Windows.Forms.Label();
             this.tabControlMain = new System.Windows.Forms.TabControl();
             this.tabPageSource = new System.Windows.Forms.TabPage();
@@ -71,27 +74,27 @@
             this.labelLexerWarningsLabel = new System.Windows.Forms.Label();
             this.labelLexerWarningErrors = new System.Windows.Forms.Label();
             this.listViewLexerWarningsAndErrors = new System.Windows.Forms.ListView();
-            this.columnHeaderLexerType = new System.Windows.Forms.ColumnHeader();
-            this.columnHeaderLexerLine = new System.Windows.Forms.ColumnHeader();
-            this.columnHeaderLexerColumn = new System.Windows.Forms.ColumnHeader();
-            this.columnHeaderLexerMessage = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderLexerType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderLexerLine = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderLexerColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderLexerMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.labelLexerReturnValue = new System.Windows.Forms.Label();
             this.labelLexerReturnValueLabel = new System.Windows.Forms.Label();
             this.labelTokenStreamLabel = new System.Windows.Forms.Label();
             this.listViewTokenList = new System.Windows.Forms.ListView();
-            this.columnHeaderToken = new System.Windows.Forms.ColumnHeader();
-            this.columnHeaderLine = new System.Windows.Forms.ColumnHeader();
-            this.columnHeaderColumn = new System.Windows.Forms.ColumnHeader();
-            this.columnHeaderValue = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderToken = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderLine = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabPageParse = new System.Windows.Forms.TabPage();
             this.labelCST = new System.Windows.Forms.Label();
             this.labelParserMessage = new System.Windows.Forms.Label();
             this.labelParserWarningError = new System.Windows.Forms.Label();
             this.listViewParserWarningsAndErrors = new System.Windows.Forms.ListView();
-            this.columnHeaderParseType = new System.Windows.Forms.ColumnHeader();
-            this.columnHeaderParseLine = new System.Windows.Forms.ColumnHeader();
-            this.columnHeaderParseColumn = new System.Windows.Forms.ColumnHeader();
-            this.columnHeaderParseMessages = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderParseGrammar = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderParseToken = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderParseTokenIndex = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderParseMessages = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.labelParserErrorTotal = new System.Windows.Forms.Label();
             this.labelParserErrorLabel = new System.Windows.Forms.Label();
             this.labelParserWarningTotal = new System.Windows.Forms.Label();
@@ -103,6 +106,7 @@
             this.tabPageSymantics = new System.Windows.Forms.TabPage();
             this.tabPageOptimization = new System.Windows.Forms.TabPage();
             this.tabPageCodeGeneration = new System.Windows.Forms.TabPage();
+            this.columnHeaderParseType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabControlMain.SuspendLayout();
             this.tabPageSource.SuspendLayout();
             this.groupBoxOptions.SuspendLayout();
@@ -172,6 +176,9 @@
             this.columnHeadGeneralType,
             this.columnHeaderGeneralLine,
             this.columnHeaderGeneralCol,
+            this.columnHeaderGeneralGrammar,
+            this.columnHeaderGeneralToken,
+            this.columnHeaderGeneralTokenIndex,
             this.columnHeaderGeneralMsg});
             this.listViewGeneralWarningsAndErrors.Location = new System.Drawing.Point(6, 499);
             this.listViewGeneralWarningsAndErrors.Name = "listViewGeneralWarningsAndErrors";
@@ -183,6 +190,7 @@
             // columnHeaderGeneralSystem
             // 
             this.columnHeaderGeneralSystem.Text = "System";
+            this.columnHeaderGeneralSystem.Width = 90;
             // 
             // columnHeadGeneralType
             // 
@@ -195,6 +203,21 @@
             // columnHeaderGeneralCol
             // 
             this.columnHeaderGeneralCol.Text = "Column";
+            // 
+            // columnHeaderGeneralGrammar
+            // 
+            this.columnHeaderGeneralGrammar.Text = "Grammar Process";
+            this.columnHeaderGeneralGrammar.Width = 100;
+            // 
+            // columnHeaderGeneralToken
+            // 
+            this.columnHeaderGeneralToken.Text = "Token";
+            this.columnHeaderGeneralToken.Width = 90;
+            // 
+            // columnHeaderGeneralTokenIndex
+            // 
+            this.columnHeaderGeneralTokenIndex.Text = "Token Index";
+            this.columnHeaderGeneralTokenIndex.Width = 75;
             // 
             // columnHeaderGeneralMsg
             // 
@@ -676,8 +699,9 @@
             // 
             this.listViewParserWarningsAndErrors.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderParseType,
-            this.columnHeaderParseLine,
-            this.columnHeaderParseColumn,
+            this.columnHeaderParseGrammar,
+            this.columnHeaderParseToken,
+            this.columnHeaderParseTokenIndex,
             this.columnHeaderParseMessages});
             this.listViewParserWarningsAndErrors.Location = new System.Drawing.Point(9, 534);
             this.listViewParserWarningsAndErrors.Name = "listViewParserWarningsAndErrors";
@@ -686,18 +710,20 @@
             this.listViewParserWarningsAndErrors.UseCompatibleStateImageBehavior = false;
             this.listViewParserWarningsAndErrors.View = System.Windows.Forms.View.Details;
             // 
-            // columnHeaderParseType
+            // columnHeaderParseGrammar
             // 
-            this.columnHeaderParseType.Text = "Type";
-            this.columnHeaderParseType.Width = 80;
+            this.columnHeaderParseGrammar.Text = "Grammar Process";
+            this.columnHeaderParseGrammar.Width = 100;
             // 
-            // columnHeaderParseLine
+            // columnHeaderParseToken
             // 
-            this.columnHeaderParseLine.Text = "Line";
+            this.columnHeaderParseToken.Text = "Token";
+            this.columnHeaderParseToken.Width = 80;
             // 
-            // columnHeaderParseColumn
+            // columnHeaderParseTokenIndex
             // 
-            this.columnHeaderParseColumn.Text = "Column";
+            this.columnHeaderParseTokenIndex.Text = "Token Index";
+            this.columnHeaderParseTokenIndex.Width = 80;
             // 
             // columnHeaderParseMessages
             // 
@@ -802,6 +828,10 @@
             this.tabPageCodeGeneration.Text = "Code Generation";
             this.tabPageCodeGeneration.UseVisualStyleBackColor = true;
             // 
+            // columnHeaderParseType
+            // 
+            this.columnHeaderParseType.Text = "Type";
+            // 
             // CompilerInterfaceForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -892,9 +922,8 @@
         private System.Windows.Forms.TreeView treeViewCST;
         private System.Windows.Forms.Label labelParserWarningError;
         private System.Windows.Forms.ListView listViewParserWarningsAndErrors;
-        private System.Windows.Forms.ColumnHeader columnHeaderParseType;
-        private System.Windows.Forms.ColumnHeader columnHeaderParseLine;
-        private System.Windows.Forms.ColumnHeader columnHeaderParseColumn;
+        private System.Windows.Forms.ColumnHeader columnHeaderParseGrammar;
+        private System.Windows.Forms.ColumnHeader columnHeaderParseToken;
         private System.Windows.Forms.ColumnHeader columnHeaderParseMessages;
         private System.Windows.Forms.Label labelCST;
         private System.Windows.Forms.Label labelParserMessage;
@@ -902,6 +931,11 @@
         private System.Windows.Forms.Label labelGeneralErrorLabel;
         private System.Windows.Forms.Label labelGeneralWarningTotal;
         private System.Windows.Forms.Label labelGeneralWarningLabel;
+        private System.Windows.Forms.ColumnHeader columnHeaderGeneralGrammar;
+        private System.Windows.Forms.ColumnHeader columnHeaderGeneralToken;
+        private System.Windows.Forms.ColumnHeader columnHeaderGeneralTokenIndex;
+        private System.Windows.Forms.ColumnHeader columnHeaderParseTokenIndex;
+        private System.Windows.Forms.ColumnHeader columnHeaderParseType;
     }
 }
 

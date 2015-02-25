@@ -71,6 +71,27 @@ namespace NFLanguageCompiler
 
         #endregion
 
+        #region Overrides
+
+        public override string ToString()
+        {
+            String s = null;
+            if (this.Token != null)
+            {
+                if( Grammar == GrammarProcess.GP_NONE )
+                    s = String.Format("{0} Value: {1}", this.Token.Type.ToString(),this.Token.Value.ToString());
+                else
+                    s = String.Format("{0} {1}", Grammar.ToString(),this.Token.Type.ToString());
+            }
+            else
+                s = Grammar.ToString();
+
+            return s;
+        }
+
+        #endregion
+
+
         #region ISerializable Members
 
         //Describes object for serialization. ISerializeable member.

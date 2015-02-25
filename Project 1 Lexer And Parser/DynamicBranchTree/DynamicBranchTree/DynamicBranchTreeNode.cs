@@ -12,39 +12,28 @@ namespace DynamicBranchTree
     // pointers in an array, and keeps track of how many
     // their are. Takes an generic type.
     [Serializable]
-    public class DynamicBranchTreeNode<T>  where T : class , ISerializable
+    public class DynamicBranchTreeNode<T>  where T : class 
     { 
         #region Data Members
 
         //Stores all nodes
-        private ArrayList Children;
+        private ArrayList childNodes;
+        public DynamicBranchTreeNode<T> Parent;
+        public T Data;
 
         #endregion
 
         #region Properties
-        
-        //Parent node
-        public DynamicBranchTreeNode<T> Parent
-        {
-            get;
-            set;
-        }
 
-        //Access data object, in generic type T
-        public T Data
+
+        public ArrayList Children
         {
             get
             {
-                return Data;
-            }
-
-            set
-            {
-                Data = value;
+                return childNodes;
             }
         }
-
-        //Returns node count
+        
         public int NodeCount
         {
             get
@@ -53,14 +42,6 @@ namespace DynamicBranchTree
             }
         }
 
-        //Returns data type
-        public Type DataType
-        {
-            get
-            {
-                return Data.GetType();
-            }
-        }
 
         #endregion
 
@@ -69,8 +50,9 @@ namespace DynamicBranchTree
         //Default constructor. Inits objects.
         public DynamicBranchTreeNode()
         {
-            Children = new ArrayList(3);
+            childNodes = new ArrayList(3);
             Parent = null;
+            Data = null;
         }
 
         //Sets data object, and calls default constructor
@@ -80,6 +62,7 @@ namespace DynamicBranchTree
             Data = dataObject;
         }
 
+        /*
         //Deserialization constructor.
         public DynamicBranchTreeNode(SerializationInfo info, StreamingContext context)
         {
@@ -88,6 +71,7 @@ namespace DynamicBranchTree
             Children = (ArrayList)info.GetValue("Nodes", typeof(ArrayList));
             Parent = (DynamicBranchTreeNode<T>)info.GetValue("Parent", typeof(DynamicBranchTreeNode<T>));
         }
+         * */
 
         #endregion
 
@@ -100,7 +84,7 @@ namespace DynamicBranchTree
             node.Parent = this;
 
             //Add to list
-            Children.Add(node);
+            childNodes.Add(node);
         }
 
         //Returns node at index.
@@ -136,34 +120,40 @@ namespace DynamicBranchTree
         public void Clear()
         {
             Clear(this);
-            Children = new ArrayList(5);
+            childNodes = new ArrayList(3);
         }
 
         //Recursive clear function
         private void Clear(DynamicBranchTreeNode<T> node)
         {
             //Cycle through children cand call clear
-            for (int i = 0; i < NodeCount; i++)
+            for (int i = 0; i < node.NodeCount; i++)
             {
                 node.GetChild(i).Parent = null;
                 Clear(node.GetChild(i));
             }
 
             //Clear children array
-            Children.Clear();
-
-            //Disassociate variables for garbage collection
-            Children = null;
-            Data = null;
+            node.Children.Clear();
 
             //Return state
             return;
         }
 
         #endregion
-        
+
+        #region Overrides
+
+        public override string ToString()
+        {
+            return Data.ToString();
+        }
+
+        #endregion
+
         #region ISerializable Members
 
+        /*
         //Serialize method for ISerializable. Describes serialization.
         //
         //Throws: SerializationException if data type does not implement ISerializeable
@@ -182,6 +172,7 @@ namespace DynamicBranchTree
                 throw new SerializationException(String.Format("Data object of type '{0}' does not implememnt ISerializeable. Cannot serialize."
                         , Data.GetType().ToString()));
         }
+         * */
 
         #endregion
     }

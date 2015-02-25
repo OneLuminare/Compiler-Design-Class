@@ -236,7 +236,7 @@ namespace NFLanguageCompiler
             LexerReturnValue = Lexer.LexFromString(sourceText);
 
             //Parse if no errors
-            if (LexerReturnValue != ProcessReturnValue.PRV_ERRORS)
+           if (LexerReturnValue != ProcessReturnValue.PRV_ERRORS)
                 ParserReturnValue = Parser.Parse(Lexer.OutputTokenStream);
         }
 
