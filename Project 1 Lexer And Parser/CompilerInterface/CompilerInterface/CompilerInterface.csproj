@@ -48,15 +48,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CompilerInterfaceForm.cs">
+    <Compile Include="Properties\CompilerInterfaceForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CompilerInterfaceForm.Designer.cs">
+    <Compile Include="Properties\CompilerInterfaceForm.Designer.cs">
       <DependentUpon>CompilerInterfaceForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="CompilerInterfaceForm.resx">
+    <EmbeddedResource Include="Properties\CompilerInterfaceForm.resx">
       <DependentUpon>CompilerInterfaceForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>

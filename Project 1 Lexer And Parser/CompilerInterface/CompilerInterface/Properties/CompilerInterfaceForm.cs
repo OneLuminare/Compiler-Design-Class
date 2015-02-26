@@ -760,7 +760,7 @@ namespace CompilerInterface
                 if (compiler.ParserReturnValue == ProcessReturnValue.PRV_ERRORS)
                 {
                     labelParserReturnValue.Text = "Parse returned with errors.";
-                    labelCompilerReturnValue.Text = "Parse returned with errors.";
+                    labelCompilerReturnValue.Text = "Parse returned with errors. \nCan not perform Symantic Analysis.";
                 }
                 //Else if warnings output lex return value with warnings
                 else if (compiler.ParserReturnValue == ProcessReturnValue.PRV_WARNINGS)
@@ -804,6 +804,27 @@ namespace CompilerInterface
         private void checkBoxShowParseErrorChain_CheckedChanged(object sender, EventArgs e)
         {
             compiler.Parser.ShowErrorChain = !compiler.Parser.ShowErrorChain;
+        }
+
+        //Toggles enabling message events to speed up compilation
+        private void checkBoxShowMessages_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxShowMessages.Checked)
+            {
+                //Register events
+                compiler.Lexer.LexerMessageEvent += new MessageEventHandler(OutputGeneralMessages);
+                compiler.Lexer.LexerMessageEvent += new MessageEventHandler(OutputLexerMessages);
+                compiler.Parser.ParserMessageEvent += new MessageEventHandler(OutputGeneralMessages);
+                compiler.Parser.ParserMessageEvent += new MessageEventHandler(OutputParserMessages);
+            }
+            else
+            {
+                //Unregister events
+                compiler.Lexer.LexerMessageEvent -= OutputGeneralMessages;
+                compiler.Lexer.LexerMessageEvent -= OutputLexerMessages;
+                compiler.Parser.ParserMessageEvent -= OutputGeneralMessages;
+                compiler.Parser.ParserMessageEvent -= OutputParserMessages;
+            }
         }
 
         #region Old Code

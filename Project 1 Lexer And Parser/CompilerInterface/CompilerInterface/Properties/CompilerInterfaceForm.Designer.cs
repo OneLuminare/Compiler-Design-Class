@@ -54,6 +54,8 @@
             this.labelCompilerReturnValue = new System.Windows.Forms.Label();
             this.labelCompilerReturnValueLabel = new System.Windows.Forms.Label();
             this.groupBoxOptions = new System.Windows.Forms.GroupBox();
+            this.checkBoxShowMessages = new System.Windows.Forms.CheckBox();
+            this.checkBoxShowParseErrorChain = new System.Windows.Forms.CheckBox();
             this.checkBoxOutputOpCodesToFile = new System.Windows.Forms.CheckBox();
             this.groupBoxProcess = new System.Windows.Forms.GroupBox();
             this.checkBoxCodeGenSuccess = new System.Windows.Forms.CheckBox();
@@ -120,7 +122,6 @@
             this.labelSymbolTable = new System.Windows.Forms.Label();
             this.tabPageOptimization = new System.Windows.Forms.TabPage();
             this.tabPageCodeGeneration = new System.Windows.Forms.TabPage();
-            this.checkBoxShowParseErrorChain = new System.Windows.Forms.CheckBox();
             this.tabControlMain.SuspendLayout();
             this.tabPageSource.SuspendLayout();
             this.groupBoxOptions.SuspendLayout();
@@ -296,7 +297,7 @@
             // labelGeneralErrorTotal
             // 
             this.labelGeneralErrorTotal.AutoSize = true;
-            this.labelGeneralErrorTotal.Location = new System.Drawing.Point(744, 392);
+            this.labelGeneralErrorTotal.Location = new System.Drawing.Point(742, 403);
             this.labelGeneralErrorTotal.Name = "labelGeneralErrorTotal";
             this.labelGeneralErrorTotal.Size = new System.Drawing.Size(19, 13);
             this.labelGeneralErrorTotal.TabIndex = 33;
@@ -305,7 +306,7 @@
             // labelGeneralErrorLabel
             // 
             this.labelGeneralErrorLabel.AutoSize = true;
-            this.labelGeneralErrorLabel.Location = new System.Drawing.Point(696, 392);
+            this.labelGeneralErrorLabel.Location = new System.Drawing.Point(694, 403);
             this.labelGeneralErrorLabel.Name = "labelGeneralErrorLabel";
             this.labelGeneralErrorLabel.Size = new System.Drawing.Size(40, 13);
             this.labelGeneralErrorLabel.TabIndex = 32;
@@ -314,7 +315,7 @@
             // labelGeneralWarningTotal
             // 
             this.labelGeneralWarningTotal.AutoSize = true;
-            this.labelGeneralWarningTotal.Location = new System.Drawing.Point(671, 392);
+            this.labelGeneralWarningTotal.Location = new System.Drawing.Point(669, 403);
             this.labelGeneralWarningTotal.Name = "labelGeneralWarningTotal";
             this.labelGeneralWarningTotal.Size = new System.Drawing.Size(19, 13);
             this.labelGeneralWarningTotal.TabIndex = 31;
@@ -323,7 +324,7 @@
             // labelGeneralWarningLabel
             // 
             this.labelGeneralWarningLabel.AutoSize = true;
-            this.labelGeneralWarningLabel.Location = new System.Drawing.Point(608, 392);
+            this.labelGeneralWarningLabel.Location = new System.Drawing.Point(606, 403);
             this.labelGeneralWarningLabel.Name = "labelGeneralWarningLabel";
             this.labelGeneralWarningLabel.Size = new System.Drawing.Size(58, 13);
             this.labelGeneralWarningLabel.TabIndex = 30;
@@ -344,7 +345,7 @@
             this.labelCompilerReturnValue.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.labelCompilerReturnValue.Location = new System.Drawing.Point(605, 345);
             this.labelCompilerReturnValue.Name = "labelCompilerReturnValue";
-            this.labelCompilerReturnValue.Size = new System.Drawing.Size(159, 35);
+            this.labelCompilerReturnValue.Size = new System.Drawing.Size(159, 50);
             this.labelCompilerReturnValue.TabIndex = 28;
             this.labelCompilerReturnValue.Text = "                                                  ";
             // 
@@ -359,14 +360,39 @@
             // 
             // groupBoxOptions
             // 
+            this.groupBoxOptions.Controls.Add(this.checkBoxShowMessages);
             this.groupBoxOptions.Controls.Add(this.checkBoxShowParseErrorChain);
             this.groupBoxOptions.Controls.Add(this.checkBoxOutputOpCodesToFile);
             this.groupBoxOptions.Location = new System.Drawing.Point(605, 196);
             this.groupBoxOptions.Name = "groupBoxOptions";
-            this.groupBoxOptions.Size = new System.Drawing.Size(167, 72);
+            this.groupBoxOptions.Size = new System.Drawing.Size(167, 92);
             this.groupBoxOptions.TabIndex = 26;
             this.groupBoxOptions.TabStop = false;
             this.groupBoxOptions.Text = "Options";
+            // 
+            // checkBoxShowMessages
+            // 
+            this.checkBoxShowMessages.AutoSize = true;
+            this.checkBoxShowMessages.Checked = true;
+            this.checkBoxShowMessages.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxShowMessages.Location = new System.Drawing.Point(6, 65);
+            this.checkBoxShowMessages.Name = "checkBoxShowMessages";
+            this.checkBoxShowMessages.Size = new System.Drawing.Size(104, 17);
+            this.checkBoxShowMessages.TabIndex = 27;
+            this.checkBoxShowMessages.Text = "Show &Messages";
+            this.checkBoxShowMessages.UseVisualStyleBackColor = true;
+            this.checkBoxShowMessages.CheckedChanged += new System.EventHandler(this.checkBoxShowMessages_CheckedChanged);
+            // 
+            // checkBoxShowParseErrorChain
+            // 
+            this.checkBoxShowParseErrorChain.AutoSize = true;
+            this.checkBoxShowParseErrorChain.Location = new System.Drawing.Point(6, 19);
+            this.checkBoxShowParseErrorChain.Name = "checkBoxShowParseErrorChain";
+            this.checkBoxShowParseErrorChain.Size = new System.Drawing.Size(138, 17);
+            this.checkBoxShowParseErrorChain.TabIndex = 26;
+            this.checkBoxShowParseErrorChain.Text = "Show &Parse Error Chain";
+            this.checkBoxShowParseErrorChain.UseVisualStyleBackColor = true;
+            this.checkBoxShowParseErrorChain.CheckedChanged += new System.EventHandler(this.checkBoxShowParseErrorChain_CheckedChanged);
             // 
             // checkBoxOutputOpCodesToFile
             // 
@@ -375,7 +401,7 @@
             this.checkBoxOutputOpCodesToFile.Name = "checkBoxOutputOpCodesToFile";
             this.checkBoxOutputOpCodesToFile.Size = new System.Drawing.Size(143, 17);
             this.checkBoxOutputOpCodesToFile.TabIndex = 25;
-            this.checkBoxOutputOpCodesToFile.Text = "Output Op Codes To File";
+            this.checkBoxOutputOpCodesToFile.Text = "Output &Op Codes To File";
             this.checkBoxOutputOpCodesToFile.UseVisualStyleBackColor = true;
             this.checkBoxOutputOpCodesToFile.CheckedChanged += new System.EventHandler(this.checkBoxOutputOpCodesToFile_CheckedChanged);
             // 
@@ -974,17 +1000,6 @@
             this.tabPageCodeGeneration.Text = "Code Generation";
             this.tabPageCodeGeneration.UseVisualStyleBackColor = true;
             // 
-            // checkBoxShowParseErrorChain
-            // 
-            this.checkBoxShowParseErrorChain.AutoSize = true;
-            this.checkBoxShowParseErrorChain.Location = new System.Drawing.Point(6, 19);
-            this.checkBoxShowParseErrorChain.Name = "checkBoxShowParseErrorChain";
-            this.checkBoxShowParseErrorChain.Size = new System.Drawing.Size(138, 17);
-            this.checkBoxShowParseErrorChain.TabIndex = 26;
-            this.checkBoxShowParseErrorChain.Text = "Show Parse Error Chain";
-            this.checkBoxShowParseErrorChain.UseVisualStyleBackColor = true;
-            this.checkBoxShowParseErrorChain.CheckedChanged += new System.EventHandler(this.checkBoxShowParseErrorChain_CheckedChanged);
-            // 
             // CompilerInterfaceForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1105,6 +1120,7 @@
         private System.Windows.Forms.Label labelTotalIntsValue;
         private System.Windows.Forms.Label labelTotalInts;
         private System.Windows.Forms.CheckBox checkBoxShowParseErrorChain;
+        private System.Windows.Forms.CheckBox checkBoxShowMessages;
     }
 }
 
