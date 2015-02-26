@@ -1,0 +1,7 @@
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\NFLanguageCompiler\NFLanguageCompiler\bin\Release\NFLanguageCompiler.dll
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\NFLanguageCompiler\NFLanguageCompiler\bin\Release\NFLanguageCompiler.pdb
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\NFLanguageCompiler\NFLanguageCompiler\bin\Release\DynamicBranchTree.dll
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\NFLanguageCompiler\NFLanguageCompiler\bin\Release\DynamicBranchTree.pdb
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\NFLanguageCompiler\NFLanguageCompiler\obj\Release\ResolveAssemblyReference.cache
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\NFLanguageCompiler\NFLanguageCompiler\obj\Release\NFLanguageCompiler.dll
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\NFLanguageCompiler\NFLanguageCompiler\obj\Release\NFLanguageCompiler.pdb

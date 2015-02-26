@@ -35,14 +35,14 @@
             this.buttonBrowse = new System.Windows.Forms.Button();
             this.labelSource = new System.Windows.Forms.Label();
             this.listViewGeneralWarningsAndErrors = new System.Windows.Forms.ListView();
-            this.columnHeaderGeneralSystem = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeadGeneralType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderGeneralLine = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderGeneralCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderGeneralGrammar = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderGeneralToken = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderGeneralTokenIndex = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderGeneralMsg = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderGeneralSystem = new System.Windows.Forms.ColumnHeader();
+            this.columnHeadGeneralType = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderGeneralLine = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderGeneralCol = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderGeneralGrammar = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderGeneralToken = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderGeneralTokenIndex = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderGeneralMsg = new System.Windows.Forms.ColumnHeader();
             this.labelWarningError = new System.Windows.Forms.Label();
             this.tabControlMain = new System.Windows.Forms.TabControl();
             this.tabPageSource = new System.Windows.Forms.TabPage();
@@ -55,7 +55,6 @@
             this.labelCompilerReturnValueLabel = new System.Windows.Forms.Label();
             this.groupBoxOptions = new System.Windows.Forms.GroupBox();
             this.checkBoxOutputOpCodesToFile = new System.Windows.Forms.CheckBox();
-            this.checkBoxOutputErrorsToFile = new System.Windows.Forms.CheckBox();
             this.groupBoxProcess = new System.Windows.Forms.GroupBox();
             this.checkBoxCodeGenSuccess = new System.Windows.Forms.CheckBox();
             this.checkBoxOptimizationSuccess = new System.Windows.Forms.CheckBox();
@@ -74,27 +73,28 @@
             this.labelLexerWarningsLabel = new System.Windows.Forms.Label();
             this.labelLexerWarningErrors = new System.Windows.Forms.Label();
             this.listViewLexerWarningsAndErrors = new System.Windows.Forms.ListView();
-            this.columnHeaderLexerType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderLexerLine = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderLexerColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderLexerMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderLexerType = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderLexerLine = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderLexerColumn = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderLexerMessage = new System.Windows.Forms.ColumnHeader();
             this.labelLexerReturnValue = new System.Windows.Forms.Label();
             this.labelLexerReturnValueLabel = new System.Windows.Forms.Label();
             this.labelTokenStreamLabel = new System.Windows.Forms.Label();
             this.listViewTokenList = new System.Windows.Forms.ListView();
-            this.columnHeaderToken = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderLine = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderToken = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderLine = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderColumn = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderValue = new System.Windows.Forms.ColumnHeader();
             this.tabPageParse = new System.Windows.Forms.TabPage();
             this.labelCST = new System.Windows.Forms.Label();
             this.labelParserMessage = new System.Windows.Forms.Label();
             this.labelParserWarningError = new System.Windows.Forms.Label();
             this.listViewParserWarningsAndErrors = new System.Windows.Forms.ListView();
-            this.columnHeaderParseGrammar = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderParseToken = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderParseTokenIndex = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderParseMessages = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderParseType = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderParseGrammar = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderParseToken = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderParseTokenIndex = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderParseMessages = new System.Windows.Forms.ColumnHeader();
             this.labelParserErrorTotal = new System.Windows.Forms.Label();
             this.labelParserErrorLabel = new System.Windows.Forms.Label();
             this.labelParserWarningTotal = new System.Windows.Forms.Label();
@@ -104,15 +104,30 @@
             this.labelParserReturnValueLabel = new System.Windows.Forms.Label();
             this.treeViewCST = new System.Windows.Forms.TreeView();
             this.tabPageSymantics = new System.Windows.Forms.TabPage();
+            this.tabPageSymbolTable = new System.Windows.Forms.TabPage();
+            this.labelBytes = new System.Windows.Forms.Label();
+            this.labelMaxMemoryValue = new System.Windows.Forms.Label();
+            this.labelMaxMemory = new System.Windows.Forms.Label();
+            this.labelTotalBooleanValue = new System.Windows.Forms.Label();
+            this.labelTotalBoolean = new System.Windows.Forms.Label();
+            this.labelTotalSringsValue = new System.Windows.Forms.Label();
+            this.labelTotalStrings = new System.Windows.Forms.Label();
+            this.labelTotalIntsValue = new System.Windows.Forms.Label();
+            this.labelTotalInts = new System.Windows.Forms.Label();
+            this.labelTotalVarsValue = new System.Windows.Forms.Label();
+            this.labelTotalVars = new System.Windows.Forms.Label();
+            this.treeViewSymbolTable = new System.Windows.Forms.TreeView();
+            this.labelSymbolTable = new System.Windows.Forms.Label();
             this.tabPageOptimization = new System.Windows.Forms.TabPage();
             this.tabPageCodeGeneration = new System.Windows.Forms.TabPage();
-            this.columnHeaderParseType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.checkBoxShowParseErrorChain = new System.Windows.Forms.CheckBox();
             this.tabControlMain.SuspendLayout();
             this.tabPageSource.SuspendLayout();
             this.groupBoxOptions.SuspendLayout();
             this.groupBoxProcess.SuspendLayout();
             this.tabPageLexer.SuspendLayout();
             this.tabPageParse.SuspendLayout();
+            this.tabPageSymbolTable.SuspendLayout();
             this.SuspendLayout();
             // 
             // textBoxSource
@@ -239,6 +254,7 @@
             this.tabControlMain.Controls.Add(this.tabPageLexer);
             this.tabControlMain.Controls.Add(this.tabPageParse);
             this.tabControlMain.Controls.Add(this.tabPageSymantics);
+            this.tabControlMain.Controls.Add(this.tabPageSymbolTable);
             this.tabControlMain.Controls.Add(this.tabPageOptimization);
             this.tabControlMain.Controls.Add(this.tabPageCodeGeneration);
             this.tabControlMain.Location = new System.Drawing.Point(-1, 11);
@@ -280,7 +296,7 @@
             // labelGeneralErrorTotal
             // 
             this.labelGeneralErrorTotal.AutoSize = true;
-            this.labelGeneralErrorTotal.Location = new System.Drawing.Point(744, 347);
+            this.labelGeneralErrorTotal.Location = new System.Drawing.Point(744, 392);
             this.labelGeneralErrorTotal.Name = "labelGeneralErrorTotal";
             this.labelGeneralErrorTotal.Size = new System.Drawing.Size(19, 13);
             this.labelGeneralErrorTotal.TabIndex = 33;
@@ -289,7 +305,7 @@
             // labelGeneralErrorLabel
             // 
             this.labelGeneralErrorLabel.AutoSize = true;
-            this.labelGeneralErrorLabel.Location = new System.Drawing.Point(696, 347);
+            this.labelGeneralErrorLabel.Location = new System.Drawing.Point(696, 392);
             this.labelGeneralErrorLabel.Name = "labelGeneralErrorLabel";
             this.labelGeneralErrorLabel.Size = new System.Drawing.Size(40, 13);
             this.labelGeneralErrorLabel.TabIndex = 32;
@@ -298,7 +314,7 @@
             // labelGeneralWarningTotal
             // 
             this.labelGeneralWarningTotal.AutoSize = true;
-            this.labelGeneralWarningTotal.Location = new System.Drawing.Point(671, 347);
+            this.labelGeneralWarningTotal.Location = new System.Drawing.Point(671, 392);
             this.labelGeneralWarningTotal.Name = "labelGeneralWarningTotal";
             this.labelGeneralWarningTotal.Size = new System.Drawing.Size(19, 13);
             this.labelGeneralWarningTotal.TabIndex = 31;
@@ -307,7 +323,7 @@
             // labelGeneralWarningLabel
             // 
             this.labelGeneralWarningLabel.AutoSize = true;
-            this.labelGeneralWarningLabel.Location = new System.Drawing.Point(608, 347);
+            this.labelGeneralWarningLabel.Location = new System.Drawing.Point(608, 392);
             this.labelGeneralWarningLabel.Name = "labelGeneralWarningLabel";
             this.labelGeneralWarningLabel.Size = new System.Drawing.Size(58, 13);
             this.labelGeneralWarningLabel.TabIndex = 30;
@@ -326,7 +342,7 @@
             // labelCompilerReturnValue
             // 
             this.labelCompilerReturnValue.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.labelCompilerReturnValue.Location = new System.Drawing.Point(605, 300);
+            this.labelCompilerReturnValue.Location = new System.Drawing.Point(605, 345);
             this.labelCompilerReturnValue.Name = "labelCompilerReturnValue";
             this.labelCompilerReturnValue.Size = new System.Drawing.Size(159, 35);
             this.labelCompilerReturnValue.TabIndex = 28;
@@ -335,7 +351,7 @@
             // labelCompilerReturnValueLabel
             // 
             this.labelCompilerReturnValueLabel.AutoSize = true;
-            this.labelCompilerReturnValueLabel.Location = new System.Drawing.Point(602, 276);
+            this.labelCompilerReturnValueLabel.Location = new System.Drawing.Point(602, 321);
             this.labelCompilerReturnValueLabel.Name = "labelCompilerReturnValueLabel";
             this.labelCompilerReturnValueLabel.Size = new System.Drawing.Size(118, 13);
             this.labelCompilerReturnValueLabel.TabIndex = 27;
@@ -343,11 +359,11 @@
             // 
             // groupBoxOptions
             // 
+            this.groupBoxOptions.Controls.Add(this.checkBoxShowParseErrorChain);
             this.groupBoxOptions.Controls.Add(this.checkBoxOutputOpCodesToFile);
-            this.groupBoxOptions.Controls.Add(this.checkBoxOutputErrorsToFile);
             this.groupBoxOptions.Location = new System.Drawing.Point(605, 196);
             this.groupBoxOptions.Name = "groupBoxOptions";
-            this.groupBoxOptions.Size = new System.Drawing.Size(167, 68);
+            this.groupBoxOptions.Size = new System.Drawing.Size(167, 72);
             this.groupBoxOptions.TabIndex = 26;
             this.groupBoxOptions.TabStop = false;
             this.groupBoxOptions.Text = "Options";
@@ -362,17 +378,6 @@
             this.checkBoxOutputOpCodesToFile.Text = "Output Op Codes To File";
             this.checkBoxOutputOpCodesToFile.UseVisualStyleBackColor = true;
             this.checkBoxOutputOpCodesToFile.CheckedChanged += new System.EventHandler(this.checkBoxOutputOpCodesToFile_CheckedChanged);
-            // 
-            // checkBoxOutputErrorsToFile
-            // 
-            this.checkBoxOutputErrorsToFile.AutoSize = true;
-            this.checkBoxOutputErrorsToFile.Location = new System.Drawing.Point(6, 19);
-            this.checkBoxOutputErrorsToFile.Name = "checkBoxOutputErrorsToFile";
-            this.checkBoxOutputErrorsToFile.Size = new System.Drawing.Size(123, 17);
-            this.checkBoxOutputErrorsToFile.TabIndex = 17;
-            this.checkBoxOutputErrorsToFile.Text = "Output Errors To File";
-            this.checkBoxOutputErrorsToFile.UseVisualStyleBackColor = true;
-            this.checkBoxOutputErrorsToFile.CheckedChanged += new System.EventHandler(this.checkBoxOutputErrorsToFile_CheckedChanged);
             // 
             // groupBoxProcess
             // 
@@ -710,6 +715,10 @@
             this.listViewParserWarningsAndErrors.UseCompatibleStateImageBehavior = false;
             this.listViewParserWarningsAndErrors.View = System.Windows.Forms.View.Details;
             // 
+            // columnHeaderParseType
+            // 
+            this.columnHeaderParseType.Text = "Type";
+            // 
             // columnHeaderParseGrammar
             // 
             this.columnHeaderParseGrammar.Text = "Grammar Process";
@@ -810,6 +819,143 @@
             this.tabPageSymantics.Text = "Symantics";
             this.tabPageSymantics.UseVisualStyleBackColor = true;
             // 
+            // tabPageSymbolTable
+            // 
+            this.tabPageSymbolTable.Controls.Add(this.labelBytes);
+            this.tabPageSymbolTable.Controls.Add(this.labelMaxMemoryValue);
+            this.tabPageSymbolTable.Controls.Add(this.labelMaxMemory);
+            this.tabPageSymbolTable.Controls.Add(this.labelTotalBooleanValue);
+            this.tabPageSymbolTable.Controls.Add(this.labelTotalBoolean);
+            this.tabPageSymbolTable.Controls.Add(this.labelTotalSringsValue);
+            this.tabPageSymbolTable.Controls.Add(this.labelTotalStrings);
+            this.tabPageSymbolTable.Controls.Add(this.labelTotalIntsValue);
+            this.tabPageSymbolTable.Controls.Add(this.labelTotalInts);
+            this.tabPageSymbolTable.Controls.Add(this.labelTotalVarsValue);
+            this.tabPageSymbolTable.Controls.Add(this.labelTotalVars);
+            this.tabPageSymbolTable.Controls.Add(this.treeViewSymbolTable);
+            this.tabPageSymbolTable.Controls.Add(this.labelSymbolTable);
+            this.tabPageSymbolTable.Location = new System.Drawing.Point(4, 22);
+            this.tabPageSymbolTable.Name = "tabPageSymbolTable";
+            this.tabPageSymbolTable.Size = new System.Drawing.Size(785, 657);
+            this.tabPageSymbolTable.TabIndex = 6;
+            this.tabPageSymbolTable.Text = "Symbol Table";
+            this.tabPageSymbolTable.UseVisualStyleBackColor = true;
+            // 
+            // labelBytes
+            // 
+            this.labelBytes.AutoSize = true;
+            this.labelBytes.Location = new System.Drawing.Point(739, 629);
+            this.labelBytes.Name = "labelBytes";
+            this.labelBytes.Size = new System.Drawing.Size(32, 13);
+            this.labelBytes.TabIndex = 13;
+            this.labelBytes.Text = "bytes";
+            // 
+            // labelMaxMemoryValue
+            // 
+            this.labelMaxMemoryValue.AutoSize = true;
+            this.labelMaxMemoryValue.Location = new System.Drawing.Point(708, 629);
+            this.labelMaxMemoryValue.Name = "labelMaxMemoryValue";
+            this.labelMaxMemoryValue.Size = new System.Drawing.Size(25, 13);
+            this.labelMaxMemoryValue.TabIndex = 12;
+            this.labelMaxMemoryValue.Text = "000";
+            // 
+            // labelMaxMemory
+            // 
+            this.labelMaxMemory.AutoSize = true;
+            this.labelMaxMemory.Location = new System.Drawing.Point(605, 629);
+            this.labelMaxMemory.Name = "labelMaxMemory";
+            this.labelMaxMemory.Size = new System.Drawing.Size(97, 13);
+            this.labelMaxMemory.TabIndex = 11;
+            this.labelMaxMemory.Text = "Maximum Memory :";
+            // 
+            // labelTotalBooleanValue
+            // 
+            this.labelTotalBooleanValue.AutoSize = true;
+            this.labelTotalBooleanValue.Location = new System.Drawing.Point(531, 629);
+            this.labelTotalBooleanValue.Name = "labelTotalBooleanValue";
+            this.labelTotalBooleanValue.Size = new System.Drawing.Size(19, 13);
+            this.labelTotalBooleanValue.TabIndex = 10;
+            this.labelTotalBooleanValue.Text = "00";
+            // 
+            // labelTotalBoolean
+            // 
+            this.labelTotalBoolean.AutoSize = true;
+            this.labelTotalBoolean.Location = new System.Drawing.Point(441, 629);
+            this.labelTotalBoolean.Name = "labelTotalBoolean";
+            this.labelTotalBoolean.Size = new System.Drawing.Size(84, 13);
+            this.labelTotalBoolean.TabIndex = 9;
+            this.labelTotalBoolean.Text = "Total Booleans :";
+            // 
+            // labelTotalSringsValue
+            // 
+            this.labelTotalSringsValue.AutoSize = true;
+            this.labelTotalSringsValue.Location = new System.Drawing.Point(378, 629);
+            this.labelTotalSringsValue.Name = "labelTotalSringsValue";
+            this.labelTotalSringsValue.Size = new System.Drawing.Size(19, 13);
+            this.labelTotalSringsValue.TabIndex = 8;
+            this.labelTotalSringsValue.Text = "00";
+            // 
+            // labelTotalStrings
+            // 
+            this.labelTotalStrings.AutoSize = true;
+            this.labelTotalStrings.Location = new System.Drawing.Point(300, 629);
+            this.labelTotalStrings.Name = "labelTotalStrings";
+            this.labelTotalStrings.Size = new System.Drawing.Size(72, 13);
+            this.labelTotalStrings.TabIndex = 7;
+            this.labelTotalStrings.Text = "Total Strings :";
+            // 
+            // labelTotalIntsValue
+            // 
+            this.labelTotalIntsValue.AutoSize = true;
+            this.labelTotalIntsValue.Location = new System.Drawing.Point(237, 629);
+            this.labelTotalIntsValue.Name = "labelTotalIntsValue";
+            this.labelTotalIntsValue.Size = new System.Drawing.Size(19, 13);
+            this.labelTotalIntsValue.TabIndex = 6;
+            this.labelTotalIntsValue.Text = "00";
+            // 
+            // labelTotalInts
+            // 
+            this.labelTotalInts.AutoSize = true;
+            this.labelTotalInts.Location = new System.Drawing.Point(174, 629);
+            this.labelTotalInts.Name = "labelTotalInts";
+            this.labelTotalInts.Size = new System.Drawing.Size(57, 13);
+            this.labelTotalInts.TabIndex = 5;
+            this.labelTotalInts.Text = "Total Ints :";
+            // 
+            // labelTotalVarsValue
+            // 
+            this.labelTotalVarsValue.AutoSize = true;
+            this.labelTotalVarsValue.Location = new System.Drawing.Point(76, 629);
+            this.labelTotalVarsValue.Name = "labelTotalVarsValue";
+            this.labelTotalVarsValue.Size = new System.Drawing.Size(19, 13);
+            this.labelTotalVarsValue.TabIndex = 4;
+            this.labelTotalVarsValue.Text = "00";
+            // 
+            // labelTotalVars
+            // 
+            this.labelTotalVars.AutoSize = true;
+            this.labelTotalVars.Location = new System.Drawing.Point(9, 629);
+            this.labelTotalVars.Name = "labelTotalVars";
+            this.labelTotalVars.Size = new System.Drawing.Size(61, 13);
+            this.labelTotalVars.TabIndex = 3;
+            this.labelTotalVars.Text = "Total Vars :";
+            // 
+            // treeViewSymbolTable
+            // 
+            this.treeViewSymbolTable.Location = new System.Drawing.Point(8, 25);
+            this.treeViewSymbolTable.Name = "treeViewSymbolTable";
+            this.treeViewSymbolTable.Size = new System.Drawing.Size(766, 580);
+            this.treeViewSymbolTable.TabIndex = 2;
+            // 
+            // labelSymbolTable
+            // 
+            this.labelSymbolTable.AutoSize = true;
+            this.labelSymbolTable.Location = new System.Drawing.Point(9, 9);
+            this.labelSymbolTable.Name = "labelSymbolTable";
+            this.labelSymbolTable.Size = new System.Drawing.Size(71, 13);
+            this.labelSymbolTable.TabIndex = 1;
+            this.labelSymbolTable.Text = "Symbol Table";
+            // 
             // tabPageOptimization
             // 
             this.tabPageOptimization.Location = new System.Drawing.Point(4, 22);
@@ -828,9 +974,16 @@
             this.tabPageCodeGeneration.Text = "Code Generation";
             this.tabPageCodeGeneration.UseVisualStyleBackColor = true;
             // 
-            // columnHeaderParseType
+            // checkBoxShowParseErrorChain
             // 
-            this.columnHeaderParseType.Text = "Type";
+            this.checkBoxShowParseErrorChain.AutoSize = true;
+            this.checkBoxShowParseErrorChain.Location = new System.Drawing.Point(6, 19);
+            this.checkBoxShowParseErrorChain.Name = "checkBoxShowParseErrorChain";
+            this.checkBoxShowParseErrorChain.Size = new System.Drawing.Size(138, 17);
+            this.checkBoxShowParseErrorChain.TabIndex = 26;
+            this.checkBoxShowParseErrorChain.Text = "Show Parse Error Chain";
+            this.checkBoxShowParseErrorChain.UseVisualStyleBackColor = true;
+            this.checkBoxShowParseErrorChain.CheckedChanged += new System.EventHandler(this.checkBoxShowParseErrorChain_CheckedChanged);
             // 
             // CompilerInterfaceForm
             // 
@@ -851,6 +1004,8 @@
             this.tabPageLexer.PerformLayout();
             this.tabPageParse.ResumeLayout(false);
             this.tabPageParse.PerformLayout();
+            this.tabPageSymbolTable.ResumeLayout(false);
+            this.tabPageSymbolTable.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -878,7 +1033,6 @@
         private System.Windows.Forms.TabPage tabPageSymantics;
         private System.Windows.Forms.TabPage tabPageOptimization;
         private System.Windows.Forms.TabPage tabPageCodeGeneration;
-        private System.Windows.Forms.CheckBox checkBoxOutputErrorsToFile;
         private System.Windows.Forms.Button buttonCompile;
         private System.Windows.Forms.GroupBox groupBoxProcess;
         private System.Windows.Forms.CheckBox checkBoxParserSuccess;
@@ -936,6 +1090,21 @@
         private System.Windows.Forms.ColumnHeader columnHeaderGeneralTokenIndex;
         private System.Windows.Forms.ColumnHeader columnHeaderParseTokenIndex;
         private System.Windows.Forms.ColumnHeader columnHeaderParseType;
+        private System.Windows.Forms.TabPage tabPageSymbolTable;
+        private System.Windows.Forms.TreeView treeViewSymbolTable;
+        private System.Windows.Forms.Label labelSymbolTable;
+        private System.Windows.Forms.Label labelTotalVarsValue;
+        private System.Windows.Forms.Label labelTotalVars;
+        private System.Windows.Forms.Label labelBytes;
+        private System.Windows.Forms.Label labelMaxMemoryValue;
+        private System.Windows.Forms.Label labelMaxMemory;
+        private System.Windows.Forms.Label labelTotalBooleanValue;
+        private System.Windows.Forms.Label labelTotalBoolean;
+        private System.Windows.Forms.Label labelTotalSringsValue;
+        private System.Windows.Forms.Label labelTotalStrings;
+        private System.Windows.Forms.Label labelTotalIntsValue;
+        private System.Windows.Forms.Label labelTotalInts;
+        private System.Windows.Forms.CheckBox checkBoxShowParseErrorChain;
     }
 }
 

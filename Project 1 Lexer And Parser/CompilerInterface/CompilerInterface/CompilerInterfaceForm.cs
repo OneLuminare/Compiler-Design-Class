@@ -21,6 +21,12 @@ namespace CompilerInterface
         Compiler compiler;
         bool optionSaveErrorsToFile;
         bool optionSaveTokenStreamToFile;
+        private int symtblVars;
+        private int symtblInts;
+        private int symtblStrings;
+        private int symtblBools;
+        private int symtblMemory;
+        private int block = 0;
 
         #endregion
 
@@ -36,6 +42,11 @@ namespace CompilerInterface
             compiler = new Compiler();
             optionSaveErrorsToFile = false;
             optionSaveTokenStreamToFile = false;
+            symtblVars = 0;
+            symtblInts = 0;
+            symtblStrings = 0;
+            symtblBools = 0;
+            symtblMemory = 0;
 
             //Register events
             compiler.Lexer.LexerMessageEvent += new MessageEventHandler(OutputGeneralMessages);
@@ -78,7 +89,6 @@ namespace CompilerInterface
             ListViewItem item = null;
             SystemType proc = SystemType.ST_NONE;
             
-
             //Clear warnings and errors
             listViewGeneralWarningsAndErrors.Items.Clear();
 
@@ -106,11 +116,12 @@ namespace CompilerInterface
                 }
                 else if( proc == SystemType.ST_PARSER )
                 {
+
                     //Create listview item
                     item = new ListViewItem(proc.ToString());
                     item.SubItems.Add("Warning");
-                    item.SubItems.Add("");
-                    item.SubItems.Add("");
+                    item.SubItems.Add(msg.Line.ToString());
+                    item.SubItems.Add(msg.Column.ToString());
                     item.SubItems.Add(msg.Grammar.ToString());
                     if (msg.Token != null)
                         item.SubItems.Add(msg.Token.Type.ToString());
@@ -152,8 +163,8 @@ namespace CompilerInterface
                     //Create listview item
                     item = new ListViewItem(proc.ToString());
                     item.SubItems.Add("Error");
-                    item.SubItems.Add("");
-                    item.SubItems.Add("");
+                    item.SubItems.Add(msg.Line.ToString());
+                    item.SubItems.Add(msg.Column.ToString());
                     item.SubItems.Add(msg.Grammar.ToString());
                     if (msg.Token != null)
                         item.SubItems.Add(msg.Token.Type.ToString());
@@ -291,6 +302,7 @@ namespace CompilerInterface
             //Reset other systme output
             ResetLexOutput();
             ResetParseOutput();
+            ResetSymbolTableOutput();
         }
 
         //Resets source tab
@@ -347,6 +359,20 @@ namespace CompilerInterface
             labelParserReturnValue.Text = "";
             labelParserErrorTotal.Text = "00";
             labelParserWarningTotal.Text = "00";
+        }
+
+        //Resets symbol table output
+        private void ResetSymbolTableOutput()
+        {
+            //Reset tree control
+            treeViewSymbolTable.Nodes.Clear();
+
+            //Reset internal counters for stats
+            symtblVars = 0;
+            symtblInts = 0;
+            symtblStrings = 0;
+            symtblBools = 0;
+            symtblMemory = 0;
         }
 
         //Outputs token stream to listviewtokens
@@ -423,6 +449,106 @@ namespace CompilerInterface
 
                 //Add nodes children
                 OutputCSTNode(childNode, parentTreeNode);
+            }
+        }
+
+        //Output symbol table
+        private void OutputSymbolTable()
+        {
+            //Inits
+            DynamicBranchTreeNode<HashSet<SymbolTableEntry>> curNode = compiler.Parser.SymbolTableRootNode;
+
+            //Begin tree control update
+            treeViewSymbolTable.BeginUpdate();
+
+            //Clear items
+            treeViewSymbolTable.Nodes.Clear();
+
+            //Reset counters
+            ResetSymbolTableCounters();
+
+            //Output symbol table to tree controll
+            treeViewSymbolTable.Nodes.Add(String.Format("Block {0}",block));
+            OutputSymbolTableEntry(curNode, treeViewSymbolTable.Nodes[0]);
+
+            //End tree control update
+            treeViewSymbolTable.EndUpdate();
+            
+            //Update stats (counted in recursive function to save a pass through nodes )
+            labelTotalVarsValue.Text = symtblVars.ToString();
+            labelTotalIntsValue.Text = symtblInts.ToString();
+            labelTotalSringsValue.Text = symtblStrings.ToString();
+            labelTotalBooleanValue.Text = symtblBools.ToString();
+            labelMaxMemoryValue.Text = symtblMemory.ToString();
+        }
+
+        private void ResetSymbolTableCounters()
+        {
+            block = 0;
+            symtblVars = 0;
+            symtblInts = 0;
+            symtblStrings = 0;
+            symtblBools = 0;
+            symtblMemory = 0;
+        }
+
+        private void OutputSymbolTableEntry(DynamicBranchTreeNode<HashSet<SymbolTableEntry>> entry, TreeNode treeNode)
+        {
+            //Inits
+            HashSet<SymbolTableEntry> hashSet = entry.Data;
+            TreeNode newNode = null;
+
+            //Output hash set
+            foreach (SymbolTableEntry symEntry in hashSet)
+            {
+                //Add each entry to node
+                treeNode.Nodes.Add( symEntry.ToString() );
+
+                //Collect data
+
+                //Inc var count
+                symtblVars++;
+
+                //Check for int type
+                if( symEntry.DataType == DataType.DT_INT )
+                {
+                    //Inc int type count
+                    symtblInts++;
+
+                    //Inc memory 1 byte
+                    symtblMemory++;
+                }
+                //Check for string type
+                else if( symEntry.DataType == DataType.DT_STRING )
+                {
+                    //Inc total strings type counter
+                    symtblStrings++;
+
+                    //Incrmeent memory 1 byte for each char
+                    symtblMemory += (symEntry.StringValue.Length);
+                }
+                //Check for boolean type
+                else if( symEntry.DataType == DataType.DT_BOOLEAN )
+                {
+                    //Inc bool type counter
+                    symtblBools++;
+
+                    //Increment max memory 1 byte
+                    symtblMemory++;
+                }
+            }
+
+            //Cycle through children nodes, and call recursive function
+            for( int i = 0; i < entry.NodeCount; i++ )
+            {
+                //Increment block
+                block++;
+
+                //Create a new block node title
+                newNode = treeNode.Nodes.Add(String.Format("Block {0}", block));
+
+                //Call recursive function on child
+                OutputSymbolTableEntry(entry.GetChild(i), newNode);
             }
         }
 
@@ -578,6 +704,9 @@ namespace CompilerInterface
                     //Ouput general warnings and errors
                     OutputParserWarningsAndErrors();
 
+                    //Output symbol table
+                    OutputSymbolTable();
+
                     //Set lex complete
                     checkBoxParserSuccess.Checked = true;
 
@@ -662,12 +791,6 @@ namespace CompilerInterface
                 labelLexerReturnValue.Text = "Lexer returned with errors.";
             }
         }
- 
-        //Toggle error to file option on clicked
-        private void checkBoxOutputErrorsToFile_CheckedChanged(object sender, EventArgs e)
-        {
-            optionSaveErrorsToFile = !optionSaveErrorsToFile;
-        }
 
         //Toggle token stream to file option on clicked
         private void checkBoxOutputOpCodesToFile_CheckedChanged(object sender, EventArgs e)
@@ -676,6 +799,12 @@ namespace CompilerInterface
         }
 
         #endregion
+
+        //Toggles show all parse error chain or just first error
+        private void checkBoxShowParseErrorChain_CheckedChanged(object sender, EventArgs e)
+        {
+            compiler.Parser.ShowErrorChain = !compiler.Parser.ShowErrorChain;
+        }
 
         #region Old Code
 

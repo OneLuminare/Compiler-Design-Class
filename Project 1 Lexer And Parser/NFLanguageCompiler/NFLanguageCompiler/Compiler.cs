@@ -25,6 +25,15 @@ namespace NFLanguageCompiler
         PRV_NONE
     }
 
+    // Describes data type
+    public enum DataType
+    {
+        DT_INT,
+        DT_STRING,
+        DT_BOOLEAN,
+        DT_NONE
+    }
+
     // Describes grammer process
     public enum GrammarProcess
     {
@@ -52,6 +61,21 @@ namespace NFLanguageCompiler
         GP_BOOLVAL,
         GP_LAMDA,
         GP_NONE
+    }
+
+    //Custome parse exception thrown on error
+    public class ParseException : Exception
+    {
+        //Default constructor
+        public ParseException()
+        {
+        }
+
+        //Constructor calls base
+        public ParseException(String msg)
+            : base(msg)
+        {
+        }
     }
 
     #endregion

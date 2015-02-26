@@ -79,7 +79,7 @@ namespace NFLanguageCompiler
             if (this.Token != null)
             {
                 if( Grammar == GrammarProcess.GP_NONE )
-                    s = String.Format("{0} Value: {1}", this.Token.Type.ToString(),this.Token.Value.ToString());
+                    s = String.Format("{0}       Value: {1}", this.Token.Type.ToString(),this.Token.Value.ToString());
                 else
                     s = String.Format("{0} {1}", Grammar.ToString(),this.Token.Type.ToString());
             }

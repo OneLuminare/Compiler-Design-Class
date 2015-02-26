@@ -277,7 +277,7 @@ namespace NFLanguageCompiler
                                 match = true;
 
                                 //Send print token
-                                OutputTokenStream.AddToken(new Token(Token.TokenType.TK_PRINT, lineNum, col));
+                                OutputTokenStream.AddToken(new Token(Token.TokenType.TK_WHILE, lineNum, col));
 
                                 //Increment index one less then used, as loop incrments by one at end
                                 index += 4;

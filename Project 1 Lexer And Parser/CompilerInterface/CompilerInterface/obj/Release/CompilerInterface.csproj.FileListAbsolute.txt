@@ -1,0 +1,12 @@
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\CompilerInterface\CompilerInterface\bin\Release\CompilerInterface.exe
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\CompilerInterface\CompilerInterface\bin\Release\CompilerInterface.pdb
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\CompilerInterface\CompilerInterface\bin\Release\DynamicBranchTree.dll
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\CompilerInterface\CompilerInterface\bin\Release\NFLanguageCompiler.dll
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\CompilerInterface\CompilerInterface\bin\Release\NFLanguageCompiler.pdb
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\CompilerInterface\CompilerInterface\bin\Release\DynamicBranchTree.pdb
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\CompilerInterface\CompilerInterface\obj\Release\ResolveAssemblyReference.cache
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\CompilerInterface\CompilerInterface\obj\Release\CompilerInterface.CompilerInterfaceForm.resources
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\CompilerInterface\CompilerInterface\obj\Release\CompilerInterface.Properties.Resources.resources
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\CompilerInterface\CompilerInterface\obj\Release\CompilerInterface.csproj.GenerateResource.Cache
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\CompilerInterface\CompilerInterface\obj\Release\CompilerInterface.exe
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\CompilerInterface\CompilerInterface\obj\Release\CompilerInterface.pdb

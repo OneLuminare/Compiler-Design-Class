@@ -1,0 +1,5 @@
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\DynamicBranchTree\DynamicBranchTree\bin\Release\DynamicBranchTree.dll
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\DynamicBranchTree\DynamicBranchTree\bin\Release\DynamicBranchTree.pdb
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\DynamicBranchTree\DynamicBranchTree\obj\Release\ResolveAssemblyReference.cache
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\DynamicBranchTree\DynamicBranchTree\obj\Release\DynamicBranchTree.dll
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\DynamicBranchTree\DynamicBranchTree\obj\Release\DynamicBranchTree.pdb
