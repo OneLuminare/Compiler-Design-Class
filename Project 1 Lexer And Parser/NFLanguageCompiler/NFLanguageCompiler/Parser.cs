@@ -1136,8 +1136,8 @@ namespace NFLanguageCompiler
                 }
             }
 
-            //Else if peek for bool op
-            else if (PeekBoolOp())
+            //Else if peek for bool value
+            else if (PeekBoolVal())
             {
                 //Create child for parse bool value
                 CurCSTNode = new DynamicBranchTreeNode<CSTValue>(new CSTValue());
@@ -2113,7 +2113,7 @@ namespace NFLanguageCompiler
             //Send message
             SendMessage("Peeking for BOOLOP...");
 
-            // Peek for TK_LPARAM,TK_BOOL_TRUE,TK_BOOL_FALSE
+            // Peek forTK_bool_op_EQUALS TK_BOOL_OP_NOT_EQUALS
             if (PeekToken(Token.TokenType.TK_BOOL_OP_EQUALS) ||
                 PeekToken(Token.TokenType.TK_BOOL_OP_NOT_EQUALS) )
             {
@@ -2158,6 +2158,38 @@ namespace NFLanguageCompiler
             {
                 //Send msg
                 SendMessage("Peek did not find INTOP.");
+
+                //Set return value
+                ret = false;
+            }
+
+            //Return set value
+            return ret;
+        }
+
+        //Peek for BOOLVAL. First set is TK_BOOL_TRUE, TK_BOOL_FALSE
+        private bool PeekBoolVal()
+        {
+            //Inits
+            bool ret = false;
+
+            //Send message
+            SendMessage("Peeking for BOOLVAL...");
+
+            // Peek for TK_BOOL_TRUE,TK_BOOL_FALSE
+            if (PeekToken(Token.TokenType.TK_BOOL_TRUE) ||
+                PeekToken(Token.TokenType.TK_BOOL_FALSE))
+            {
+                //Send msg
+                SendMessage("Peek found BOOLVAL.");
+
+                //Set return value
+                ret = true;
+            }
+            else
+            {
+                //Send msg
+                SendMessage("Peek did not find BOOLVAL.");
 
                 //Set return value
                 ret = false;

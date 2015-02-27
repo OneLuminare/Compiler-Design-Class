@@ -1,0 +1,44 @@
+// Tests all token types, in valid grammar.
+// Also shows warnings on invalid chars in string
+// Also shows whitespace does not matter
+
+int a
+string s
+boolean b
+s="testst 32 lkasdf .#$%#@!!"
+if( 5 + a == 2)
+{
+    while(b != true)
+    {
+         a = 5b=falsea=2
+        print(b)
+    }
+}
+intcc=2c=2+a
+$
+
+// Tests run on string error
+
+s = "alksdflksdf
+int a$
+
+// Tests eof warnings
+
+int a$
+int b
+
+// Tests invalid symbol error
+
+int a
+*
+
+// Test parse statements and expression grammar test
+// Actually tests entire grammar
+
+print(5 + 5 + a)
+print(((a != false) == (b==true)))
+print("string")
+print(a)a=5intbif(a==true)
+{while(b==true){}}{}$
+
+
