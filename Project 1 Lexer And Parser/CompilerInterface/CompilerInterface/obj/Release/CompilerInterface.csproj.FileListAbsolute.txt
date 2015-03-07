@@ -10,3 +10,5 @@ C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parse
 C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\CompilerInterface\CompilerInterface\obj\Release\CompilerInterface.csproj.GenerateResource.Cache
 C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\CompilerInterface\CompilerInterface\obj\Release\CompilerInterface.exe
 C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\CompilerInterface\CompilerInterface\obj\Release\CompilerInterface.pdb
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\Project 1 Release Executables\CompilerInterface.exe
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\Project 1 Release Executables\CompilerInterface.pdb

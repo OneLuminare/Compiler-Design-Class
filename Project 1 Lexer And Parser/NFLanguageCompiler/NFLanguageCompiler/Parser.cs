@@ -357,8 +357,11 @@ namespace NFLanguageCompiler
         //Parses BLOCK grammar
         //:= { STATEMENTLIST }
         //
+        // Params: bool noNewSymbolTableNode : If true does not create a new symbol table node.
+        // Notes: This param used to be first block, I most of my code I creae new nodes before
+        //        calling a parse function. 
         // Throws: new ParseException
-        private bool ParseBlock(bool firstBlock)
+        private bool ParseBlock(bool noNewSymbolTableNode)
         {
             //Inits
             DynamicBranchTreeNode<CSTValue> parentNode = CurCSTNode;
@@ -376,39 +379,36 @@ namespace NFLanguageCompiler
             //Send message
             SendMessage("Parsing BLOCK...");
 
-            //If not first block, create a new child node
-            if (!firstBlock)
+            //If noNewSymbolTablleNode create a new child node for symbol table
+            if (!noNewSymbolTableNode)
             {
-                //Create new child node
+                //Create new child node for symbol table
                 CurSymbolTableNode = new DynamicBranchTreeNode<HashSet<SymbolTableEntry>>(new HashSet<SymbolTableEntry>());
 
-                //If not first block add child
+                //Add child node to symbol table
                 parentSymTblEntry.AddChild(CurSymbolTableNode);
             }
 
-            //Match { if not first block
-            if (!firstBlock)
+            //Match { token and check
+            if (MatchToken(Token.TokenType.TK_LBRACE))
             {
-                //Match token and check
-                if (MatchToken(Token.TokenType.TK_LBRACE))
-                {
-                    //Create child node for TK_LBRACE
-                    CurCSTNode = new DynamicBranchTreeNode<CSTValue>(new CSTValue(GrammarProcess.GP_NONE
-                        , CurTokenStream.GetToken(CurTokenIndex - 1)));
-                    parentNode.AddChild(CurCSTNode);
+                //Create child node for TK_LBRACE
+                CurCSTNode = new DynamicBranchTreeNode<CSTValue>(new CSTValue(GrammarProcess.GP_NONE
+                    , CurTokenStream.GetToken(CurTokenIndex - 1)));
+                parentNode.AddChild(CurCSTNode);
 
-                    //Set ret
-                    ret = true;
+                //Set ret
+                ret = true;
 
-                }
-                //Else if dont show error chain
-                else if (!showErrorChain)
-                    throw new ParseException("Parse BLOCK failed, expecting '{'. Block is := { STATEMENTLIST }." );
             }
+            //Else if dont show error chain
+            else if (!showErrorChain)
+                throw new ParseException("Parse BLOCK failed, expecting '{'. Block is := { STATEMENTLIST }." );
+            
    
 
-            //Check ret
-            if( firstBlock || ret )
+            //Check ret and parse statemenetlist
+            if( ret )
             {
                 //Create child node for STATEMENTLIST
                 CurCSTNode = new DynamicBranchTreeNode<CSTValue>();
@@ -418,26 +418,20 @@ namespace NFLanguageCompiler
                 ret = ParseStatementList();
             }
 
-
-            //Match { if not first block
-            if (!firstBlock)
+            //Match } token and check
+            if (ret && MatchToken(Token.TokenType.TK_RBRACE))
             {
-                //Match token and check
-                if (ret && MatchToken(Token.TokenType.TK_RBRACE))
-                {
-                    //Create child node for TK_BRACE
-                    CurCSTNode = new DynamicBranchTreeNode<CSTValue>(new CSTValue(GrammarProcess.GP_NONE
-                        , CurTokenStream.GetToken(CurTokenIndex - 1)));
-                    parentNode.AddChild(CurCSTNode);
+                //Create child node for TK_BRACE
+                CurCSTNode = new DynamicBranchTreeNode<CSTValue>(new CSTValue(GrammarProcess.GP_NONE
+                    , CurTokenStream.GetToken(CurTokenIndex - 1)));
+                parentNode.AddChild(CurCSTNode);
 
-                    //Set ret
-                    ret = true;
-                }
-                //Else if dont show error chain
-                else if (!showErrorChain)
-                    throw new ParseException("Parse BLOCK failed, expecting '}'. Block is := { STATEMENTLIST }.");
-
+                //Set ret
+                ret = true;
             }
+            //Else if dont show error chain
+            else if (!showErrorChain)
+                throw new ParseException("Parse BLOCK failed, expecting '}'. Block is := { STATEMENTLIST }.");
 
             // Reset Symbol Table parent
             CurSymbolTableNode = parentSymTblEntry;

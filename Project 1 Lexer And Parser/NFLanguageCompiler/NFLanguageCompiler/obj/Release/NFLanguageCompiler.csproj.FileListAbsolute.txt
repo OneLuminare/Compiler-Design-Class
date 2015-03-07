@@ -5,3 +5,5 @@ C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parse
 C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\NFLanguageCompiler\NFLanguageCompiler\obj\Release\ResolveAssemblyReference.cache
 C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\NFLanguageCompiler\NFLanguageCompiler\obj\Release\NFLanguageCompiler.dll
 C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\NFLanguageCompiler\NFLanguageCompiler\obj\Release\NFLanguageCompiler.pdb
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\Project 1 Release Executables\NFLanguageCompiler.dll
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Project 1 Lexer And Parser\Project 1 Release Executables\NFLanguageCompiler.pdb

@@ -147,6 +147,7 @@ namespace NFLanguageCompiler
             bool match = false;
             bool eofFound = false;
             bool inString = false;
+            bool codeAfterEOF = false;
             String line = null;
             Char curChar;
             ProcessReturnValue ret;
@@ -200,14 +201,54 @@ namespace NFLanguageCompiler
                 
                     //Get current char
                     curChar = line[index];
-                
+
+                    //Check if EOF found and char is a non space character
+                    if (eofFound && curChar != ' ')
+                    {
+                        codeAfterEOF = true;
+
+                        //Send output event
+                        if (LexerMessageEvent != null)
+                            LexerMessageEvent("Warning: Code found after EOF.");
+
+                        //Send warning event
+                        if (LexerWarningEvent != null)
+                            LexerWarningEvent(new Message(String.Format("Code found after EOF starting on line {0} column {1}."
+                                , lineNum, col), lineNum, col, SystemType.ST_LEXER));
+
+                        //Increment warning count
+                        WarningCount++;
+                        
+                        //Break char loop
+                        break;
+                    }
                     //Check if char is an alphebetical character
-                    if (Char.IsLetter(curChar))
+                    else if (Char.IsLetter(curChar))
                     {
                         //Check if in string mode, add char literal token, and set found match to true
                         if (inString)
                         {
-                            OutputTokenStream.AddToken(new Token(Token.TokenType.TK_CHAR_LITERAL, lineNum, col,line[index]));
+                            if (Char.IsLower(curChar))
+                            {
+                                OutputTokenStream.AddToken(new Token(Token.TokenType.TK_CHAR_LITERAL, lineNum, col, line[index]));
+                            }
+                            else
+                            {
+                                //Send output event
+                                if (LexerMessageEvent != null)
+                                    LexerMessageEvent(String.Format("Error: Indentified upper case character literal '{0}' while in string literal"
+                                        , line[index]));
+
+                                //Send error event that integers cannot be in strings. Integer is not sent as token
+                                if (LexerErrorEvent != null)
+                                    LexerErrorEvent(new Message(
+                                        String.Format("Indentifed upper case character literal {0} in string literal on line {1} , column {2}. Strings can only contain characters or white space."
+                                        , line[index], lineNum, col), lineNum, col, SystemType.ST_LEXER));
+
+                                //Increment error count
+                                ErrorCount++;
+                            }
+
                             match = true;
                             
                         }
@@ -389,6 +430,7 @@ namespace NFLanguageCompiler
                         //Sends warning and removes character from string
                         if (inString)
                         {
+                            /*
                             //Send output event
                             if (LexerMessageEvent != null)
                                 LexerMessageEvent(String.Format("Warning: Indentified integer literal '{0}' while in string literal"
@@ -402,6 +444,20 @@ namespace NFLanguageCompiler
 
                             //Increment warning count
                             WarningCount++;
+                             * */
+                            //Send output event
+                            if (LexerMessageEvent != null)
+                                LexerMessageEvent(String.Format("Error: Indentified integer literal '{0}' while in string literal"
+                                    , line[index]));
+
+                            //Send error event that integers cannot be in strings. Integer is not sent as token
+                            if (LexerErrorEvent != null)
+                                LexerErrorEvent(new Message(
+                                    String.Format("Indentifed integer literal {0} in string literal on line {1} , column {2}. Strings can only contain characters or white space."
+                                    , line[index], lineNum, col), lineNum, col, SystemType.ST_LEXER));
+
+                            //Increment error count
+                            ErrorCount++;
                         }
                         //If not in string mode, sent integer literal token
                         else
@@ -589,8 +645,9 @@ namespace NFLanguageCompiler
                     else if (curChar == '$')
                     {
                         //Check if eof already found, and remove old one
-                        if (eofFound)
+                        if (!eofFound)
                         {
+                            /*
                             //Send output event
                             if (LexerMessageEvent != null)
                                 LexerMessageEvent("Warning: End of file already found. Removing previous EOF.");
@@ -605,26 +662,28 @@ namespace NFLanguageCompiler
 
                             //Increment warning count
                             WarningCount++;
+                             * */
+
+
+                            //Set found match
+                            match = true;
+
+                            //Add EoF token
+                            eofTokenIndex = OutputTokenStream.AddToken(new Token(Token.TokenType.TK_EOF, lineNum, col));
+
+                            //Send output event
+                            if (LexerMessageEvent != null)
+                                LexerMessageEvent("Indentified end of file.");
+
+                            //Set found EOF 
+                            eofFound = true;
+
+                            //Record eof line
+                            eofTokenLine = lineNum;
+
+                            //Record eof col
+                            eofTokenCol = col;
                         }
-
-                        //Set found match
-                        match = true;
-
-                        //Add EoF token
-                        eofTokenIndex = OutputTokenStream.AddToken(new Token(Token.TokenType.TK_EOF, lineNum, col));
-
-                        //Send output event
-                        if (LexerMessageEvent != null)
-                            LexerMessageEvent("Indentified end of file.");
-
-                        //Set found EOF 
-                        eofFound = true;
-
-                        //Record eof line
-                        eofTokenLine = lineNum;
-
-                        //Record eof col
-                        eofTokenCol = col;
                     }
                     //Check for addition operator
                     else if (curChar == '+')
@@ -762,38 +821,21 @@ namespace NFLanguageCompiler
                         //Increment error count
                         ErrorCount++;
                     }
+                }
 
-                    //Check if found eof marker, and another token was sent.
-                    //If so remove previous EOF token
-                    if (match && eofFound && curChar != '$')
-                    {
-                        //Send output event
-                        if (LexerMessageEvent != null)
-                            LexerMessageEvent("Warning: End of file already found. Removing previous EOF.");
-
-                        //Remove EOF token
-                        OutputTokenStream.RemoveToken(eofTokenIndex);
-
-                        //Set found eof to false
-                        eofFound = false;
-
-                        //Send warning event
-                        if(LexerWarningEvent != null)
-                            LexerWarningEvent(new Message(String.Format("End of file already found on line {0} column {1}. Removing previous EOF token."
-                                ,eofTokenLine,eofTokenCol),lineNum,col,SystemType.ST_LEXER));
-
-                        //Increment warning count
-                        WarningCount++;
-                    }
-                } 
+                //Break line loop if code afer eof
+                if (codeAfterEOF)
+                    break;
             }
+
+
 
             //After all lines are process, if in string mode send error
             if (inString)
             {
                 //Trigger lexer output event
                 if (LexerMessageEvent != null)
-                    LexerMessageEvent("Error: String ran over line. Exiting string mode to search for more errors.");
+                    LexerMessageEvent("Error: String ran over line.");
 
                 //Trigger error event
                 if (LexerErrorEvent != null)
@@ -803,9 +845,6 @@ namespace NFLanguageCompiler
 
                 //Increment error count
                 ErrorCount++;
-
-                //Send quote token
-                OutputTokenStream.AddToken(new Token(Token.TokenType.TK_QUOTE,lineNum,col));
             }
 
             //After all lines are process, check if eof was not added at end of source
