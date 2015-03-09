@@ -12,15 +12,12 @@ namespace NFLanguageCompiler
     // Warnings and errors are sent to the parent Compiler object.
     //
     // Warnings: (Repairs warnings)
-    //  1.) EOF previously found, or no EOF at end of source.
-    //  2.) Integers or punctuation in string literals.
-    //  3.) Unfinished not equals(!=), meaning just a !.
-    //      In this grammer it cannot be anything else other 
-    //      than an unreconized symbol.
+    //  1.) EOF previously found, or no EOF at end of source. 
     //
     // Errors: (Does not repair. Changes meaning of code.)
     //  1.) Run on strings. String cannot run over a line.
     //  2.) Invalid symbols. 
+    //  3.) Integers or punctuation in string literals.
     public class Lexer
     {
         #region Data Members
@@ -775,26 +772,6 @@ namespace NFLanguageCompiler
                             //Send output event
                             if (LexerMessageEvent != null)
                                 LexerMessageEvent("Indentified bolean not equals operator.");
-                        }
-
-                        //If not found following !=, it most likley is an ommision. 
-                        //Send warning and repair.
-                        if (!match)
-                        {
-                            //Send output event
-                            if (LexerMessageEvent != null)
-                                LexerMessageEvent("Warning: Indentified \"!\" symbol with no following \"=\". Adding \"=\" and sending not equals token.");
-
-                            //Send not equals token
-                            OutputTokenStream.AddToken(new Token(Token.TokenType.TK_BOOL_OP_NOT_EQUALS, lineNum, col));
-
-                            //Send warning event
-                            if (LexerWarningEvent != null)
-                                LexerWarningEvent(new Message(String.Format("Indentified \"!\" symbol on line {0}, column {1}, with no following \"=\". Adding \"=\" and sending not equals token."
-                                    , lineNum, col), lineNum, col, SystemType.ST_LEXER));
-
-                            //Increment warning count
-                            WarningCount++;
                         }
                     }
                    
