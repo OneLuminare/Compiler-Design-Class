@@ -11,7 +11,7 @@ namespace NFLanguageCompiler
         #region Data Members
 
         DynamicBranchTreeNode<CSTValue> curCSTNode;
-        DynamicBranchTreeNode<CSTValue> parentCSTNode;
+       // DynamicBranchTreeNode<CSTValue> parentCSTNode;
         BlockASTNode rootASTNode;
 
         #endregion
@@ -24,6 +24,31 @@ namespace NFLanguageCompiler
             set { rootASTNode = value; }
         }
 
+        public int ErrorCount
+        {
+            get;
+            set;
+        }
+
+        public int WarningCount
+        {
+            get;
+            set;
+        }
+
+        #endregion
+
+        #region Delegates and Events
+
+        //Symantic Analyzer message event
+        public event MessageEventHandler SymanticAnalyzerMessageEvent;
+
+        //Symantic Analyzer error event
+        public event WarningErrorEventHandler SymanticAnalyzerErrorEvent;
+
+        //Symantic Analyzer warning event
+        public event WarningErrorEventHandler SymanticAnalyzerWarningEvent;
+
         #endregion
 
         #region Constructors
@@ -32,20 +57,47 @@ namespace NFLanguageCompiler
         public SymanticAnalyzer()
         {
            curCSTNode = null;
-           parentCSTNode = null;
+           //parentCSTNode = null;
             rootASTNode = null;
 
+            WarningCount = 0;
+            ErrorCount = 0;
         }
 
         #endregion
 
         #region AST Creation Methods
 
+        public ProcessReturnValue AnalyzeSymantics(DynamicBranchTreeNode<CSTValue> rootCSTNode)
+        {
+            // Inits
+            ProcessReturnValue ret = ProcessReturnValue.PRV_NONE;
+
+            // Create AST from CST
+            CreateAST(rootCSTNode);
+
+            // Anaylze scope, existance
+
+            // Check for unreachable code
+
+            // Set return value
+            if (ErrorCount > 0)
+                ret = ProcessReturnValue.PRV_ERRORS;
+            else if (WarningCount > 0)
+                ret = ProcessReturnValue.PRV_WARNINGS;
+            else
+                ret = ProcessReturnValue.PRV_OK;
+
+            // Return value
+            return ret;
+        }
+
         public void CreateAST(DynamicBranchTreeNode<CSTValue> rootCSTNode)
         {
+            
             //Set current and parent CST node values
             curCSTNode = rootCSTNode;
-            parentCSTNode = null;
+            //parentCSTNode = null;
 
             //Parse first program block, and set as root AST
             rootASTNode = CreateBlockASTNode(true);
@@ -56,10 +108,18 @@ namespace NFLanguageCompiler
             // Inits
             StatementASTNode retASTNode = null;
             StatementASTNode firstRetASTNode = null;
+            DynamicBranchTreeNode<CSTValue> statementListCSTNode = null;
             BlockASTNode curASTNode = null;
+            DynamicBranchTreeNode<CSTValue> parentCSTNode;
+                        
 
-            // Set parent node to current
-            parentCSTNode = curCSTNode;
+            // If first block, move from PROGRAM cst node to BLOCK
+            if (firstBlock)
+                parentCSTNode = curCSTNode.GetChild(0);
+
+            // Else set parent to current node
+            else
+                parentCSTNode = curCSTNode;
 
             // Create new AST node for block
             curASTNode = new BlockASTNode();
@@ -68,14 +128,14 @@ namespace NFLanguageCompiler
             curASTNode.IsProgramBlock = firstBlock;
 
             // Get first statement list
-            curCSTNode = parentCSTNode.GetChild(1);
+            statementListCSTNode = parentCSTNode.GetChild(1);
+
+            // Get statement
+            curCSTNode = statementListCSTNode.GetChild(0);
 
             // Loop through statement lists until lamda
             while (curCSTNode.Data.Grammar != GrammarProcess.GP_LAMDA)
             {
-                // Set current node to statement
-                curCSTNode = curCSTNode.GetChild(0);
-
                 //Create statement grammar
                 retASTNode = CreateStatementASTNode();
                 
@@ -84,10 +144,18 @@ namespace NFLanguageCompiler
                     firstRetASTNode.MakeSybling(retASTNode);
                 // Else set first returned statement
                 else
+                {
                     firstRetASTNode = retASTNode;
 
+                    // Set first statement as statement list
+                    curASTNode.StatementList = retASTNode;
+                }
+
                 // Get next statment list
-                curCSTNode = parentCSTNode.GetChild(1);
+                statementListCSTNode = statementListCSTNode.GetChild(1);
+
+                // Get next statement or lamda
+                curCSTNode = statementListCSTNode.GetChild(0);
             }
 
             // Adopt statement family
@@ -105,6 +173,7 @@ namespace NFLanguageCompiler
         {
             // Inits
             StatementASTNode retASTNode = null;
+            DynamicBranchTreeNode<CSTValue> parentCSTNode;
 
             // Set parent node to current
             parentCSTNode = curCSTNode;
@@ -161,6 +230,7 @@ namespace NFLanguageCompiler
             // Inits
             ExprASTNode retASTNode = null;
             PrintStatementASTNode curASTNode = null;
+            DynamicBranchTreeNode<CSTValue> parentCSTNode;
 
             // Set parent node to current
             parentCSTNode = curCSTNode;
@@ -190,6 +260,7 @@ namespace NFLanguageCompiler
             IDASTNode retIDASTNode = null;
             ExprASTNode retExprASTNode = null;
             AssignmentStatementASTNode curASTNode = null;
+            DynamicBranchTreeNode<CSTValue> parentCSTNode;
 
             // Set parent node to current
             parentCSTNode = curCSTNode;
@@ -215,6 +286,10 @@ namespace NFLanguageCompiler
             // Adopt child family
             curASTNode.AdoptChild(retIDASTNode);
 
+            // Set static refs
+            curASTNode.Id = retIDASTNode;
+            curASTNode.Expr = retExprASTNode;
+
             // Reset current CST node
             curCSTNode = parentCSTNode;
 
@@ -229,6 +304,7 @@ namespace NFLanguageCompiler
             IDASTNode retIDASTNode = null;
             VAR_TYPE varType = VAR_TYPE.VARTYPE_INT;
             VarDecStatementASTNode curASTNode = null;
+            DynamicBranchTreeNode<CSTValue> parentCSTNode;
 
             // Set parent node to current
             parentCSTNode = curCSTNode;
@@ -237,11 +313,11 @@ namespace NFLanguageCompiler
             curASTNode = new VarDecStatementASTNode();
 
             // Get var type
-            if( curCSTNode.GetChild(0).Data.Token.Type == Token.TokenType.TK_INT )
+            if( curCSTNode.GetChild(0).GetChild(0).Data.Token.Type == Token.TokenType.TK_INT )
                 varType = VAR_TYPE.VARTYPE_INT;
-            else if ( curCSTNode.GetChild(0).Data.Token.Type == Token.TokenType.TK_STRING )
+            else if ( curCSTNode.GetChild(0).GetChild(0).Data.Token.Type == Token.TokenType.TK_STRING )
                 varType = VAR_TYPE.VARTYPE_STRING;
-            else if ( curCSTNode.GetChild(0).Data.Token.Type == Token.TokenType.TK_BOOLEAN  )
+            else if ( curCSTNode.GetChild(0).GetChild(0).Data.Token.Type == Token.TokenType.TK_BOOLEAN  )
                 varType = VAR_TYPE.VARTYPE_BOOLEAN;
 
             // Create new type ast node
@@ -259,6 +335,10 @@ namespace NFLanguageCompiler
             // Adopt family
             curASTNode.AdoptChild(retTypeASTNode);
 
+            // Set static refs
+            curASTNode.Type = retTypeASTNode;
+            curASTNode.Id = retIDASTNode;
+
             // Reset current CST node
             curCSTNode = parentCSTNode;
 
@@ -272,6 +352,7 @@ namespace NFLanguageCompiler
             ExprASTNode retExprASTNode = null;
             BlockASTNode retBlockASTNode = null;
             WhileStatementASTNode curASTNode = null;
+            DynamicBranchTreeNode<CSTValue> parentCSTNode;
 
             // Set parent node to current
             parentCSTNode = curCSTNode;
@@ -280,13 +361,13 @@ namespace NFLanguageCompiler
             curASTNode = new WhileStatementASTNode();
 
             // Set current node to expr
-            curCSTNode = parentCSTNode.GetChild(2);
+            curCSTNode = parentCSTNode.GetChild(1);
 
             // Create expr
-            retExprASTNode = CreateExprASTNode();
+            retExprASTNode = CreateBooleanExprASTNode(); 
 
             // Set current node to block
-            curCSTNode = parentCSTNode.GetChild(4);
+            curCSTNode = parentCSTNode.GetChild(2);
 
             // Create block
             retBlockASTNode = CreateBlockASTNode(false);
@@ -296,6 +377,10 @@ namespace NFLanguageCompiler
 
             // Adopt family
             curASTNode.AdoptChild(retExprASTNode);
+
+            // Set static refs
+            curASTNode.Expr = retExprASTNode;
+            curASTNode.Block = retBlockASTNode;
 
             // Reset current CST node
             curCSTNode = parentCSTNode;
@@ -309,6 +394,7 @@ namespace NFLanguageCompiler
             ExprASTNode retExprASTNode = null;
             BlockASTNode retBlockASTNode = null;
             IfStatementASTNode curASTNode = null;
+            DynamicBranchTreeNode<CSTValue> parentCSTNode;
 
             // Set parent node to current
             parentCSTNode = curCSTNode;
@@ -317,13 +403,13 @@ namespace NFLanguageCompiler
             curASTNode = new IfStatementASTNode();
 
             // Set current node to expr
-            curCSTNode = parentCSTNode.GetChild(2);
+            curCSTNode = parentCSTNode.GetChild(1);
 
             // Create expr
-            retExprASTNode = CreateExprASTNode();
+            retExprASTNode = CreateBooleanExprASTNode();
 
             // Set current node to block
-            curCSTNode = parentCSTNode.GetChild(4);
+            curCSTNode = parentCSTNode.GetChild(2);
 
             // Create block
             retBlockASTNode = CreateBlockASTNode(false);
@@ -333,6 +419,10 @@ namespace NFLanguageCompiler
 
             // Adopt family
             curASTNode.AdoptChild(retExprASTNode);
+
+            // Set static refs
+            curASTNode.Expr = retExprASTNode;
+            curASTNode.Block = retBlockASTNode;
 
             // Reset current CST node
             curCSTNode = parentCSTNode;
@@ -345,9 +435,13 @@ namespace NFLanguageCompiler
         {
             // Inits
             ExprASTNode retASTNode = null;
+            DynamicBranchTreeNode<CSTValue> parentCSTNode;
 
             // Set parent node to current
             parentCSTNode = curCSTNode;
+
+            // Get child node
+            curCSTNode = curCSTNode.GetChild(0);
 
             // Check if print Statment
             if (curCSTNode.Data.Grammar == GrammarProcess.GP_INTEXPR)
@@ -368,7 +462,7 @@ namespace NFLanguageCompiler
                 retASTNode = CreateBooleanExprASTNode();
             }
             // Check if while
-            else if (curCSTNode.Data.Grammar == GrammarProcess.GP_ID)
+            else if (curCSTNode.Data.Token.Type == Token.TokenType.TK_ID)
             {
                 // Create while statement
                 retASTNode = CreateIDExprASTNode();
@@ -388,6 +482,7 @@ namespace NFLanguageCompiler
             IntOpASTNode retIntOpASTNode = null;
             ExprASTNode retExprASTNode = null;
             IntExprASTNode curASTNode = null;
+            DynamicBranchTreeNode<CSTValue> parentCSTNode;
 
             // Set parent node to current
             parentCSTNode = curCSTNode;
@@ -397,7 +492,8 @@ namespace NFLanguageCompiler
             {
 
                 // Create new int expr ast node
-                curASTNode = new IntExprASTNode(INTEXPR_TYPE.IET_ONE);
+                curASTNode = new IntExprASTNode(INTEXPR_TYPE.IET_TWO);
+               
                
                 // Create int val ast node and get digit
                 retIntValASTNode = new IntValASTNode( Int32.Parse(parentCSTNode.GetChild(0).Data.Token.Value.ToString()) );
@@ -415,15 +511,23 @@ namespace NFLanguageCompiler
                 // Make sybling
                 retIntValASTNode.MakeSybling(retIntOpASTNode);
                 retIntValASTNode.MakeSybling(retExprASTNode);
+
+                // Set static refs
+                curASTNode.IntVal = retIntValASTNode;
+                curASTNode.IntOp = retIntOpASTNode;
+                curASTNode.Expr = retExprASTNode;
             }
             // Else type two (digit)
             else
             {
                 // Create new int expr ast node
-                curASTNode = new IntExprASTNode(INTEXPR_TYPE.IET_TWO);
+                curASTNode = new IntExprASTNode(INTEXPR_TYPE.IET_ONE);
 
                 // Create int val ast node and get digit
                 retIntValASTNode = new IntValASTNode(Int32.Parse(parentCSTNode.GetChild(0).Data.Token.Value.ToString()));
+
+                // Set static refs
+                curASTNode.IntVal = retIntValASTNode;
 
             }
 
@@ -442,7 +546,8 @@ namespace NFLanguageCompiler
             // Inits
             StringBuilder sb = new StringBuilder(20);
             StringExprASTNode curASTNode = null;
-            int charNode = 0;
+            DynamicBranchTreeNode<CSTValue> charListCSTNode = null;
+            DynamicBranchTreeNode<CSTValue> parentCSTNode;
 
             // Set parent node to current
             parentCSTNode = curCSTNode;
@@ -450,8 +555,11 @@ namespace NFLanguageCompiler
             // Create new string expr ast node
             curASTNode = new StringExprASTNode();
 
-            // Set current node to first child
-            curCSTNode = parentCSTNode.GetChild(0);
+            // Get first charlist CST node
+            charListCSTNode = parentCSTNode;
+
+            // Set current node to first child, either char or lamda
+            curCSTNode = charListCSTNode.GetChild(0);
 
             // Loop through char nodes adding to string value
             while (curCSTNode.Data.Grammar != GrammarProcess.GP_LAMDA)
@@ -459,11 +567,11 @@ namespace NFLanguageCompiler
                 // Add char value to string
                 sb.Append(curCSTNode.Data.Token.Value);
 
-                // Increment node count
-                charNode++;
+                // Get next charlist
+                charListCSTNode = charListCSTNode.GetChild(1);
 
                 // Get next char node
-                curCSTNode = parentCSTNode.GetChild(charNode);
+                curCSTNode = charListCSTNode.GetChild(0);
             }
 
             // Set string value to ast node
@@ -484,6 +592,7 @@ namespace NFLanguageCompiler
             ExprASTNode retExprASTNode2 = null;
             BoolValASTNode retBoolValASTNode = null;
             BooleanExprASTNode curASTNode = null;
+            DynamicBranchTreeNode<CSTValue> parentCSTNode;
 
             // Set parent node to current
             parentCSTNode = curCSTNode;
@@ -501,7 +610,7 @@ namespace NFLanguageCompiler
                 retExprASTNode1 = CreateExprASTNode();
 
                 // Determine bool op
-                if (parentCSTNode.GetChild(2).Data.Token.Type == Token.TokenType.TK_BOOL_OP_EQUALS)
+                if (parentCSTNode.GetChild(2).GetChild(0).Data.Token.Type == Token.TokenType.TK_BOOL_OP_EQUALS)
                     retBoolOpASTNode = new BoolOpASTNode(BOOLOP_TYPE.BOOLOP_EQUALS);
                 else
                     retBoolOpASTNode = new BoolOpASTNode(BOOLOP_TYPE.BOOLOP_NOT_EQUALS);
@@ -518,6 +627,11 @@ namespace NFLanguageCompiler
 
                 // Adopt family
                 curASTNode.AdoptChild(retExprASTNode1);
+
+                // Set static refs
+                curASTNode.ExprOne = retExprASTNode1;
+                curASTNode.BoolOp = retBoolOpASTNode;
+                curASTNode.ExprTwo = retExprASTNode2;
             }
             // Else boolean expr type : BOOLVAL
             else
@@ -530,6 +644,9 @@ namespace NFLanguageCompiler
 
                 // Adopt family
                 curASTNode.AdoptChild(retBoolValASTNode);
+
+                // Set static refs
+                curASTNode.BoolVal = retBoolValASTNode;
             }
 
             // Reset current CST node
@@ -547,9 +664,45 @@ namespace NFLanguageCompiler
             // Create new ID ast node with char value
             curASTNode = new IDASTNode(curCSTNode.Data.Token.Value);
 
+            // Set static refs
+            curASTNode.Value = curCSTNode.Data.Token.Value;
+
             // Return created id ast node
             return curASTNode;
         }
+
+        #endregion
+
+        #region Helper Methods
+
+        //Sends message event
+        private void SendMessage(String msg)
+        {
+            if (SymanticAnalyzerMessageEvent != null)
+                SymanticAnalyzerMessageEvent(msg);
+        }
+
+        // ### !!! NOTE TODE !!! ### //
+
+        // Send warning event
+        private void SendWarning(Message msg)
+        {
+            if (SymanticAnalyzerWarningEvent != null)
+                SymanticAnalyzerWarningEvent(msg);
+
+            WarningCount++;
+        }
+
+        // Send error event
+        private void SendError(Message msg)
+        {
+            if (SymanticAnalyzerErrorEvent != null)
+                SymanticAnalyzerErrorEvent(msg);
+
+            ErrorCount++;
+        }
+
+        // ### !!! END TODO !!! ### //
 
         #endregion
     }

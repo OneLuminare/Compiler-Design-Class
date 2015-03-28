@@ -45,7 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DynamicBranchTree.cs" />
+    <Compile Include="Properties\DynamicBranchTree.cs" />
     <Compile Include="DynamicBranchTreeNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -114,5 +114,21 @@ namespace NFLanguageCompiler
         }
 
         #endregion
+
+        #region Object Overrides
+
+        public override string ToString()
+        {
+            String ret = null;
+
+            if (value == BOOLEXPR_TYPE.BET_ONE)
+                ret =  String.Format("Boolean Expression: {0} {1} {2}", exprOne.ToString(), boolOp.ToString(), exprTwo.ToString());
+            else
+                ret = String.Format("Boolean Expression: {0}",boolVal.ToString());
+
+            return ret;
+        }
+
+        #endregion
     }
 }

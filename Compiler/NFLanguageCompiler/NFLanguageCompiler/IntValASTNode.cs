@@ -52,5 +52,18 @@ namespace NFLanguageCompiler
         }
 
         #endregion
+
+        #region Object Overrides
+
+        public override string ToString()
+        {
+            String ret = null;
+
+            ret = String.Format("Int Value: {0}", value.ToString());
+
+            return ret;
+        }
+
+        #endregion
     }
 }

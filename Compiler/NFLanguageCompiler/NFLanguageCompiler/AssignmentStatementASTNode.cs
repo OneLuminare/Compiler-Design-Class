@@ -52,5 +52,18 @@ namespace NFLanguageCompiler
         }
 
         #endregion
+
+        #region Object Overrides
+
+        public override string ToString()
+        {
+            String ret = null;
+
+            ret = "Assignment";
+
+            return ret;
+        }
+
+        #endregion
     }
 }

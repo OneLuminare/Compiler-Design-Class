@@ -497,8 +497,12 @@ namespace NFLanguageCompiler
             //Else message fail peek
             else
             {
+                //Create child node for LAMDA
+                CurCSTNode = new DynamicBranchTreeNode<CSTValue>(new CSTValue(GrammarProcess.GP_LAMDA));
+                parentNode.AddChild(CurCSTNode);
+
                 //Set cur node value to LAMDA
-                CurCSTNode.Data.Grammar = GrammarProcess.GP_LAMDA;
+                //CurCSTNode.Data.Grammar = GrammarProcess.GP_LAMDA;
 
                 //Send message
                 SendMessage("STATEMENTLIST is LAMDA.");

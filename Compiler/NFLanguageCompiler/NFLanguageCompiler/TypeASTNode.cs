@@ -58,5 +58,23 @@ namespace NFLanguageCompiler
         }
 
         #endregion
+
+        #region Object Overrides
+
+        public override string ToString()
+        {
+            String ret = null;
+
+            if (value == VAR_TYPE.VARTYPE_BOOLEAN)
+                ret =  "Type: boolean";
+            else if( value == VAR_TYPE.VARTYPE_INT)
+                ret = "Type: int";
+            else
+                ret = "Type: string";
+
+            return ret;
+        }
+
+        #endregion
     }
 }

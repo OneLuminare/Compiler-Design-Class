@@ -1,0 +1,3 @@
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Compiler\ComiplerInterface\ComiplerInterface\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Compiler\ComiplerInterface\ComiplerInterface\obj\Debug\ComiplerInterface.Properties.Resources.resources
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Compiler\ComiplerInterface\ComiplerInterface\obj\Debug\ComiplerInterface.csproj.GenerateResource.Cache

@@ -33,6 +33,7 @@ namespace NFLanguageCompiler
         }
 
         #endregion
+
         #region Constructors
 
         // Default constructor. Inits values
@@ -48,6 +49,19 @@ namespace NFLanguageCompiler
             : this()
         {
             this.value = value;
+        }
+
+        #endregion
+
+        #region Object Overrides
+
+        public override string ToString()
+        {
+            String ret = null;
+
+            ret = String.Format("ID: {0}",value.ToString());
+
+            return ret;
         }
 
         #endregion

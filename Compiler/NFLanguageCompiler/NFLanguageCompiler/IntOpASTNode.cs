@@ -62,5 +62,19 @@ namespace NFLanguageCompiler
         }
 
         #endregion
+
+        #region Object Overrides
+
+        public override string ToString()
+        {
+            String ret = null;
+
+            if (value == INTOP_TYPE.INTOP_ADD)
+                ret =  "Int Op: +";
+
+            return ret;
+        }
+
+        #endregion
     }
 }

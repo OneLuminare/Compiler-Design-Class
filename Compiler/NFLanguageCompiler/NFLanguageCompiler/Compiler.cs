@@ -6,6 +6,8 @@ using System.Text;
 
 namespace NFLanguageCompiler
 {
+   
+
     #region Types
 
     // Describes system type for use in warning and error messages.
@@ -95,6 +97,7 @@ namespace NFLanguageCompiler
     // data logging. Ultimate output is machine code.
     public class Compiler
     {
+        bool noSym = false;
         #region Data Members
 
         public Lexer Lexer;
@@ -169,6 +172,7 @@ namespace NFLanguageCompiler
             //Init objects
             Lexer = new Lexer();
             Parser = new Parser();
+            SymanticAnalyzer = new SymanticAnalyzer();
             WarningList = new ArrayList();
             ErrorList = new ArrayList();
 
@@ -180,6 +184,9 @@ namespace NFLanguageCompiler
             Lexer.LexerErrorEvent += new WarningErrorEventHandler(AddError);
             Parser.ParserWarningEvent += new WarningErrorEventHandler(AddWarning);
             Parser.ParserErrorEvent += new WarningErrorEventHandler(AddError);
+            SymanticAnalyzer.SymanticAnalyzerWarningEvent += new WarningErrorEventHandler(AddWarning);
+            SymanticAnalyzer.SymanticAnalyzerErrorEvent += new WarningErrorEventHandler(AddError);
+
         }
 
         #endregion
@@ -263,6 +270,13 @@ namespace NFLanguageCompiler
             //Parse if no errors
            if (LexerReturnValue != ProcessReturnValue.PRV_ERRORS)
                 ParserReturnValue = Parser.Parse(Lexer.OutputTokenStream);
+
+            if(!noSym)
+            {
+            // Analyze Symantics if no errors
+           if (ParserReturnValue != ProcessReturnValue.PRV_ERRORS)
+               SymanticReturnValue = SymanticAnalyzer.AnalyzeSymantics(Parser.CSTRootNode);
+            }
         }
 
         #endregion

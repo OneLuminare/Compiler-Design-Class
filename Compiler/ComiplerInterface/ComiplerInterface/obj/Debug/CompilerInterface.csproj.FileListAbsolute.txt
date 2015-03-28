@@ -1,0 +1,11 @@
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Compiler\ComiplerInterface\ComiplerInterface\bin\Debug\ComiplerInterface.exe
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Compiler\ComiplerInterface\ComiplerInterface\bin\Debug\ComiplerInterface.pdb
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Compiler\ComiplerInterface\ComiplerInterface\bin\Debug\DynamicBranchTree.dll
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Compiler\ComiplerInterface\ComiplerInterface\bin\Debug\NFLanguageCompiler.dll
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Compiler\ComiplerInterface\ComiplerInterface\bin\Debug\NFLanguageCompiler.pdb
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Compiler\ComiplerInterface\ComiplerInterface\bin\Debug\DynamicBranchTree.pdb
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Compiler\ComiplerInterface\ComiplerInterface\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Compiler\ComiplerInterface\ComiplerInterface\obj\Debug\ComiplerInterface.Properties.Resources.resources
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Compiler\ComiplerInterface\ComiplerInterface\obj\Debug\CompilerInterface.csproj.GenerateResource.Cache
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Compiler\ComiplerInterface\ComiplerInterface\obj\Debug\ComiplerInterface.exe
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Compiler\ComiplerInterface\ComiplerInterface\obj\Debug\ComiplerInterface.pdb

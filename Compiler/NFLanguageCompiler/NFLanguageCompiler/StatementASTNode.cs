@@ -33,5 +33,18 @@ namespace NFLanguageCompiler
         }
 
         #endregion
+
+        #region Object Overrides
+
+        public override string ToString()
+        {
+            String ret = null;
+
+            ret = "Base Statement AST node.";
+
+            return ret;
+        }
+
+        #endregion
     }
 }

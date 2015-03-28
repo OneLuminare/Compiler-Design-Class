@@ -52,5 +52,14 @@ namespace NFLanguageCompiler
         }
 
         #endregion
+
+        #region Object Overrides
+
+        public override string ToString()
+        {
+            return "Block";
+        }
+
+        #endregion
     }
 }

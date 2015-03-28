@@ -18,10 +18,13 @@ namespace NFLanguageCompiler
         public int Line { get; set; }
         public int Column { get; set; }
         public SystemType System { get; set; }
+
         //Add during Parse development
         public GrammarProcess Grammar { get; set; }
         public Token Token { get; set; }
         public int TokenIndex { get; set; }
+
+        // Added during Symantic Analysis development
 
         #endregion
 

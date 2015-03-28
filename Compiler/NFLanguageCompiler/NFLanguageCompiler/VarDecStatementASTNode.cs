@@ -52,5 +52,18 @@ namespace NFLanguageCompiler
         }
 
         #endregion
+
+        #region Object Overrides
+
+        public override string ToString()
+        {
+            String ret = null;
+
+            ret = String.Format("Variable Declaration: {0}", id.ToString());
+
+            return ret;
+        }
+
+        #endregion
     }
 }

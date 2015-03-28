@@ -111,5 +111,21 @@ namespace NFLanguageCompiler
         }
 
         #endregion
+
+        #region Object Overrides
+
+        public override string ToString()
+        {
+            String ret = null;
+
+            if (value == INTEXPR_TYPE.IET_ONE)
+                ret =  String.Format("Int Expression: {0}",intVal.ToString());
+            else
+                ret = String.Format("Int Expression: {0} {1} {2}",intVal.ToString(),intOp.ToString(),expr.ToString());
+
+            return ret;
+        }
+
+        #endregion
     }
 }

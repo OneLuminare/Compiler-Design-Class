@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("NFLanguageCompiler")]
+[assembly: AssemblyTitle("CompilerInterface")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("NFLanguageCompiler")]
+[assembly: AssemblyProduct("CompilerInterface")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("c376ce0a-403c-452e-bf33-6fc9c9959c9b")]
+[assembly: Guid("68b9615e-babb-4ebd-b9a1-3f327381735e")]
 
 // Version information for an assembly consists of the following four values:
 //

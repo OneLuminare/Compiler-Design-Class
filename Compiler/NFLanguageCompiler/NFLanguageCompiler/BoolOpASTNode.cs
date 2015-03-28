@@ -63,7 +63,21 @@ namespace NFLanguageCompiler
 
         #endregion
     
+                #region Object Overrides
 
+        public override string ToString()
+        {
+            String ret = null;
 
-}
+            if (value == BOOLOP_TYPE.BOOLOP_EQUALS)
+                ret =  "Boolean Op: ==";
+            else
+                ret = "Boolean Op: !=";
+
+            return ret;
+        }
+
+        #endregion
+
+    }
 }

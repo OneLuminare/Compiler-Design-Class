@@ -62,5 +62,21 @@ namespace NFLanguageCompiler
         }
 
         #endregion
+
+        #region Object Overrides
+
+        public override string ToString()
+        {
+            String ret = null;
+
+            if (value == BOOLVAL_TYPE.BOOLVAL_TRUE)
+                ret =  "Boolean Value: true";
+            else
+                ret = "Boolean Value: false";
+
+            return ret;
+        }
+
+        #endregion
     }
 }
