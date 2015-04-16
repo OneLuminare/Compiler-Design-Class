@@ -18,9 +18,7 @@ namespace NFLanguageCompiler
 
         //Root node of CST
         private DynamicBranchTreeNode<CSTValue> CSTRoot;
-        private DynamicBranchTreeNode<HashSet<SymbolTableEntry>> SymbolTableRoot;
         private DynamicBranchTreeNode<CSTValue> CurCSTNode;
-        private DynamicBranchTreeNode<HashSet<SymbolTableEntry>> CurSymbolTableNode;
 
         //Token stream processed
         private TokenStream CurTokenStream;
@@ -44,15 +42,6 @@ namespace NFLanguageCompiler
             get
             {
                 return CSTRoot;
-            }
-        }
-
-        //Symbol Table Public
-        public DynamicBranchTreeNode<HashSet<SymbolTableEntry>> SymbolTableRootNode
-        {
-            get
-            {
-                return SymbolTableRoot;
             }
         }
 
@@ -106,9 +95,7 @@ namespace NFLanguageCompiler
         {
             //Init data objects
             CSTRoot = new DynamicBranchTreeNode<CSTValue>(new CSTValue());
-            SymbolTableRoot = new DynamicBranchTreeNode<HashSet<SymbolTableEntry>>(new HashSet<SymbolTableEntry>());
             CurCSTNode = CSTRoot;
-            CurSymbolTableNode = SymbolTableRoot;
             CurTokenStream = null;
             WarningCount = 0;
             ErrorCount = 0;
@@ -128,7 +115,6 @@ namespace NFLanguageCompiler
 
             //Clear CST tree, warning count, and error count
             CSTRoot.Clear();
-            SymbolTableRoot.Clear();
             WarningCount = 0;
             ErrorCount = 0;
             CurTokenIndex = 0;
@@ -136,9 +122,6 @@ namespace NFLanguageCompiler
 
             //Reset current node
             CurCSTNode = CSTRoot;
-
-            //Reset cuurent symbol table node
-            CurSymbolTableNode = SymbolTableRoot;
 
             //Set working token stream
             CurTokenStream = tokenStream;
@@ -365,7 +348,6 @@ namespace NFLanguageCompiler
         {
             //Inits
             DynamicBranchTreeNode<CSTValue> parentNode = CurCSTNode;
-            DynamicBranchTreeNode<HashSet<SymbolTableEntry>> parentSymTblEntry = CurSymbolTableNode;
             GrammarProcess parentPhase = CurPhase;
             bool ret = false;
 
@@ -378,16 +360,6 @@ namespace NFLanguageCompiler
 
             //Send message
             SendMessage("Parsing BLOCK...");
-
-            //If noNewSymbolTablleNode create a new child node for symbol table
-            if (!noNewSymbolTableNode)
-            {
-                //Create new child node for symbol table
-                CurSymbolTableNode = new DynamicBranchTreeNode<HashSet<SymbolTableEntry>>(new HashSet<SymbolTableEntry>());
-
-                //Add child node to symbol table
-                parentSymTblEntry.AddChild(CurSymbolTableNode);
-            }
 
             //Match { token and check
             if (MatchToken(Token.TokenType.TK_LBRACE))
@@ -433,8 +405,6 @@ namespace NFLanguageCompiler
             else if (!showErrorChain)
                 throw new ParseException("Parse BLOCK failed, expecting '}'. Block is := { STATEMENTLIST }.");
 
-            // Reset Symbol Table parent
-            CurSymbolTableNode = parentSymTblEntry;
 
             //Send appropriate message
             if (ret)
@@ -1254,8 +1224,7 @@ namespace NFLanguageCompiler
             //Inits
             DynamicBranchTreeNode<CSTValue> parentNode = CurCSTNode;
             GrammarProcess parentPhase = CurPhase;
-            Token backToken = null;
-            DataType dt = DataType.DT_NONE;
+      
             bool ret = false;
 
             //Set current phase
@@ -1280,21 +1249,6 @@ namespace NFLanguageCompiler
                 //Create child node for ID
                 CurCSTNode = new DynamicBranchTreeNode<CSTValue>(new CSTValue(GrammarProcess.GP_NONE,GetLastToken()));
                 parentNode.AddChild(CurCSTNode);
-
-                //Add symbol table entry
-                backToken = CurTokenStream[CurTokenIndex - 2];
-
-                if( backToken.Type == Token.TokenType.TK_INT )
-                    dt = DataType.DT_INT;
-                else if ( backToken.Type == Token.TokenType.TK_STRING )
-                    dt = DataType.DT_STRING;
-                else if( backToken.Type == Token.TokenType.TK_BOOLEAN )
-                    dt = DataType.DT_BOOLEAN;
-
-                CurSymbolTableNode.Data.Add(new SymbolTableEntry(CurTokenStream[CurTokenIndex - 1].Value,dt,0,0));
-
-                //Send message
-                SendMessage(String.Format("Added var {0} {1} to symbol table.", CurTokenStream[CurTokenIndex - 1], dt));
 
                 //Set ret
                 ret = true;
@@ -1636,7 +1590,7 @@ namespace NFLanguageCompiler
             bool ret = false;
 
             //Set current phase
-            CurPhase = GrammarProcess.GP_BOOLOP;
+            CurPhase = GrammarProcess.GP_BOOLVAL;
 
             //Create current node and set value
             CurCSTNode.Data = new CSTValue(CurPhase);

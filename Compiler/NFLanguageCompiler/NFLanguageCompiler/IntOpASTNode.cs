@@ -18,18 +18,27 @@ namespace NFLanguageCompiler
     #endregion
 
     // Basic node type representing the int mathmatical operations.
-    // For ASTNode types used in more complex structures.
+    // For Describes int expression of type INTVAL INTOP EXPR
     // 
-    // Base: ASTNode<>
-    public class IntOpASTNode : ASTNode, IASTNodeValue<INTOP_TYPE>
+    // Base: IntExprASTNode<>
+    public class IntOpASTNode : IntExprASTNode, IASTNodeValue<INTOP_TYPE>
     {
         #region Data Members
 
         private INTOP_TYPE value;
+        protected IntValASTNode intVal;
+        protected ExprASTNode expr;
+        protected Token startToken;
 
         #endregion
 
         #region Properties
+
+        public Token StartToken
+        {
+            get { return startToken; }
+            set { startToken = value; }
+        }
 
         public INTOP_TYPE Value
         {
@@ -43,6 +52,19 @@ namespace NFLanguageCompiler
             }
         }
 
+        public IntValASTNode IntVal
+        {
+            get { return intVal; }
+            set { intVal = value; }
+        }
+
+
+        public ExprASTNode Expr
+        {
+            get { return expr; }
+            set { expr = value; }
+        }
+
         #endregion
 
         #region Constructors
@@ -52,6 +74,8 @@ namespace NFLanguageCompiler
             : base(ASTNodeType.ASTTYPE_INTOP)
         {
             value = INTOP_TYPE.INTOP_ADD;
+            intVal = null;
+            expr = null;
         }
 
         //Set constructor

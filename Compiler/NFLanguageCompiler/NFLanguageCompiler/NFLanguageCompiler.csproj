@@ -74,6 +74,7 @@
     <Compile Include="StatementASTNode.cs" />
     <Compile Include="StringExprASTNode.cs" />
     <Compile Include="SymanticAnalyzer.cs" />
+    <Compile Include="SymbolHashTable.cs" />
     <Compile Include="SymbolTableEntry.cs" />
     <Compile Include="Token.cs" />
     <Compile Include="TokenStream.cs" />

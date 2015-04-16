@@ -21,15 +21,24 @@ namespace NFLanguageCompiler
     // Describes a boolean operator of equals or not equals.
     //
     // Base: ASTNode<>
-    public class BoolOpASTNode : ASTNode, IASTNodeValue<BOOLOP_TYPE>
+    public class BoolOpASTNode : BooleanExprASTNode, IASTNodeValue<BOOLOP_TYPE>
     {
         #region Data Members
 
         private BOOLOP_TYPE value;
+        protected ExprASTNode exprOne;
+        protected ExprASTNode exprTwo;
+        protected Token startToken;
 
         #endregion
 
         #region Properties
+
+        public Token StartToken
+        {
+            get { return startToken; }
+            set { startToken = value; }
+        }
 
         public BOOLOP_TYPE Value
         {
@@ -43,6 +52,18 @@ namespace NFLanguageCompiler
 	        }
         }
 
+        public ExprASTNode ExprTwo
+        {
+            get { return exprTwo; }
+            set { exprTwo = value; }
+        }
+
+        public ExprASTNode ExprOne
+        {
+            get { return exprOne; }
+            set { exprOne = value; }
+        }
+
         #endregion
 
         #region Constructors
@@ -52,6 +73,8 @@ namespace NFLanguageCompiler
             : base(ASTNodeType.ASTTYPE_BOOLOP)
         {
             value = BOOLOP_TYPE.BOOLOP_EQUALS;
+            exprOne = null;
+            exprTwo = null;
         }
 
         // Set constructor.
@@ -63,7 +86,7 @@ namespace NFLanguageCompiler
 
         #endregion
     
-                #region Object Overrides
+        #region Object Overrides
 
         public override string ToString()
         {

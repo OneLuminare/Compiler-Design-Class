@@ -109,6 +109,30 @@ namespace NFLanguageCompiler
 
         #region Methods
 
+        // Determines total number of children. 
+        // This is usefull for block statments 
+        // and determining when to leave scope on 
+        // parent symbol table node
+        //
+        // Returns: Number of children
+        public int TotalChildren()
+        {
+            // Inits
+            int children = 0;
+            ASTNode curASTnode = null;
+
+            // Cycle through children while counting
+            curASTnode = this.leftMostChild;
+            while (curASTnode != null)
+            {
+                children++;
+                curASTnode = curASTnode.rightSibling;
+            }
+
+            // Return child count
+            return children;
+        }
+
         // Makes node a sybling of this node,
         // and sets approprate pointers to 
         // left most sybling, right sybling,

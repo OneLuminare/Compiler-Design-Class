@@ -19,16 +19,17 @@ namespace NFLanguageCompiler
     // IET_TWO: DIGIT INTOP EXPR
     //
     // Base: ExprASTNode
-    public class IntExprASTNode : ExprASTNode, IASTNodeValue<INTEXPR_TYPE>
+    public class IntExprASTNode : ExprASTNode
     {
         #region Data Members
 
-        private INTEXPR_TYPE value;
+        //private INTEXPR_TYPE value;
 
         #endregion
 
         #region Properties
 
+        /*
         public INTEXPR_TYPE Value
         {
             get
@@ -40,36 +41,17 @@ namespace NFLanguageCompiler
                 this.value = value;
             }
         }
+         * */
 
         #endregion
 
         #region Data Members
 
-        protected IntValASTNode intVal;
-        protected IntOpASTNode intOp;
-        protected ExprASTNode expr;
 
         #endregion
 
         #region Properties
 
-        public IntValASTNode IntVal
-        {
-            get { return intVal; }
-            set { intVal = value; }
-        }
-
-        public IntOpASTNode IntOp
-        {
-            get { return intOp; }
-            set { intOp = value; }
-        }
-
-        public ExprASTNode Expr
-        {
-            get { return expr; }
-            set { expr = value; }
-        }
 
         #endregion
 
@@ -79,12 +61,17 @@ namespace NFLanguageCompiler
         public IntExprASTNode()
             : base(ASTNodeType.ASTTYPE_INTEXPR)
         {
-            value = INTEXPR_TYPE.IET_ONE;
-            intVal = null;
-            intOp = null;
-            expr = null;
+           
+
         }
 
+        public IntExprASTNode(ASTNodeType type)
+            : base(type)
+        {
+
+        }
+
+        /*
         // Basic set constructor.
         public IntExprASTNode(INTEXPR_TYPE value)
             : this()
@@ -99,6 +86,7 @@ namespace NFLanguageCompiler
             value = INTEXPR_TYPE.IET_ONE;
             this.intVal = intVal;
         }
+         * 
 
         // Set constructor for type two: digit intop expr
         public IntExprASTNode(IntValASTNode intVal, IntOpASTNode intOp, ExprASTNode expr)
@@ -109,6 +97,7 @@ namespace NFLanguageCompiler
             this.intOp = intOp;
             this.expr = expr;
         }
+         * */
 
         #endregion
 
@@ -117,12 +106,13 @@ namespace NFLanguageCompiler
         public override string ToString()
         {
             String ret = null;
-
+            /*
             if (value == INTEXPR_TYPE.IET_ONE)
                 ret =  String.Format("Int Expression: {0}",intVal.ToString());
             else
                 ret = String.Format("Int Expression: {0} {1} {2}",intVal.ToString(),intOp.ToString(),expr.ToString());
-
+            */
+            ret = "Int Expression";
             return ret;
         }
 

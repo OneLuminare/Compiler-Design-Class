@@ -14,6 +14,7 @@ namespace NFLanguageCompiler
 
         protected IDASTNode id;
         protected ExprASTNode expr;
+        protected Token startToken;
 
         #endregion
 
@@ -29,6 +30,12 @@ namespace NFLanguageCompiler
         {
             get { return expr; }
             set { this.expr = value; }
+        }
+
+        public Token StartToken
+        {
+            get { return startToken; }
+            set { startToken = value; }
         }
 
         #endregion

@@ -9,7 +9,7 @@ namespace NFLanguageCompiler
     //Encapsulates Symbol Table Entry.
     //
     //Implements: ISerializeable
-    public class SymbolTableEntry : ISerializable
+    public class SymbolTableEntry : ISerializable,IComparable<SymbolTableEntry>
     {
         #region Data Members
 
@@ -106,6 +106,25 @@ namespace NFLanguageCompiler
             }
         }
 
+        public bool BoolValue
+        {
+            get
+            {
+                if ((int)byteValue == 0)
+                    return false;
+                else
+                    return true;
+            }
+
+            set
+            {
+                if (value)
+                    byteValue = (byte)1;
+                else
+                    byteValue = (byte)0;
+            }
+        }
+
         #endregion
 
         #region Constructors
@@ -185,6 +204,15 @@ namespace NFLanguageCompiler
             info.AddValue("Memory Location", memoryLocation, typeof(int));
             info.AddValue("Byte Value", byteValue, typeof(byte));
             info.AddValue("String Value", stringValue, typeof(String));
+        }
+
+        #endregion
+
+        #region IComparable<SymbolTableEntry> Members
+
+        public int CompareTo(SymbolTableEntry other)
+        {
+            return this.ID.CompareTo(other.ID);
         }
 
         #endregion

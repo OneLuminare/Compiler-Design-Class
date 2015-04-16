@@ -17,7 +17,6 @@ namespace CompilerInterface
 
     public partial class CompilerInterfaceForm : Form
     {
-        bool noSym = false;
 
         #region Data Members
 
@@ -186,6 +185,18 @@ namespace CompilerInterface
                     else
                         item.SubItems.Add("");
                     item.SubItems.Add(msg.TokenIndex.ToString());
+                    item.SubItems.Add(msg.Text);
+                }
+                else if (proc == SystemType.ST_SYMANTICS)
+                {
+                    //Create listview item
+                    item = new ListViewItem(proc.ToString());
+                    item.SubItems.Add("Error");
+                    item.SubItems.Add(msg.Line.ToString());
+                    item.SubItems.Add(msg.Column.ToString());
+                    item.SubItems.Add("");
+                    item.SubItems.Add("");
+                    item.SubItems.Add("");
                     item.SubItems.Add(msg.Text);
                 }
 
@@ -491,7 +502,9 @@ namespace CompilerInterface
         private void OutputSymbolTable()
         {
             //Inits
-            DynamicBranchTreeNode<HashSet<SymbolTableEntry>> curNode = compiler.Parser.SymbolTableRootNode;
+            DynamicBranchTreeNode<SymbolHashTable> curNode = compiler.SymanticAnalyzer.RootSymbolTableNode;
+
+            
 
             //Begin tree control update
             treeViewSymbolTable.BeginUpdate();
@@ -499,12 +512,18 @@ namespace CompilerInterface
             //Clear items
             treeViewSymbolTable.Nodes.Clear();
 
-            //Reset counters
-            ResetSymbolTableCounters();
+            // Check if root symbol table is not null
+            if (curNode != null)
+            {
 
-            //Output symbol table to tree controll
-            treeViewSymbolTable.Nodes.Add(String.Format("Block {0}",block));
-            OutputSymbolTableEntry(curNode, treeViewSymbolTable.Nodes[0]);
+                //Reset counters
+                ResetSymbolTableCounters();
+
+                //Output symbol table to tree controll
+                treeViewSymbolTable.Nodes.Add(String.Format("Block {0}", block));
+                OutputSymbolTableEntry(curNode, treeViewSymbolTable.Nodes[0]);
+
+            }
 
             //End tree control update
             treeViewSymbolTable.EndUpdate();
@@ -575,14 +594,16 @@ namespace CompilerInterface
             symtblMemory = 0;
         }
 
-        private void OutputSymbolTableEntry(DynamicBranchTreeNode<HashSet<SymbolTableEntry>> entry, TreeNode treeNode)
+        private void OutputSymbolTableEntry(DynamicBranchTreeNode<SymbolHashTable> entry, TreeNode treeNode)
         {
+           
             //Inits
-            HashSet<SymbolTableEntry> hashSet = entry.Data;
+            SymbolHashTable hashSet = entry.Data;
+            SymbolTableEntry[] entries = hashSet.GetAllItems();
             TreeNode newNode = null;
 
             //Output hash set
-            foreach (SymbolTableEntry symEntry in hashSet)
+            foreach (SymbolTableEntry symEntry in entries)
             {
                 //Add each entry to node
                 treeNode.Nodes.Add( symEntry.ToString() );
@@ -788,7 +809,7 @@ namespace CompilerInterface
                     OutputParserWarningsAndErrors();
 
                     //Output symbol table
-                    OutputSymbolTable();
+                    //OutputSymbolTable();
 
                     //Set lex complete
                     checkBoxParserSuccess.Checked = true;
@@ -813,13 +834,8 @@ namespace CompilerInterface
                     error = true;
                 }
 
-                // Else output ast and symbol table
-                else
-                    
-                {
-                    if (!noSym)
-                    {
-                        // Output warnigns and errors
+               
+                       // Output warnigns and errors
                         OutputSymanticAnalyzerWarningsAndErrors();
 
                         // Output AST
@@ -829,12 +845,13 @@ namespace CompilerInterface
                         OutputSymbolTable();
 
                         // Set check flag on process
+                        if( !error )
                         checkBoxSyamnticsSuccess.Checked = true;
 
                         // Set phase 
                         phase = 3;
-                    }
-                }
+                    
+                
             }
             
             //Check if at least lex passed

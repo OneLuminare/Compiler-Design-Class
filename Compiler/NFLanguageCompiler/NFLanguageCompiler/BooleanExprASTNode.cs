@@ -23,44 +23,18 @@ namespace NFLanguageCompiler
     //
     // Base: ExprASTNode
     // Interfaces: IASTNodeValue<>
-    public class BooleanExprASTNode : ExprASTNode, IASTNodeValue<BOOLEXPR_TYPE>
+    public class BooleanExprASTNode : ExprASTNode
     {
         #region Data Members
 
-        protected ExprASTNode exprOne;
-        protected BoolOpASTNode boolOp;
-        protected ExprASTNode exprTwo;
-        protected BoolValASTNode boolVal;
-        private BOOLEXPR_TYPE value;
+     
+        //private BOOLEXPR_TYPE value;
 
         #endregion
 
         #region Properties
 
-        public ExprASTNode ExprTwo
-        {
-            get { return exprTwo; }
-            set { exprTwo = value; }
-        }
-
-        public BoolOpASTNode BoolOp
-        {
-            get { return boolOp; }
-            set { boolOp = value; }
-        }
-
-        public ExprASTNode ExprOne
-        {
-            get { return exprOne; }
-            set { exprOne = value; }
-        }
-
-        public BoolValASTNode BoolVal
-        {
-            get{ return boolVal; }
-            set{ boolVal = value; }
-        }
-  
+  /*
         public BOOLEXPR_TYPE Value
         {
             get
@@ -72,6 +46,7 @@ namespace NFLanguageCompiler
                 this.value = value;
             }
         }
+   * */
 
         #endregion
 
@@ -81,13 +56,16 @@ namespace NFLanguageCompiler
         public BooleanExprASTNode()
             : base(ASTNodeType.ASTTYPE_BOOLEANEXPR)
         {
-            value = BOOLEXPR_TYPE.BET_ONE;
-            exprOne = null;
-            exprTwo = null;
-            boolOp = null;
-            boolVal = null;
+            //value = BOOLEXPR_TYPE.BET_ONE;
+
         }
 
+        public BooleanExprASTNode(ASTNodeType type)
+            : base(type)
+        {
+        }
+
+        /*
         // Basic set constructor.
         public BooleanExprASTNode(BOOLEXPR_TYPE value)
             : this()
@@ -112,6 +90,7 @@ namespace NFLanguageCompiler
             value = BOOLEXPR_TYPE.BET_TWO;
             this.boolVal = boolVal;
         }
+         * */
 
         #endregion
 
@@ -120,11 +99,13 @@ namespace NFLanguageCompiler
         public override string ToString()
         {
             String ret = null;
-
+            /*
             if (value == BOOLEXPR_TYPE.BET_ONE)
                 ret =  String.Format("Boolean Expression: {0} {1} {2}", exprOne.ToString(), boolOp.ToString(), exprTwo.ToString());
             else
                 ret = String.Format("Boolean Expression: {0}",boolVal.ToString());
+             * */
+            ret = "Boolean Expression";
 
             return ret;
         }

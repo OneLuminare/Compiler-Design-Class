@@ -15,6 +15,7 @@ namespace NFLanguageCompiler
     {
         ST_LEXER,
         ST_PARSER,
+        ST_SYMANTICS,
         ST_NONE
     };
 
@@ -274,8 +275,8 @@ namespace NFLanguageCompiler
             if(!noSym)
             {
             // Analyze Symantics if no errors
-           if (ParserReturnValue != ProcessReturnValue.PRV_ERRORS)
-               SymanticReturnValue = SymanticAnalyzer.AnalyzeSymantics(Parser.CSTRootNode);
+            if (ParserReturnValue != ProcessReturnValue.PRV_ERRORS)
+                SymanticReturnValue = SymanticAnalyzer.AnalyzeSymantics(Parser.CSTRootNode);
             }
         }
 

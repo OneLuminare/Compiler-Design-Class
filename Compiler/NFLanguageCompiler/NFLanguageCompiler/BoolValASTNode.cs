@@ -20,16 +20,23 @@ namespace NFLanguageCompiler
     // Basic ASTNode type for use in more complicated node structures.
     // Describes a boolean value of true or false.
     //
-    // Base: ASTNode<>
-    public class BoolValASTNode : ASTNode, IASTNodeValue<BOOLVAL_TYPE>
+    // Base: BooleanExprASTNode<>
+    public class BoolValASTNode : BooleanExprASTNode, IASTNodeValue<BOOLVAL_TYPE>
     {
         #region Data Members
 
         private BOOLVAL_TYPE value;
+        private Token startToken;
 
         #endregion
 
         #region Properties
+
+        public Token StartToken
+        {
+            get { return startToken; }
+            set { startToken = value; }
+        }
 
         public BOOLVAL_TYPE Value
         {

@@ -14,6 +14,7 @@ namespace NFLanguageCompiler
 
         protected TypeASTNode type;
         protected IDASTNode id;
+        protected Token startToken;
 
         #endregion
 
@@ -29,6 +30,12 @@ namespace NFLanguageCompiler
         {
             get { return id; }
             set { this.id = value; }
+        }
+
+        public Token StartToken
+        {
+            get{ return startToken; }
+            set{ startToken = value; }
         }
 
         #endregion
@@ -59,7 +66,7 @@ namespace NFLanguageCompiler
         {
             String ret = null;
 
-            ret = String.Format("Variable Declaration: {0}", id.ToString());
+            ret = "Variable Declaration";
 
             return ret;
         }
