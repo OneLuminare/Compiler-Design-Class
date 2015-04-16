@@ -13,6 +13,7 @@ namespace NFLanguageCompiler
         #region Data Members
 
         protected ExprASTNode expr;
+        protected Token startToken;
 
         #endregion
 
@@ -24,6 +25,12 @@ namespace NFLanguageCompiler
             set { this.expr = value; }
         }
 
+        public Token StartToken
+        {
+            get { return startToken; }
+            set { startToken = value; }
+        }
+
         #endregion
 
         #region Constructors
@@ -33,6 +40,7 @@ namespace NFLanguageCompiler
             : base(ASTNodeType.ASTTYPE_PRINTSTATEMENT)
         {
             expr = null;
+            startToken = null;
         }
 
         // Set cosntructor

@@ -35,14 +35,14 @@
             this.buttonBrowse = new System.Windows.Forms.Button();
             this.labelSource = new System.Windows.Forms.Label();
             this.listViewGeneralWarningsAndErrors = new System.Windows.Forms.ListView();
-            this.columnHeaderGeneralSystem = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeadGeneralType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderGeneralLine = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderGeneralCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderGeneralGrammar = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderGeneralToken = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderGeneralTokenIndex = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderGeneralMsg = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderGeneralSystem = new System.Windows.Forms.ColumnHeader();
+            this.columnHeadGeneralType = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderGeneralLine = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderGeneralCol = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderGeneralGrammar = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderGeneralToken = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderGeneralTokenIndex = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderGeneralMsg = new System.Windows.Forms.ColumnHeader();
             this.labelWarningError = new System.Windows.Forms.Label();
             this.tabControlMain = new System.Windows.Forms.TabControl();
             this.tabPageSource = new System.Windows.Forms.TabPage();
@@ -75,28 +75,28 @@
             this.labelLexerWarningsLabel = new System.Windows.Forms.Label();
             this.labelLexerWarningErrors = new System.Windows.Forms.Label();
             this.listViewLexerWarningsAndErrors = new System.Windows.Forms.ListView();
-            this.columnHeaderLexerType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderLexerLine = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderLexerColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderLexerMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderLexerType = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderLexerLine = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderLexerColumn = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderLexerMessage = new System.Windows.Forms.ColumnHeader();
             this.labelLexerReturnValue = new System.Windows.Forms.Label();
             this.labelLexerReturnValueLabel = new System.Windows.Forms.Label();
             this.labelTokenStreamLabel = new System.Windows.Forms.Label();
             this.listViewTokenList = new System.Windows.Forms.ListView();
-            this.columnHeaderToken = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderLine = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderToken = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderLine = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderColumn = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderValue = new System.Windows.Forms.ColumnHeader();
             this.tabPageParse = new System.Windows.Forms.TabPage();
             this.labelCST = new System.Windows.Forms.Label();
             this.labelParserMessage = new System.Windows.Forms.Label();
             this.labelParserWarningError = new System.Windows.Forms.Label();
             this.listViewParserWarningsAndErrors = new System.Windows.Forms.ListView();
-            this.columnHeaderParseType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderParseGrammar = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderParseToken = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderParseTokenIndex = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderParseMessages = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderParseType = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderParseGrammar = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderParseToken = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderParseTokenIndex = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderParseMessages = new System.Windows.Forms.ColumnHeader();
             this.labelParserErrorTotal = new System.Windows.Forms.Label();
             this.labelParserErrorLabel = new System.Windows.Forms.Label();
             this.labelParserWarningTotal = new System.Windows.Forms.Label();
@@ -108,11 +108,9 @@
             this.tabPageSymantics = new System.Windows.Forms.TabPage();
             this.labelSymanticAnalyzerWarningsErrors = new System.Windows.Forms.Label();
             this.listViewSymanticAnalyzerWarningsAndErrors = new System.Windows.Forms.ListView();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chSAType = new System.Windows.Forms.ColumnHeader();
+            this.chSAGrammar = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
             this.labelSymanticAnalyzerErrorTotal = new System.Windows.Forms.Label();
             this.labelSymanticAnalyzerErrorCountLabel = new System.Windows.Forms.Label();
             this.labelSymanticAnalyzerWarningTotal = new System.Windows.Forms.Label();
@@ -139,6 +137,8 @@
             this.labelSymbolTable = new System.Windows.Forms.Label();
             this.tabPageOptimization = new System.Windows.Forms.TabPage();
             this.tabPageCodeGeneration = new System.Windows.Forms.TabPage();
+            this.chSALine = new System.Windows.Forms.ColumnHeader();
+            this.chSAColumn = new System.Windows.Forms.ColumnHeader();
             this.tabControlMain.SuspendLayout();
             this.tabPageSource.SuspendLayout();
             this.groupBoxOptions.SuspendLayout();
@@ -887,10 +887,10 @@
             // listViewSymanticAnalyzerWarningsAndErrors
             // 
             this.listViewSymanticAnalyzerWarningsAndErrors.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader3,
-            this.columnHeader4,
+            this.chSAType,
+            this.chSAGrammar,
+            this.chSALine,
+            this.chSAColumn,
             this.columnHeader5});
             this.listViewSymanticAnalyzerWarningsAndErrors.Location = new System.Drawing.Point(9, 538);
             this.listViewSymanticAnalyzerWarningsAndErrors.Name = "listViewSymanticAnalyzerWarningsAndErrors";
@@ -899,34 +899,25 @@
             this.listViewSymanticAnalyzerWarningsAndErrors.UseCompatibleStateImageBehavior = false;
             this.listViewSymanticAnalyzerWarningsAndErrors.View = System.Windows.Forms.View.Details;
             // 
-            // columnHeader1
+            // chSAType
             // 
-            this.columnHeader1.Text = "Type";
+            this.chSAType.Text = "Type";
             // 
-            // columnHeader2
+            // chSAGrammar
             // 
-            this.columnHeader2.Text = "Grammar Process";
-            this.columnHeader2.Width = 100;
-            // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Text = "Token";
-            this.columnHeader3.Width = 80;
-            // 
-            // columnHeader4
-            // 
-            this.columnHeader4.Text = "Token Index";
-            this.columnHeader4.Width = 80;
+            this.chSAGrammar.Text = "Grammar Process";
+            this.chSAGrammar.Width = 100;
             // 
             // columnHeader5
             // 
+            this.columnHeader5.DisplayIndex = 2;
             this.columnHeader5.Text = "Message";
             this.columnHeader5.Width = 807;
             // 
             // labelSymanticAnalyzerErrorTotal
             // 
             this.labelSymanticAnalyzerErrorTotal.AutoSize = true;
-            this.labelSymanticAnalyzerErrorTotal.Location = new System.Drawing.Point(690, 60);
+            this.labelSymanticAnalyzerErrorTotal.Location = new System.Drawing.Point(694, 76);
             this.labelSymanticAnalyzerErrorTotal.Name = "labelSymanticAnalyzerErrorTotal";
             this.labelSymanticAnalyzerErrorTotal.Size = new System.Drawing.Size(19, 13);
             this.labelSymanticAnalyzerErrorTotal.TabIndex = 36;
@@ -935,7 +926,7 @@
             // labelSymanticAnalyzerErrorCountLabel
             // 
             this.labelSymanticAnalyzerErrorCountLabel.AutoSize = true;
-            this.labelSymanticAnalyzerErrorCountLabel.Location = new System.Drawing.Point(644, 60);
+            this.labelSymanticAnalyzerErrorCountLabel.Location = new System.Drawing.Point(648, 76);
             this.labelSymanticAnalyzerErrorCountLabel.Name = "labelSymanticAnalyzerErrorCountLabel";
             this.labelSymanticAnalyzerErrorCountLabel.Size = new System.Drawing.Size(40, 13);
             this.labelSymanticAnalyzerErrorCountLabel.TabIndex = 35;
@@ -944,7 +935,7 @@
             // labelSymanticAnalyzerWarningTotal
             // 
             this.labelSymanticAnalyzerWarningTotal.AutoSize = true;
-            this.labelSymanticAnalyzerWarningTotal.Location = new System.Drawing.Point(619, 60);
+            this.labelSymanticAnalyzerWarningTotal.Location = new System.Drawing.Point(623, 76);
             this.labelSymanticAnalyzerWarningTotal.Name = "labelSymanticAnalyzerWarningTotal";
             this.labelSymanticAnalyzerWarningTotal.Size = new System.Drawing.Size(19, 13);
             this.labelSymanticAnalyzerWarningTotal.TabIndex = 34;
@@ -953,7 +944,7 @@
             // labelSymanticAnalyzerWarningCountLabel
             // 
             this.labelSymanticAnalyzerWarningCountLabel.AutoSize = true;
-            this.labelSymanticAnalyzerWarningCountLabel.Location = new System.Drawing.Point(555, 60);
+            this.labelSymanticAnalyzerWarningCountLabel.Location = new System.Drawing.Point(559, 76);
             this.labelSymanticAnalyzerWarningCountLabel.Name = "labelSymanticAnalyzerWarningCountLabel";
             this.labelSymanticAnalyzerWarningCountLabel.Size = new System.Drawing.Size(58, 13);
             this.labelSymanticAnalyzerWarningCountLabel.TabIndex = 33;
@@ -964,7 +955,7 @@
             this.labelSymanticAnalyzerReturnValue.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.labelSymanticAnalyzerReturnValue.Location = new System.Drawing.Point(558, 36);
             this.labelSymanticAnalyzerReturnValue.Name = "labelSymanticAnalyzerReturnValue";
-            this.labelSymanticAnalyzerReturnValue.Size = new System.Drawing.Size(180, 15);
+            this.labelSymanticAnalyzerReturnValue.Size = new System.Drawing.Size(180, 31);
             this.labelSymanticAnalyzerReturnValue.TabIndex = 32;
             this.labelSymanticAnalyzerReturnValue.Text = "                                                         ";
             // 
@@ -989,7 +980,7 @@
             // labelSymanticAnalyzerMessages
             // 
             this.labelSymanticAnalyzerMessages.AutoSize = true;
-            this.labelSymanticAnalyzerMessages.Location = new System.Drawing.Point(555, 89);
+            this.labelSymanticAnalyzerMessages.Location = new System.Drawing.Point(559, 98);
             this.labelSymanticAnalyzerMessages.Name = "labelSymanticAnalyzerMessages";
             this.labelSymanticAnalyzerMessages.Size = new System.Drawing.Size(55, 13);
             this.labelSymanticAnalyzerMessages.TabIndex = 22;
@@ -1167,6 +1158,14 @@
             this.tabPageCodeGeneration.Text = "Code Generation";
             this.tabPageCodeGeneration.UseVisualStyleBackColor = true;
             // 
+            // chSALine
+            // 
+            this.chSALine.Text = "Line";
+            // 
+            // chSAColumn
+            // 
+            this.chSAColumn.Text = "Column";
+            // 
             // CompilerInterfaceForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1302,11 +1301,11 @@
         private System.Windows.Forms.Label labelAST;
         private System.Windows.Forms.Label labelSymanticAnalyzerWarningsErrors;
         private System.Windows.Forms.ListView listViewSymanticAnalyzerWarningsAndErrors;
-        private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.ColumnHeader columnHeader2;
-        private System.Windows.Forms.ColumnHeader columnHeader3;
-        private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.ColumnHeader chSAType;
+        private System.Windows.Forms.ColumnHeader chSAGrammar;
         private System.Windows.Forms.ColumnHeader columnHeader5;
+        private System.Windows.Forms.ColumnHeader chSALine;
+        private System.Windows.Forms.ColumnHeader chSAColumn;
     }
 }
 

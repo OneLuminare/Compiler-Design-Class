@@ -625,6 +625,9 @@ namespace NFLanguageCompiler
             //Create current node and set value
             CurCSTNode.Data = new CSTValue(CurPhase);
 
+            // Get token
+            CurCSTNode.Data.Token = GetCurToken();
+
             //Send message
             SendMessage("Parsing PRINTSTATEMENT...");
 
@@ -1661,7 +1664,7 @@ namespace NFLanguageCompiler
             bool ret = false;
 
             //Set current phase
-            CurPhase = GrammarProcess.GP_BOOLOP;
+            CurPhase = GrammarProcess.GP_INTOP;
 
             //Create current node and set value
             CurCSTNode.Data = new CSTValue(CurPhase);

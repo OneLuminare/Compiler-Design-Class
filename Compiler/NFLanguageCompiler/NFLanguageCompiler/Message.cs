@@ -53,6 +53,12 @@ namespace NFLanguageCompiler
             }
         }
 
+        // Input constructor for symantic analysis
+        public Message(String message, int line, int column, GrammarProcess grammar, SystemType system)
+            : this(message, line, column, system, grammar, null, -1)
+        {
+        }
+
         //Base input constructor, has all values
         public Message(String message, int line, int column, SystemType system, GrammarProcess grammar,Token token, int tokenIndex)
         {

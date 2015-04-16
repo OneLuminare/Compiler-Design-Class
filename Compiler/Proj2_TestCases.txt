@@ -1,0 +1,67 @@
+{
+int a 
+a=5 
+if( a== 5) 
+{ int b if (b == 5) { boolean c} string c } 
+boolean b
+}$
+
+{
+int a
+if( a== 5 )
+{ boolean a if( a == true ) { string a} int a }
+boolean a
+}$
+
+{inta
+intb
+a=5+a
+b=5+7+9+a
+b=a}$
+
+{inta
+booleanb
+stringc
+a=b
+a=c
+a="test"
+a=( b != true)}$
+
+{
+boolean a
+boolean b
+a = ( b == ( a == true ) )
+a = false
+b = a
+}$
+
+{
+boolean a
+string b
+int c
+a = ( b == true  )
+a = (c != ( c != false ) )
+a = "test"
+a = 5 + c
+a = b
+a = c
+}$
+
+{
+string a
+string b
+a = "test"
+b = "this"
+a = b
+}$
+
+{
+string a
+int b
+boolean c
+a = 5 + b
+a = ( c != true )
+a = b
+a = c
+}$
+

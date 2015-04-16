@@ -9,3 +9,4 @@ C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Compiler\ComiplerInterfac
 C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Compiler\ComiplerInterface\ComiplerInterface\obj\Debug\CompilerInterface.csproj.GenerateResource.Cache
 C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Compiler\ComiplerInterface\ComiplerInterface\obj\Debug\ComiplerInterface.exe
 C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Compiler\ComiplerInterface\ComiplerInterface\obj\Debug\ComiplerInterface.pdb
+C:\Users\Nathan\Documents\GitHub\Compiler-Design-Class\Compiler\ComiplerInterface\ComiplerInterface\obj\Debug\CompilerInterface.CompilerInterfaceForm.resources

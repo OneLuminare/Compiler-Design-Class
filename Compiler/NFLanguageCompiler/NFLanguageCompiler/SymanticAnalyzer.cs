@@ -6,6 +6,13 @@ using System.Text;
 
 namespace NFLanguageCompiler
 {
+    // Symantic anayzer first builds a AST from the CST generated from parse.
+    // It then builds a symbol table, checks scope, and type.
+    //
+    // Warnings: 1. Uninitialized variables.
+    // Errors:  1. Type mistmatch.
+    //          2. Undeclared variables.
+    //          3. Redeclared variables.
     public class SymanticAnalyzer
     {
         #region Data Members
@@ -66,7 +73,7 @@ namespace NFLanguageCompiler
            curCSTNode = null;
            rootSymbolTableNode = new DynamicBranchTreeNode<SymbolHashTable>(new SymbolHashTable());
            curSymbolTableNode = null;
-            rootASTNode = new BlockASTNode();
+           rootASTNode = new BlockASTNode();
 
             WarningCount = 0;
             ErrorCount = 0;
@@ -74,8 +81,9 @@ namespace NFLanguageCompiler
 
         #endregion
 
-        #region AST Creation Methods
+        #region Symantic Analysis Methods
 
+        // General method that 
         public ProcessReturnValue AnalyzeSymantics(DynamicBranchTreeNode<CSTValue> rootCSTNode)
         {
             // Inits
@@ -105,9 +113,9 @@ namespace NFLanguageCompiler
         {
             // Set root to null
             rootSymbolTableNode = null;
-            
+
             //Check ast recursivly
-            rootSymbolTableNode = CheckVarsRecursive(rootASTNode,rootSymbolTableNode,0,0);
+            rootSymbolTableNode = CheckVarsRecursive(rootASTNode, rootSymbolTableNode, 0, 0);
         }
 
         private DynamicBranchTreeNode<SymbolHashTable> CheckVarsRecursive(ASTNode curASTNode, DynamicBranchTreeNode<SymbolHashTable> curSymbolTable, int blockStmtCount, int totalBlockStmts)
@@ -124,8 +132,9 @@ namespace NFLanguageCompiler
             IntOpASTNode intOpASTNode = null;
             IDASTNode idASTNode = null;
             IDASTNode idASTNode2 = null;
-            
-            
+            bool error = false;
+
+
             bool found = false;
             int line = 0;
             int col = 0;
@@ -151,7 +160,7 @@ namespace NFLanguageCompiler
 
                     // Reset cur statment count
                     blockStmtCount = 0;
-                    
+
                     if (curSymbolTable != null)
                     {
                         newSymbolTable = new DynamicBranchTreeNode<SymbolHashTable>(new SymbolHashTable());
@@ -162,7 +171,7 @@ namespace NFLanguageCompiler
                     }
                     else
                         rootSymbolTableNode = parentSymbolTable = curSymbolTable = new DynamicBranchTreeNode<SymbolHashTable>(new SymbolHashTable());
-                    
+
 
                     break;
 
@@ -191,7 +200,7 @@ namespace NFLanguageCompiler
 
                         parentSymbolTable = parentSymbolTable.Parent;
                     }
-                  
+
 
                     // Check if found and add to symbol table
                     if (!found)
@@ -203,11 +212,11 @@ namespace NFLanguageCompiler
                     {
                         line = varDecASTNode.StartToken.Line;
                         col = varDecASTNode.StartToken.Column;
-                        SendError(new Message(String.Format("Variable redeclaration. Variable {0} on line {1} column {2} was already declared.", entry.ID, line, col), line, col, SystemType.ST_SYMANTICS));
+                        SendError(new Message(String.Format("Variable redeclaration. Variable {0} on line {1} column {2} was already declared.", entry.ID, line, col), line, col, GrammarProcess.GP_VARDEC, SystemType.ST_SYMANTICS));
                     }
-                     
+
                     break;
-                     
+
 
                 case ASTNodeType.ASTTYPE_ASSIGNSTATEMENT:
 
@@ -217,11 +226,11 @@ namespace NFLanguageCompiler
 
                     // Check if variable exits
                     parentSymbolTable = curSymbolTable;
-                    while( parentSymbolTable != null && !found)
+                    while (parentSymbolTable != null && !found)
                     {
                         // Get entry
                         entry = parentSymbolTable.Data.GetItem(assignmentASTNode.Id.Value);
-                        if( entry != null )
+                        if (entry != null)
                         {
                             // Set found flag true
                             found = true;
@@ -229,59 +238,59 @@ namespace NFLanguageCompiler
 
                         parentSymbolTable = parentSymbolTable.Parent;
                     }
-                    
+
                     // If not found in symbol table, send error
-                    if( !found )
+                    if (!found)
                     {
                         line = assignmentASTNode.StartToken.Line;
                         col = assignmentASTNode.StartToken.Column;
-                        SendError(new Message(String.Format("Undeclared variable. Variable {0} on line {1} column {2} was never declared.",entry.ID,line,col),line,col,SystemType.ST_SYMANTICS));
-                    
+                        SendError(new Message(String.Format("Undeclared variable. Variable {0} on line {1} column {2} was never declared.", entry.ID, line, col), line, col, GrammarProcess.GP_ASSIGNMENTSTATEMENT, SystemType.ST_SYMANTICS));
+                        error = true;
                     }
                     else
                     {
                         // Check if int expression is int expr
-                        if( assignmentASTNode.Expr is IntExprASTNode )
+                        if (assignmentASTNode.Expr is IntExprASTNode)
                         {
                             // check if data type of entry is not int
-                            if( entry.DataType != DataType.DT_INT )
+                            if (entry.DataType != DataType.DT_INT)
                             {
                                 // Send error
                                 line = assignmentASTNode.StartToken.Line;
                                 col = assignmentASTNode.StartToken.Column;
-                                SendError(new Message(String.Format("Type mismatch. Assignment to variable {0} {1}, on line {2} column {3} was assigned to a {4} expression.", GetTypeString(entry.DataType), entry.ID, line, col, GetExpressionTypeString(assignmentASTNode.Expr)), line, col, SystemType.ST_SYMANTICS));
-                    
+                                SendError(new Message(String.Format("Type mismatch. Assignment to variable {0} {1}, on line {2} column {3} was assigned to a {4} expression.", GetTypeString(entry.DataType), entry.ID, line, col, GetExpressionTypeString(assignmentASTNode.Expr)), line, col, GrammarProcess.GP_ASSIGNMENTSTATEMENT, SystemType.ST_SYMANTICS));
+                                error = true;
                             }
                         }
                         // Else if expr is boolean
-                        else if( assignmentASTNode.Expr is BooleanExprASTNode )
+                        else if (assignmentASTNode.Expr is BooleanExprASTNode)
                         {
                             // check if data type of entry is not boolean
-                            if( entry.DataType != DataType.DT_BOOLEAN )
+                            if (entry.DataType != DataType.DT_BOOLEAN)
                             {
                                 // Send error
                                 line = assignmentASTNode.StartToken.Line;
                                 col = assignmentASTNode.StartToken.Column;
-                                SendError(new Message(String.Format("Type mismatch. Assignment to variable {0} {1}, on line {2} column {3} was assigned to a {4} expression.", GetTypeString(entry.DataType), entry.ID, line, col, GetExpressionTypeString(assignmentASTNode.Expr)), line, col, SystemType.ST_SYMANTICS));
-                    
+                                SendError(new Message(String.Format("Type mismatch. Assignment to variable {0} {1}, on line {2} column {3} was assigned to a {4} expression.", GetTypeString(entry.DataType), entry.ID, line, col, GetExpressionTypeString(assignmentASTNode.Expr)), line, col, GrammarProcess.GP_ASSIGNMENTSTATEMENT, SystemType.ST_SYMANTICS));
+                                error = true;
                             }
                         }
 
                         /// if not boolean and int check if its a string expression
-                        else if( assignmentASTNode.Expr is StringExprASTNode )
+                        else if (assignmentASTNode.Expr is StringExprASTNode)
                         {
                             // check if data type of entry is not string
-                            if( entry.DataType != DataType.DT_STRING )
+                            if (entry.DataType != DataType.DT_STRING)
                             {
                                 // Send error
                                 line = assignmentASTNode.StartToken.Line;
                                 col = assignmentASTNode.StartToken.Column;
-                                SendError(new Message(String.Format("Type mismatch. Assignment to variable {0} {1}, on line {2} column {3} was assigned to a {4} expression.", GetTypeString(entry.DataType), entry.ID, line, col, GetExpressionTypeString(assignmentASTNode.Expr)), line, col, SystemType.ST_SYMANTICS));
-                    
+                                SendError(new Message(String.Format("Type mismatch. Assignment to variable {0} {1}, on line {2} column {3} was assigned to a {4} expression.", GetTypeString(entry.DataType), entry.ID, line, col, GetExpressionTypeString(assignmentASTNode.Expr)), line, col, GrammarProcess.GP_ASSIGNMENTSTATEMENT, SystemType.ST_SYMANTICS));
+                                error = true;
                             }
                         }
                         // finally, check if id statement
-                        else if( assignmentASTNode.Expr is IDASTNode )
+                        else if (assignmentASTNode.Expr is IDASTNode)
                         {
                             // Get id node
                             idASTNode = (IDASTNode)assignmentASTNode.Expr;
@@ -289,44 +298,59 @@ namespace NFLanguageCompiler
                             // Try to find in symbol table or parents symbol table
                             found = false;
                             parentSymbolTable = curSymbolTable;
-                            while( parentSymbolTable != null && !found )
+                            while (parentSymbolTable != null && !found)
                             {
                                 // Get entry and check if found
                                 entry2 = parentSymbolTable.Data.GetItem(idASTNode.Value);
-                                if( entry2 != null )
+                                if (entry2 != null)
                                     found = true;
 
                                 parentSymbolTable = parentSymbolTable.Parent;
                             }
 
                             // Check if entry was found in symbol table
-                            if( found )
+                            if (found)
                             {
+                                // send warning if using var before initialized
+                                if (!entry2.Initialized)
+                                {
+                                    line = assignmentASTNode.StartToken.Line;
+                                    col = assignmentASTNode.StartToken.Column;
+                                    SendWarning(new Message(String.Format("Unitialized variable. Assignment to variable {0} {1}, on line {2} column {3}, was assigned the value of uninitialized variable {4} {5}."
+                                        , GetTypeString(entry.DataType), entry.ID, line, col, GetTypeString(entry2.DataType), entry2.ID), line, col, GrammarProcess.GP_ASSIGNMENTSTATEMENT, SystemType.ST_SYMANTICS));
+
+                                }
 
                                 // check if data type of entry is same as ID
-                                if( entry2.DataType !=  entry.DataType)
+                                if (entry2.DataType != entry.DataType)
                                 {
                                     // Send error
                                     line = assignmentASTNode.StartToken.Line;
                                     col = assignmentASTNode.StartToken.Column;
-                                    SendError(new Message(String.Format("Type mismatch. Assignment to variable {0} {1}, on line {2} column {3}, was assigned the value of variable {4} {5}.",GetTypeString(entry.DataType),entry.ID,line,col,GetTypeString(entry2.DataType),entry2.ID),line,col,SystemType.ST_SYMANTICS));
-                        
+                                    SendError(new Message(String.Format("Type mismatch. Assignment to variable {0} {1}, on line {2} column {3}, was assigned the value of variable {4} {5}.", GetTypeString(entry.DataType), entry.ID, line, col, GetTypeString(entry2.DataType), entry2.ID), line, col, GrammarProcess.GP_ASSIGNMENTSTATEMENT, SystemType.ST_SYMANTICS));
+                                    error = true;
                                 }
+
                             }
                             // If not found send error
                             else
                             {
-                                 // Send error
+                                // Send error
                                 line = assignmentASTNode.StartToken.Line;
                                 col = assignmentASTNode.StartToken.Column;
-                                SendError(new Message(String.Format("Undeclared variable. Assignment to variable {0} {1}, on line {2} column {3}, was assigned to a variable {4} that does not exits.",GetTypeString(entry.DataType),entry.ID,line,col,idASTNode.Value),line,col,SystemType.ST_SYMANTICS));
-                    
+                                SendError(new Message(String.Format("Undeclared variable. Assignment to variable {0} {1}, on line {2} column {3}, was assigned to a variable {4} that does not exits.", GetTypeString(entry.DataType), entry.ID, line, col, idASTNode.Value), line, col, GrammarProcess.GP_ASSIGNMENTSTATEMENT, SystemType.ST_SYMANTICS));
+                                error = true;
                             }
                         }
                     }
 
-                    
-    
+                    // If not error set the init flag if not already set
+                    if (!error && entry != null && entry.Initialized == false)
+                    {
+                        entry.Initialized = true;
+                    }
+
+
                     break;
 
                 case ASTNodeType.ASTTYPE_BOOLOP:
@@ -336,189 +360,229 @@ namespace NFLanguageCompiler
                     boolOpASTNode = (BoolOpASTNode)curASTNode;
 
                     // Check if first expressions is boolean
-                    if( boolOpASTNode.ExprOne is BooleanExprASTNode )
+                    if (boolOpASTNode.ExprOne is BooleanExprASTNode)
                     {
                         // Check if next expressions is not boolean
-                        if( !(boolOpASTNode.ExprTwo is BooleanExprASTNode) )
+                        if (!(boolOpASTNode.ExprTwo is BooleanExprASTNode))
                         {
                             // check if expression is var of type boolean
-                            if( boolOpASTNode.ExprTwo is IDASTNode )
+                            if (boolOpASTNode.ExprTwo is IDASTNode)
                             {
                                 // Get id ast node
                                 idASTNode = (IDASTNode)boolOpASTNode.ExprTwo;
 
                                 // Find value in symbol table
                                 parentSymbolTable = curSymbolTable;
-                                while( parentSymbolTable != null && !found )
+                                while (parentSymbolTable != null && !found)
                                 {
                                     entry = parentSymbolTable.Data.GetItem(idASTNode.Value);
-                                    if( entry != null )
+                                    if (entry != null)
                                         found = true;
 
                                     parentSymbolTable = parentSymbolTable.Parent;
                                 }
 
                                 // Check if found
-                                if( found )
+                                if (found)
                                 {
-                                     // Check if id is of not of boolean type and send error
-                                    if( entry.DataType != DataType.DT_BOOLEAN )
+                                    // send warning if using var before initialized
+                                    if (!entry.Initialized)
                                     {
                                         line = boolOpASTNode.StartToken.Line;
                                         col = boolOpASTNode.StartToken.Column;
-                                        SendError(new Message(String.Format("Type mismatch. In boolean operation on line {0} column {1}, a boolean expression was compared to variable {2} {3}.",line,col,GetTypeString(entry.DataType),entry.ID),line,col,SystemType.ST_SYMANTICS));
+                                        SendWarning(new Message(String.Format("Unitialized variable. In boolean operation on line {0} column {1}, was assigned the value of uninitialized variable {2} {3}."
+                                            , line, col, GetTypeString(entry.DataType), entry.ID), line, col, GrammarProcess.GP_BOOLOP, SystemType.ST_SYMANTICS));
+
+                                    }
+
+                                    // Check if id is of not of boolean type and send error
+                                    if (entry.DataType != DataType.DT_BOOLEAN)
+                                    {
+                                        line = boolOpASTNode.StartToken.Line;
+                                        col = boolOpASTNode.StartToken.Column;
+                                        SendError(new Message(String.Format("Type mismatch. In boolean operation on line {0} column {1}, a boolean expression was compared to variable {2} {3}.", line, col, GetTypeString(entry.DataType), entry.ID), line, col, GrammarProcess.GP_BOOLOP, SystemType.ST_SYMANTICS));
                                     }
                                 }
                                 // Else send error
                                 else
                                 {
-                                    
+
                                     line = boolOpASTNode.StartToken.Line;
                                     col = boolOpASTNode.StartToken.Column;
-                                    SendError(new Message(String.Format("Undeclared variable. In boolean operation on line {0} column {1}, a boolean expression was compared to undeclared variable {2}.",line,col,idASTNode.Value),line,col,SystemType.ST_SYMANTICS));
-                                    
+                                    SendError(new Message(String.Format("Undeclared variable. In boolean operation on line {0} column {1}, a boolean expression was compared to undeclared variable {2}.", line, col, idASTNode.Value), line, col, GrammarProcess.GP_BOOLOP, SystemType.ST_SYMANTICS));
+
                                 }
                             }
                             // Else send error on expression type mismatch
                             else
                             {
-                                 line = boolOpASTNode.StartToken.Line;
-                                 col = boolOpASTNode.StartToken.Column;
-                                 SendError(new Message(String.Format("Type mismatch. In boolean operation on line {0} column {1}, a boolean expression was compared to an {2} expression.",line,col,GetExpressionTypeString(boolOpASTNode.ExprTwo)),line,col,SystemType.ST_SYMANTICS));
-                                    
+                                line = boolOpASTNode.StartToken.Line;
+                                col = boolOpASTNode.StartToken.Column;
+                                SendError(new Message(String.Format("Type mismatch. In boolean operation on line {0} column {1}, a boolean expression was compared to an {2} expression.", line, col, GetExpressionTypeString(boolOpASTNode.ExprTwo)), line, col, GrammarProcess.GP_BOOLOP, SystemType.ST_SYMANTICS));
+
                             }
                         }
                     }
                     // Check if first expressions is int expression
-                    else if( boolOpASTNode.ExprOne is IntExprASTNode )
+                    else if (boolOpASTNode.ExprOne is IntExprASTNode)
                     {
                         // Check if next expressions is not int
-                        if( !(boolOpASTNode.ExprTwo is IntExprASTNode) )
+                        if (!(boolOpASTNode.ExprTwo is IntExprASTNode))
                         {
                             // check if expression is var of type int
-                            if( boolOpASTNode.ExprTwo is IDASTNode )
+                            if (boolOpASTNode.ExprTwo is IDASTNode)
                             {
                                 // Get id ast node
                                 idASTNode = (IDASTNode)boolOpASTNode.ExprTwo;
 
                                 // Find value in symbol table
                                 parentSymbolTable = curSymbolTable;
-                                while( parentSymbolTable != null && !found )
+                                while (parentSymbolTable != null && !found)
                                 {
                                     entry = parentSymbolTable.Data.GetItem(idASTNode.Value);
-                                    if( entry != null )
+                                    if (entry != null)
                                         found = true;
 
                                     parentSymbolTable = parentSymbolTable.Parent;
                                 }
 
                                 // Check if found
-                                if( found )
+                                if (found)
                                 {
-                                     // Check if id is of not of int type and send error
-                                    if( entry.DataType != DataType.DT_INT)
+                                    // send warning if using var before initialized
+                                    if (!entry.Initialized)
                                     {
                                         line = boolOpASTNode.StartToken.Line;
                                         col = boolOpASTNode.StartToken.Column;
-                                        SendError(new Message(String.Format("Type mismatch. In boolean operation on line {0} column {1}, an integer expression was compared to variable {2} {3}.",line,col,GetTypeString(entry.DataType),entry.ID),line,col,SystemType.ST_SYMANTICS));
+                                        SendWarning(new Message(String.Format("Unitialized variable. In boolean operation on line {0} column {1}, was assigned the value of uninitialized variable {2} {3}."
+                                            , line, col, GetTypeString(entry.DataType), entry.ID), line, col, GrammarProcess.GP_BOOLOP, SystemType.ST_SYMANTICS));
+
+                                    }
+
+                                    // Check if id is of not of int type and send error
+                                    if (entry.DataType != DataType.DT_INT)
+                                    {
+                                        line = boolOpASTNode.StartToken.Line;
+                                        col = boolOpASTNode.StartToken.Column;
+                                        SendError(new Message(String.Format("Type mismatch. In boolean operation on line {0} column {1}, an integer expression was compared to variable {2} {3}.", line, col, GetTypeString(entry.DataType), entry.ID), line, col, GrammarProcess.GP_BOOLOP, SystemType.ST_SYMANTICS));
                                     }
                                 }
                                 // Else send error
                                 else
                                 {
-                                    
+
                                     line = boolOpASTNode.StartToken.Line;
                                     col = boolOpASTNode.StartToken.Column;
-                                    SendError(new Message(String.Format("Undeclared variable. In boolean operation on line {0} column {1}, an integer expression was compared to undeclared variable {2}.", line, col, idASTNode.Value), line, col, SystemType.ST_SYMANTICS));
-                                    
+                                    SendError(new Message(String.Format("Undeclared variable. In boolean operation on line {0} column {1}, an integer expression was compared to undeclared variable {2}.", line, col, idASTNode.Value), line, col, GrammarProcess.GP_BOOLOP, SystemType.ST_SYMANTICS));
+
                                 }
                             }
                             // Else send error on expression type mismatch
                             else
                             {
-                                 line = boolOpASTNode.StartToken.Line;
-                                 col = boolOpASTNode.StartToken.Column;
-                                 SendError(new Message(String.Format("Type mismatch. In boolean operation on line {0} column {1}, an integer expression was compared to an {2} expression.", line, col, GetExpressionTypeString(boolOpASTNode.ExprTwo)), line, col, SystemType.ST_SYMANTICS));
-                                    
+                                line = boolOpASTNode.StartToken.Line;
+                                col = boolOpASTNode.StartToken.Column;
+                                SendError(new Message(String.Format("Type mismatch. In boolean operation on line {0} column {1}, an integer expression was compared to an {2} expression.", line, col, GetExpressionTypeString(boolOpASTNode.ExprTwo)), line, col, GrammarProcess.GP_BOOLOP, SystemType.ST_SYMANTICS));
+
                             }
                         }
                     }
-                     // Check if first expressions is string
-                    else if( boolOpASTNode.ExprOne is StringExprASTNode )
+                    // Check if first expressions is string
+                    else if (boolOpASTNode.ExprOne is StringExprASTNode)
                     {
                         // Check if next expressions is not string
-                        if( !(boolOpASTNode.ExprTwo is StringExprASTNode) )
+                        if (!(boolOpASTNode.ExprTwo is StringExprASTNode))
                         {
                             // check if expression is var of type string
-                            if( boolOpASTNode.ExprTwo is IDASTNode )
+                            if (boolOpASTNode.ExprTwo is IDASTNode)
                             {
                                 // Get id ast node
                                 idASTNode = (IDASTNode)boolOpASTNode.ExprTwo;
 
                                 // Find value in symbol table
                                 parentSymbolTable = curSymbolTable;
-                                while( parentSymbolTable != null && !found )
+                                while (parentSymbolTable != null && !found)
                                 {
                                     entry = parentSymbolTable.Data.GetItem(idASTNode.Value);
-                                    if( entry != null )
+                                    if (entry != null)
                                         found = true;
 
                                     parentSymbolTable = parentSymbolTable.Parent;
                                 }
 
                                 // Check if found
-                                if( found )
+                                if (found)
                                 {
-                                     // Check if id is of not of boolean type and send error
-                                    if( entry.DataType != DataType.DT_STRING )
+                                    // send warning if using var before initialized
+                                    if (!entry.Initialized)
                                     {
                                         line = boolOpASTNode.StartToken.Line;
                                         col = boolOpASTNode.StartToken.Column;
-                                        SendError(new Message(String.Format("Type mismatch. In boolean operation on line {0} column {1}, a string expression was compared to variable {2} {3}.", line, col, GetTypeString(entry.DataType), entry.ID), line, col, SystemType.ST_SYMANTICS));
+                                        SendWarning(new Message(String.Format("Unitialized variable. In boolean operation on line {0} column {1}, was assigned the value of uninitialized variable {2} {3}."
+                                            , line, col, GetTypeString(entry.DataType), entry.ID), line, col, GrammarProcess.GP_BOOLOP, SystemType.ST_SYMANTICS));
+
+                                    }
+
+                                    // Check if id is of not of boolean type and send error
+                                    if (entry.DataType != DataType.DT_STRING)
+                                    {
+                                        line = boolOpASTNode.StartToken.Line;
+                                        col = boolOpASTNode.StartToken.Column;
+                                        SendError(new Message(String.Format("Type mismatch. In boolean operation on line {0} column {1}, a string expression was compared to variable {2} {3}.", line, col, GetTypeString(entry.DataType), entry.ID), line, col, GrammarProcess.GP_BOOLOP, SystemType.ST_SYMANTICS));
                                     }
                                 }
                                 // Else send error
                                 else
                                 {
-                                    
+
                                     line = boolOpASTNode.StartToken.Line;
                                     col = boolOpASTNode.StartToken.Column;
                                     SendError(new Message(String.Format("Undeclared variable. In boolean operation on line {0} column {1}, a string expression was compared to undeclared variable {2}.", line, col, idASTNode.Value), line, col, SystemType.ST_SYMANTICS));
-                                    
+
                                 }
                             }
                             // Else send error on expression type mismatch
                             else
                             {
-                                 line = boolOpASTNode.StartToken.Line;
-                                 col = boolOpASTNode.StartToken.Column;
-                                 SendError(new Message(String.Format("Type mismatch. In boolean operation on line {0} column {1}, a string expression was compared to an {2} expression.", line, col, GetExpressionTypeString(boolOpASTNode.ExprTwo)), line, col, SystemType.ST_SYMANTICS));
-                                    
+                                line = boolOpASTNode.StartToken.Line;
+                                col = boolOpASTNode.StartToken.Column;
+                                SendError(new Message(String.Format("Type mismatch. In boolean operation on line {0} column {1}, a string expression was compared to an {2} expression.", line, col, GetExpressionTypeString(boolOpASTNode.ExprTwo)), line, col, GrammarProcess.GP_BOOLOP, SystemType.ST_SYMANTICS));
+
                             }
                         }
                     }
                     // Else check if first expression is var dec
-                    else if( boolOpASTNode.ExprOne is IDASTNode )
+                    else if (boolOpASTNode.ExprOne is IDASTNode)
                     {
                         // Get id ast node
                         idASTNode = (IDASTNode)boolOpASTNode.ExprOne;
 
                         // Check if id exists in symbol table
                         parentSymbolTable = curSymbolTable;
-                        while( parentSymbolTable != null && !found )
+                        while (parentSymbolTable != null && !found)
                         {
                             entry = parentSymbolTable.Data.GetItem(idASTNode.Value);
-                            if( entry != null )
+                            if (entry != null)
                                 found = true;
 
                             parentSymbolTable = parentSymbolTable.Parent;
                         }
 
                         // Check if var found
-                        if( found )
+                        if (found)
                         {
+                            // send warning if using var before initialized
+                            if (!entry.Initialized)
+                            {
+                                line = boolOpASTNode.StartToken.Line;
+                                col = boolOpASTNode.StartToken.Column;
+                                SendWarning(new Message(String.Format("Unitialized variable. In boolean operation on line {0} column {1}, was assigned the value of uninitialized variable {2} {3}."
+                                    , line, col, GetTypeString(entry.DataType), entry.ID), line, col, GrammarProcess.GP_BOOLOP, SystemType.ST_SYMANTICS));
+
+                            }
+
                             // Check if expression two is an id
-                            if( boolOpASTNode.ExprTwo is IDASTNode )
+                            if (boolOpASTNode.ExprTwo is IDASTNode)
                             {
                                 // get second id ast node
                                 idASTNode2 = (IDASTNode)boolOpASTNode.ExprTwo;
@@ -526,25 +590,35 @@ namespace NFLanguageCompiler
                                 // Check if id exists in symbol table
                                 found = false;
                                 parentSymbolTable = curSymbolTable;
-                                while( parentSymbolTable != null && !found )
+                                while (parentSymbolTable != null && !found)
                                 {
                                     entry2 = parentSymbolTable.Data.GetItem(idASTNode2.Value);
-                                    if( entry2 != null )
+                                    if (entry2 != null)
                                         found = true;
 
                                     parentSymbolTable = parentSymbolTable.Parent;
                                 }
 
                                 // If found check if types are same
-                                if( found )
+                                if (found)
                                 {
-                                    //Check if types are wrong and send error
-                                    if( entry.DataType != entry2.DataType )
+                                    // send warning if using var before initialized
+                                    if (!entry2.Initialized)
                                     {
-                                         line = boolOpASTNode.StartToken.Line;
-                                         col = boolOpASTNode.StartToken.Column;
-                                         SendError(new Message(String.Format("Type mismatch. In boolean operation on line {0} column {1}, the variable {2} {3} was compared to variable {4} {5}.", line, col, GetTypeString(entry.DataType), entry.ID, GetTypeString(entry2.DataType), entry2.ID), line, col, SystemType.ST_SYMANTICS));
-                                            
+                                        line = boolOpASTNode.StartToken.Line;
+                                        col = boolOpASTNode.StartToken.Column;
+                                        SendWarning(new Message(String.Format("Unitialized variable. In boolean operation on line {0} column {1}, was assigned the value of uninitialized variable {2} {3}."
+                                            , line, col, GetTypeString(entry2.DataType), entry2.ID), line, col, GrammarProcess.GP_BOOLOP, SystemType.ST_SYMANTICS));
+
+                                    }
+
+                                    //Check if types are wrong and send error
+                                    if (entry.DataType != entry2.DataType)
+                                    {
+                                        line = boolOpASTNode.StartToken.Line;
+                                        col = boolOpASTNode.StartToken.Column;
+                                        SendError(new Message(String.Format("Type mismatch. In boolean operation on line {0} column {1}, the variable {2} {3} was compared to variable {4} {5}.", line, col, GetTypeString(entry.DataType), entry.ID, GetTypeString(entry2.DataType), entry2.ID), line, col, GrammarProcess.GP_BOOLOP, SystemType.ST_SYMANTICS));
+
                                     }
                                 }
                                 // Else send undeclared varabile mismatch
@@ -552,20 +626,20 @@ namespace NFLanguageCompiler
                                 {
                                     line = boolOpASTNode.StartToken.Line;
                                     col = boolOpASTNode.StartToken.Column;
-                                    SendError(new Message(String.Format("Undeclared variable. In boolean operation on line {0} column {1}, the variable {2} {3} was compared to an undeclared variable {4}.", line, col, GetTypeString(entry.DataType), entry.ID, idASTNode2.Value), line, col, SystemType.ST_SYMANTICS));
-                                    
+                                    SendError(new Message(String.Format("Undeclared variable. In boolean operation on line {0} column {1}, the variable {2} {3} was compared to an undeclared variable {4}.", line, col, GetTypeString(entry.DataType), entry.ID, idASTNode2.Value), line, col, GrammarProcess.GP_BOOLOP, SystemType.ST_SYMANTICS));
+
                                 }
                             }
                             // Else expression two is an int, boolean, or string expr
                             else
                             {
                                 // Check if types are not the same, and send error
-                                if( GetTypeString(entry.DataType) != GetExpressionTypeString(boolOpASTNode.ExprTwo) )
+                                if (GetTypeString(entry.DataType) != GetExpressionTypeString(boolOpASTNode.ExprTwo))
                                 {
-                                   line = boolOpASTNode.StartToken.Line;
+                                    line = boolOpASTNode.StartToken.Line;
                                     col = boolOpASTNode.StartToken.Column;
-                                    SendError(new Message(String.Format("Type mismatch. In boolean operation on line {0} column {1}, the variable {2} {3} was compared to an {4} expression.", line, col, GetTypeString(entry.DataType), entry.ID, GetExpressionTypeString(boolOpASTNode.ExprTwo)), line, col, SystemType.ST_SYMANTICS));
-                                    
+                                    SendError(new Message(String.Format("Type mismatch. In boolean operation on line {0} column {1}, the variable {2} {3} was compared to an {4} expression.", line, col, GetTypeString(entry.DataType), entry.ID, GetExpressionTypeString(boolOpASTNode.ExprTwo)), line, col, GrammarProcess.GP_BOOLOP, SystemType.ST_SYMANTICS));
+
                                 }
                             }
                         }
@@ -574,8 +648,8 @@ namespace NFLanguageCompiler
                         {
                             line = boolOpASTNode.StartToken.Line;
                             col = boolOpASTNode.StartToken.Column;
-                            SendError(new Message(String.Format("Undeclared variable {0}, in boolean operation on line {1} col {2}.",idASTNode.Value,line,col),line,col,SystemType.ST_SYMANTICS));
-                                    
+                            SendError(new Message(String.Format("Undeclared variable {0}, in boolean operation on line {1} col {2}.", idASTNode.Value, line, col), line, col, GrammarProcess.GP_BOOLOP, SystemType.ST_SYMANTICS));
+
                             // Also check if expression two is id ( just to catch a further undeclared var error )
                             if (boolOpASTNode.ExprTwo is IDASTNode)
                             {
@@ -597,23 +671,36 @@ namespace NFLanguageCompiler
                                 {
                                     line = intOpASTNode.StartToken.Line;
                                     col = intOpASTNode.StartToken.Column;
-                                    SendError(new Message(String.Format("Undeclared variable {0}, in boolean operation on line {1} col {2}.", entry.ID, line, col), line, col, SystemType.ST_SYMANTICS));
-                            
+                                    SendError(new Message(String.Format("Undeclared variable {0}, in boolean operation on line {1} col {2}.", entry.ID, line, col), line, col, GrammarProcess.GP_BOOLOP, SystemType.ST_SYMANTICS));
+
+                                }
+                                else
+                                {
+                                    // send warning if using var before initialized
+                                    if (!entry2.Initialized)
+                                    {
+                                        line = boolOpASTNode.StartToken.Line;
+                                        col = boolOpASTNode.StartToken.Column;
+                                        SendWarning(new Message(String.Format("Unitialized variable. In boolean operation on line {0} column {1}, was assigned the value of uninitialized variable {2} {3}."
+                                            , line, col, GetTypeString(entry2.DataType), entry2.ID), line, col, GrammarProcess.GP_BOOLOP, SystemType.ST_SYMANTICS));
+
+                                    }
+
                                 }
                             }
                         }
                     }
-                 
+
 
                     break;
 
                 case ASTNodeType.ASTTYPE_INTOP:
-                    
+
                     // Get int op node
                     intOpASTNode = (IntOpASTNode)curASTNode;
 
                     // Check if expression is id
-                    if( intOpASTNode.Expr is IDASTNode )
+                    if (intOpASTNode.Expr is IDASTNode)
                     {
                         // Get id ast node
                         idASTNode = (IDASTNode)intOpASTNode.Expr;
@@ -632,13 +719,23 @@ namespace NFLanguageCompiler
                         // Check if declared
                         if (found)
                         {
+                            // send warning if using var before initialized
+                            if (!entry.Initialized)
+                            {
+                                line = intOpASTNode.StartToken.Line;
+                                col = intOpASTNode.StartToken.Column;
+                                SendWarning(new Message(String.Format("Unitialized variable. In int operation on line {0} column {1}, was assigned the value of uninitialized variable {2} {3}."
+                                    , line, col, GetTypeString(entry.DataType), entry.ID), line, col, GrammarProcess.GP_INTOP, SystemType.ST_SYMANTICS));
+
+                            }
+
                             // Check if type is not int and send error
                             if (entry.DataType != DataType.DT_INT)
                             {
                                 line = intOpASTNode.StartToken.Line;
                                 col = intOpASTNode.StartToken.Column;
-                                SendError(new Message(String.Format("Type mismatch. Variable {0} {1} in int operation on line {2} col {3}, was not an integer.", GetTypeString(entry.DataType),entry.ID, line, col), line, col, SystemType.ST_SYMANTICS));
-                            
+                                SendError(new Message(String.Format("Type mismatch. Variable {0} {1} in int operation on line {2} col {3}, was not an integer.", GetTypeString(entry.DataType), entry.ID, line, col), line, col, GrammarProcess.GP_INTOP, SystemType.ST_SYMANTICS));
+
                             }
                         }
 
@@ -647,18 +744,18 @@ namespace NFLanguageCompiler
                         {
                             line = intOpASTNode.StartToken.Line;
                             col = intOpASTNode.StartToken.Column;
-                            SendError(new Message(String.Format("Undeclared variable. Varible {0} was undeclared in int operation on line {1} col {2}.", idASTNode.Value, line, col), line, col, SystemType.ST_SYMANTICS));
-                            
+                            SendError(new Message(String.Format("Undeclared variable. Varible {0} was undeclared in int operation on line {1} col {2}.", idASTNode.Value, line, col), line, col, GrammarProcess.GP_INTOP, SystemType.ST_SYMANTICS));
+
                         }
 
                     }
                     // Else if check if its not an int expression
-                    else if ( !(intOpASTNode.Expr is IntExprASTNode) )
+                    else if (!(intOpASTNode.Expr is IntExprASTNode))
                     {
                         line = intOpASTNode.StartToken.Line;
                         col = intOpASTNode.StartToken.Column;
-                        SendError(new Message(String.Format("Type mistmatch. Integer operation on line {0} column {1} contains an {2} expression.", line, col,GetExpressionTypeString(intOpASTNode.Expr)), line, col, SystemType.ST_SYMANTICS));
-                            
+                        SendError(new Message(String.Format("Type mistmatch. Integer operation on line {0} column {1} contains an {2} expression.", line, col, GetExpressionTypeString(intOpASTNode.Expr)), line, col, GrammarProcess.GP_INTOP, SystemType.ST_SYMANTICS));
+
                     }
                     break;
 
@@ -668,7 +765,7 @@ namespace NFLanguageCompiler
                     PrintStatementASTNode printASTNode = (PrintStatementASTNode)curASTNode;
 
                     // Check if undeclared identifier int print statment
-                    if( printASTNode.Expr is IDASTNode )
+                    if (printASTNode.Expr is IDASTNode)
                     {
                         // Get id ast node
                         idASTNode = (IDASTNode)printASTNode.Expr;
@@ -685,12 +782,24 @@ namespace NFLanguageCompiler
                         }
 
                         // If not declared send error
-                        if( !found )
+                        if (!found)
                         {
-                            line = intOpASTNode.StartToken.Line;
-                            col = intOpASTNode.StartToken.Column;
-                            SendError(new Message(String.Format("Undeclared variable. Varible {0} was undeclared in print operation on line {1} col {2}.", idASTNode.Value, line, col), line, col, SystemType.ST_SYMANTICS));
-                            
+                            line = printASTNode.StartToken.Line;
+                            col = printASTNode.StartToken.Column;
+                            SendError(new Message(String.Format("Undeclared variable. Varible {0} was undeclared in print operation on line {1} col {2}.", idASTNode.Value, line, col), line, col, GrammarProcess.GP_PRINTSTATEMENT, SystemType.ST_SYMANTICS));
+
+                        }
+                        else
+                        {
+                            // send warning if using var before initialized
+                            if (!entry.Initialized)
+                            {
+                                line = printASTNode.StartToken.Line;
+                                col = printASTNode.StartToken.Column;
+                                SendWarning(new Message(String.Format("Unitialized variable. In print statement on line {0} column {1}, was assigned the value of uninitialized variable {2} {3}."
+                                    , line, col, GetTypeString(entry.DataType), entry.ID), line, col, GrammarProcess.GP_PRINTSTATEMENT, SystemType.ST_SYMANTICS));
+
+                            }
                         }
                     }
 
@@ -702,7 +811,7 @@ namespace NFLanguageCompiler
             while (curChild != null)
             {
 
-                CheckVarsRecursive(curChild, curSymbolTable,blockStmtCount,totalBlockStmts);
+                CheckVarsRecursive(curChild, curSymbolTable, blockStmtCount, totalBlockStmts);
                 curChild = curChild.RightSibling;
             }
 
@@ -713,73 +822,10 @@ namespace NFLanguageCompiler
             return parentSymbolTable;
         }
 
-        // Helper functs 
-        public String GetTypeString(DataType dt)
-        {
-            String ret = null;
+        #endregion
 
-            switch (dt)
-            {
-                case DataType.DT_INT:
-                    ret = "int";
-                    break;
+        #region AST Creation Methods
 
-                case DataType.DT_STRING:
-                    ret = "string";
-                    break;
-
-                case DataType.DT_BOOLEAN:
-                    ret = "boolean";
-                    break;
-
-                default:
-                    ret = "none";
-                    break;
-            }
-
-            return ret;
-        }
-
-        public String GetTypeString(VAR_TYPE vt)
-        {
-            String ret = null;
-
-            switch (vt)
-            {
-                case VAR_TYPE.VARTYPE_INT:
-                    ret = "int";
-                    break;
-
-                case VAR_TYPE.VARTYPE_STRING:
-                    ret = "string";
-                    break;
-
-                case VAR_TYPE.VARTYPE_BOOLEAN:
-                    ret = "boolean";
-                    break;
-            }
-
-            return ret;
-        }
-
-        private String GetExpressionTypeString(ExprASTNode expr)
-        {
-            String ret = "none";
-
-            if (expr is IntExprASTNode)
-                ret = "int";
-            else if (expr is BooleanExprASTNode)
-                ret = "boolean";
-            else if (expr is StringExprASTNode)
-                ret = "string";
-            else if (expr is IDASTNode)
-                ret = "id";
-           
-
-            return ret;
-        }
-   
-        // end helper functions
 
         public void CreateAST(DynamicBranchTreeNode<CSTValue> rootCSTNode)
         {
@@ -926,6 +972,9 @@ namespace NFLanguageCompiler
 
             // Create print ast node
             curASTNode = new PrintStatementASTNode();
+
+            // Get start token
+            ((PrintStatementASTNode)curASTNode).StartToken = parentCSTNode.Data.Token;
 
             // Set current ast node to exprsion
             curCSTNode = parentCSTNode.GetChild(2);
@@ -1199,7 +1248,7 @@ namespace NFLanguageCompiler
             if( parentCSTNode.NodeCount == 3 )
             {
                 // Create int op ast node ( node at this time their is only one value
-                if (parentCSTNode.GetChild(1).Data.Token.Type == Token.TokenType.TK_OP_ADD)
+                if (parentCSTNode.GetChild(1).GetChild(0).Data.Token.Type == Token.TokenType.TK_OP_ADD)
                     curASTNode = new IntOpASTNode(INTOP_TYPE.INTOP_ADD);
                
                 // Get start token
@@ -1393,8 +1442,6 @@ namespace NFLanguageCompiler
                 SymanticAnalyzerMessageEvent(msg);
         }
 
-        // ### !!! NOTE TODE !!! ### //
-
         // Send warning event
         private void SendWarning(Message msg)
         {
@@ -1413,7 +1460,80 @@ namespace NFLanguageCompiler
             ErrorCount++;
         }
 
-        // ### !!! END TODO !!! ### //
+        // Converts data type enum to string
+        //
+        // Returns: String representing type
+        public String GetTypeString(DataType dt)
+        {
+            String ret = null;
+
+            switch (dt)
+            {
+                case DataType.DT_INT:
+                    ret = "int";
+                    break;
+
+                case DataType.DT_STRING:
+                    ret = "string";
+                    break;
+
+                case DataType.DT_BOOLEAN:
+                    ret = "boolean";
+                    break;
+
+                default:
+                    ret = "none";
+                    break;
+            }
+
+            return ret;
+        }
+
+        // Converts var type enum to string
+        //
+        // Returns: String representing type
+        public String GetTypeString(VAR_TYPE vt)
+        {
+            String ret = null;
+
+            switch (vt)
+            {
+                case VAR_TYPE.VARTYPE_INT:
+                    ret = "int";
+                    break;
+
+                case VAR_TYPE.VARTYPE_STRING:
+                    ret = "string";
+                    break;
+
+                case VAR_TYPE.VARTYPE_BOOLEAN:
+                    ret = "boolean";
+                    break;
+            }
+
+            return ret;
+        }
+
+        // Converts expression type to string
+        //
+        // Returns: String representing expression type
+        private String GetExpressionTypeString(ExprASTNode expr)
+        {
+            String ret = "none";
+
+            if (expr is IntExprASTNode)
+                ret = "int";
+            else if (expr is BooleanExprASTNode)
+                ret = "boolean";
+            else if (expr is StringExprASTNode)
+                ret = "string";
+            else if (expr is IDASTNode)
+                ret = "id";
+
+
+            return ret;
+        }
+   
 
         #endregion
     }

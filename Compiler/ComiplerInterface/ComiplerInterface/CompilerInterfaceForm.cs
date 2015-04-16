@@ -53,14 +53,14 @@ namespace CompilerInterface
             symtblMemory = 0;
 
             //Register events
-            /*
+            
             compiler.Lexer.LexerMessageEvent += new MessageEventHandler(OutputGeneralMessages);
             compiler.Lexer.LexerMessageEvent += new MessageEventHandler(OutputLexerMessages);
             compiler.Parser.ParserMessageEvent += new MessageEventHandler(OutputGeneralMessages);
             compiler.Parser.ParserMessageEvent += new MessageEventHandler(OutputParserMessages);
             compiler.SymanticAnalyzer.SymanticAnalyzerMessageEvent += new MessageEventHandler(OutputGeneralMessages);
             compiler.SymanticAnalyzer.SymanticAnalyzerMessageEvent += new MessageEventHandler(OutputSymanticAnalyzerMessages);
-             * */
+             
         }
 
         #endregion
@@ -145,6 +145,18 @@ namespace CompilerInterface
                     item.SubItems.Add(msg.TokenIndex.ToString());
                     item.SubItems.Add(msg.Text);
                 }
+                else if (proc == SystemType.ST_SYMANTICS)
+                {
+                    //Create listview item
+                    item = new ListViewItem(proc.ToString());
+                    item.SubItems.Add("Warning");
+                    item.SubItems.Add(msg.Line.ToString());
+                    item.SubItems.Add(msg.Column.ToString());
+                    item.SubItems.Add(msg.Grammar.ToString());
+                    item.SubItems.Add("");
+                    item.SubItems.Add("");
+                    item.SubItems.Add(msg.Text);
+                }
 
                 //Add item to list
                 listViewGeneralWarningsAndErrors.Items.Add(item);
@@ -194,7 +206,7 @@ namespace CompilerInterface
                     item.SubItems.Add("Error");
                     item.SubItems.Add(msg.Line.ToString());
                     item.SubItems.Add(msg.Column.ToString());
-                    item.SubItems.Add("");
+                    item.SubItems.Add(msg.Grammar.ToString());
                     item.SubItems.Add("");
                     item.SubItems.Add("");
                     item.SubItems.Add(msg.Text);
@@ -315,11 +327,58 @@ namespace CompilerInterface
             }
         }
 
-        // ### !!! @TODO !!! ### //
-
+        // Output all Symantic Analysis warnings and errors to list view control
         private void OutputSymanticAnalyzerWarningsAndErrors()
         {
+            //Inits
+            NFLanguageCompiler.Message msg = null;
+            ListViewItem item = null;
 
+            //Clear warnings and errors
+            listViewParserWarningsAndErrors.Items.Clear();
+
+            //Output parser warnings
+            for (int i = 0; i < compiler.WarningCount; i++)
+            {
+                //Get Message object
+                msg = compiler.GetWarning(i);
+
+                //Verify parser warning
+                if (msg.System == SystemType.ST_SYMANTICS)
+                {
+                    //Create list view item
+                    item = new ListViewItem("Warning");
+                    item.SubItems.Add(msg.Grammar.ToString());
+                    item.SubItems.Add(msg.Line.ToString());
+                    item.SubItems.Add(msg.Column.ToString());
+                    item.SubItems.Add(msg.Text);
+
+                    //Add item
+                    listViewSymanticAnalyzerWarningsAndErrors.Items.Add(item);
+                }
+            }
+
+            //Output all errors
+            for (int i = 0; i < compiler.ErrorCount; i++)
+            {
+                //Get Message object
+                msg = compiler.GetError(i);
+
+                //Verify parser warning
+                if (msg.System == SystemType.ST_SYMANTICS)
+                {
+                    //Createl list view item
+                    item = new ListViewItem("Error");
+                    item.SubItems.Add(msg.Grammar.ToString());
+                    item.SubItems.Add(msg.Line.ToString());
+                    item.SubItems.Add(msg.Column.ToString());
+                    item.SubItems.Add(msg.Text);
+
+                    //Add item to list
+
+                    listViewSymanticAnalyzerWarningsAndErrors.Items.Add(item);
+                }
+            }
         }
 
         //Resets all forms for new compilation
@@ -524,6 +583,9 @@ namespace CompilerInterface
                 OutputSymbolTableEntry(curNode, treeViewSymbolTable.Nodes[0]);
 
             }
+
+            // Expand tree view 
+            treeViewSymbolTable.ExpandAll();
 
             //End tree control update
             treeViewSymbolTable.EndUpdate();
@@ -846,7 +908,7 @@ namespace CompilerInterface
 
                         // Set check flag on process
                         if( !error )
-                        checkBoxSyamnticsSuccess.Checked = true;
+                            checkBoxSyamnticsSuccess.Checked = true;
 
                         // Set phase 
                         phase = 3;
@@ -855,7 +917,7 @@ namespace CompilerInterface
             }
             
             //Check if at least lex passed
-            if (phase < 2)
+            if (phase >= 1)
             {
                 //Output lex warnings and error count
                 labelLexerWarningsTotal.Text = String.Format("{0,2}", compiler.Lexer.WarningCount);
@@ -883,7 +945,7 @@ namespace CompilerInterface
             }
 
             //Check if parse and lex passed
-            if (phase < 3)
+            if (phase >= 2)
             {
                 //Output lex warnings and error count
                 labelParserWarningTotal.Text = String.Format("{0,2}", compiler.Parser.WarningCount);
@@ -910,7 +972,7 @@ namespace CompilerInterface
             }
 
             // Check if parse, lex, and symantics passed
-            if( phase < 4 )
+            if( phase >= 3 )
             {
                 //Output warnings and error count for symantics
                 labelSymanticAnalyzerWarningTotal.Text = String.Format("{0,2}", compiler.SymanticAnalyzer.WarningCount);
