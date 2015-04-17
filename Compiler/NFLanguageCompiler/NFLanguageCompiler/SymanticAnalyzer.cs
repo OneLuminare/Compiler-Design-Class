@@ -89,13 +89,23 @@ namespace NFLanguageCompiler
             // Inits
             ProcessReturnValue ret = ProcessReturnValue.PRV_NONE;
 
+
+            // Send Message
+            SendMessage("Creating AST...");
+
             // Create AST from CST
             CreateAST(rootCSTNode);
+
+            // Send Message
+            SendMessage("Completed AST. Starting symantic analysis...");
 
             // Anaylze scope, types, and existance
             CheckVars();
 
             // Check for unreachable code
+
+            // Send Message
+            SendMessage("Symantic analysis complete.");
 
             // Set return value
             if (ErrorCount > 0)
@@ -192,14 +202,8 @@ namespace NFLanguageCompiler
                     entry.ID = varDecASTNode.Id.Value;
 
                     // Check if exists in symbol table
-                    parentSymbolTable = curSymbolTable;
-                    while (parentSymbolTable != null && !found)
-                    {
-                        if (parentSymbolTable.Data.CheckCollision(entry.ID))
-                            found = true;
-
-                        parentSymbolTable = parentSymbolTable.Parent;
-                    }
+                    found = curSymbolTable.Data.CheckCollision(entry.ID);
+                   
 
 
                     // Check if found and add to symbol table

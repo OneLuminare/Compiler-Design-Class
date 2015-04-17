@@ -110,6 +110,8 @@
             this.listViewSymanticAnalyzerWarningsAndErrors = new System.Windows.Forms.ListView();
             this.chSAType = new System.Windows.Forms.ColumnHeader();
             this.chSAGrammar = new System.Windows.Forms.ColumnHeader();
+            this.chSALine = new System.Windows.Forms.ColumnHeader();
+            this.chSAColumn = new System.Windows.Forms.ColumnHeader();
             this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
             this.labelSymanticAnalyzerErrorTotal = new System.Windows.Forms.Label();
             this.labelSymanticAnalyzerErrorCountLabel = new System.Windows.Forms.Label();
@@ -137,8 +139,6 @@
             this.labelSymbolTable = new System.Windows.Forms.Label();
             this.tabPageOptimization = new System.Windows.Forms.TabPage();
             this.tabPageCodeGeneration = new System.Windows.Forms.TabPage();
-            this.chSALine = new System.Windows.Forms.ColumnHeader();
-            this.chSAColumn = new System.Windows.Forms.ColumnHeader();
             this.tabControlMain.SuspendLayout();
             this.tabPageSource.SuspendLayout();
             this.groupBoxOptions.SuspendLayout();
@@ -908,9 +908,16 @@
             this.chSAGrammar.Text = "Grammar Process";
             this.chSAGrammar.Width = 100;
             // 
+            // chSALine
+            // 
+            this.chSALine.Text = "Line";
+            // 
+            // chSAColumn
+            // 
+            this.chSAColumn.Text = "Column";
+            // 
             // columnHeader5
             // 
-            this.columnHeader5.DisplayIndex = 2;
             this.columnHeader5.Text = "Message";
             this.columnHeader5.Width = 807;
             // 
@@ -1157,14 +1164,6 @@
             this.tabPageCodeGeneration.TabIndex = 5;
             this.tabPageCodeGeneration.Text = "Code Generation";
             this.tabPageCodeGeneration.UseVisualStyleBackColor = true;
-            // 
-            // chSALine
-            // 
-            this.chSALine.Text = "Line";
-            // 
-            // chSAColumn
-            // 
-            this.chSAColumn.Text = "Column";
             // 
             // CompilerInterfaceForm
             // 
