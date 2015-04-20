@@ -21,8 +21,6 @@ namespace CompilerInterface
         #region Data Members
 
         Compiler compiler;
-        bool optionSaveErrorsToFile;
-        bool optionSaveTokenStreamToFile;
         private int symtblVars;
         private int symtblInts;
         private int symtblStrings;
@@ -44,8 +42,6 @@ namespace CompilerInterface
 
             //Init comipiler
             compiler = new Compiler();
-            optionSaveErrorsToFile = false;
-            optionSaveTokenStreamToFile = false;
             symtblVars = 0;
             symtblInts = 0;
             symtblStrings = 0;
@@ -621,7 +617,6 @@ namespace CompilerInterface
             treeViewAST.EndUpdate();
         }
 
-
         // Recursive output ast tree nodes
         private void OutputASTNode(ASTNode node, TreeNode treeNode)
         {
@@ -646,6 +641,7 @@ namespace CompilerInterface
              */
         }
 
+        // Resets symbol table stat counters
         private void ResetSymbolTableCounters()
         {
             block = 0;
@@ -656,6 +652,7 @@ namespace CompilerInterface
             symtblMemory = 0;
         }
 
+        // Recursive output symbol table entry function
         private void OutputSymbolTableEntry(DynamicBranchTreeNode<SymbolHashTable> entry, TreeNode treeNode)
         {
            
@@ -718,82 +715,51 @@ namespace CompilerInterface
             }
         }
 
-        #endregion
-
-        #region Control Event Handlers
-
-        //Locates file, and place location in source text box.
-        private void buttonBrowse_Click(object sender, EventArgs e)
+        // Toggle output op codes to file
+        private void ToggleOutputOPCodesToFile(bool show)
         {
-            //Create file dialog, starting in MyDocuments
-            OpenFileDialog dlgOpen = new OpenFileDialog();
-            dlgOpen.Title = "Open Source File";
-            dlgOpen.Filter = "Text Files(*.txt)|*.txt|All Files(*,*)|*.*";
-            dlgOpen.InitialDirectory = Environment.SpecialFolder.MyDocuments.ToString();
-
-            //Open dialog and check for OK
-            if (dlgOpen.ShowDialog() == DialogResult.OK)
-            {
-                //Put file location in source box
-                textBoxSourceFilePath.Text = dlgOpen.FileName;
-            }
-
-            //Dispose of OpenFileDialog
-            dlgOpen.Dispose();
+            outputOpCodesToFileToolStripMenuItem.Checked = show;
+            compiler.OpCodeGen.OutputOpCodesToFile = show;
         }
 
-        // Load file location in source text box.
-        //
-        // Throws: IOException
-        private void buttonLoad_Click(object sender, EventArgs e)
+        // Toggles show parse error change option
+        private void ToggleShowParseErrorChain(bool show)
         {
-            // Check if trimmed location is not empty
-            if (textBoxSourceFilePath.Text.Trim() != String.Empty)
+            showParseErrorChainToolStripMenuItem.Checked = show;
+            compiler.Parser.ShowErrorChain = show;
+        }
+
+        // Toggles show messages option.
+        private void ToggleShowMessages(bool show)
+        {
+            // Toggle menu check
+            showMessagesToolStripMenuItem.Checked = show;
+
+            if (show)
             {
-                //Data members
-                StreamReader sr = null;
-
-                //Try open file
-                try
-                {
-                    //Create file stream and open
-                    FileStream file = new FileStream(textBoxSourceFilePath.Text, FileMode.Open);
-
-                    //Create stream reader
-                    sr = new StreamReader(file);
-
-                    //Read entire file into string
-                    String line = sr.ReadToEnd();
-
-                    //Put text into input box
-                    textBoxSource.Text = line;        
-                }
-
-                //Catch IOException, and message user
-                catch (IOException ex)
-                {
-                    //Show MessageBox describing error
-                    MessageBox.Show(String.Format("Error \"{0}\" occurred opening file '{1}'",ex.Message,textBoxSourceFilePath.Text)
-                        ,"File Error");
-                }
-
-                //Make sure file is closed
-                finally
-                {
-                    //If stream reader is not null, close stream reader and stream
-                    if( sr != null )
-                        sr.Close();
-                }
+                //Register events
+                compiler.Lexer.LexerMessageEvent += new MessageEventHandler(OutputGeneralMessages);
+                compiler.Lexer.LexerMessageEvent += new MessageEventHandler(OutputLexerMessages);
+                compiler.Parser.ParserMessageEvent += new MessageEventHandler(OutputGeneralMessages);
+                compiler.Parser.ParserMessageEvent += new MessageEventHandler(OutputParserMessages);
+                compiler.SymanticAnalyzer.SymanticAnalyzerMessageEvent += new MessageEventHandler(OutputGeneralMessages);
+                compiler.SymanticAnalyzer.SymanticAnalyzerMessageEvent += new MessageEventHandler(OutputSymanticAnalyzerMessages);
+            }
+            else
+            {
+                //Unregister events
+                compiler.Lexer.LexerMessageEvent -= OutputGeneralMessages;
+                compiler.Lexer.LexerMessageEvent -= OutputLexerMessages;
+                compiler.Parser.ParserMessageEvent -= OutputGeneralMessages;
+                compiler.Parser.ParserMessageEvent -= OutputParserMessages;
+                compiler.SymanticAnalyzer.SymanticAnalyzerMessageEvent -= OutputGeneralMessages;
+                compiler.SymanticAnalyzer.SymanticAnalyzerMessageEvent -= OutputSymanticAnalyzerMessages;
             }
         }
 
-        //Reset all output and source box
-        private void buttonReset_Click(object sender, EventArgs e)
-        {
-            ResetAllTabs(true);
-        }
-
-        private void buttonCompile_Click(object sender, EventArgs e)
+        // Compile source code. Calls all comipler processes, outputs deliverables,
+        // and shows waning/error messages.
+        private void Compile()
         {
             //Inits
             bool error = false;
@@ -807,13 +773,13 @@ namespace CompilerInterface
             compiler.Compile(textBoxSource.Text);
 
             //Check if lex returned errors
-            if (compiler.LexerReturnValue == ProcessReturnValue.PRV_ERRORS )
+            if (compiler.LexerReturnValue == ProcessReturnValue.PRV_ERRORS)
             {
                 //Set error flag to true
                 error = true;
             }
             //Check if no lex due to empty source file
-            else if(compiler.LexerReturnValue == ProcessReturnValue.PRV_NONE )
+            else if (compiler.LexerReturnValue == ProcessReturnValue.PRV_NONE)
             {
                 //Set no complete flag to true
                 noComplete = true;
@@ -870,9 +836,6 @@ namespace CompilerInterface
                     //Ouput general warnings and errors
                     OutputParserWarningsAndErrors();
 
-                    //Output symbol table
-                    //OutputSymbolTable();
-
                     //Set lex complete
                     checkBoxParserSuccess.Checked = true;
 
@@ -888,34 +851,66 @@ namespace CompilerInterface
             }
 
             // Perform Symantic Analyzis if no errors
-            if( !error && !noComplete )
+            if (!error && !noComplete)
             {
                 // Set error flag on error
-                if( compiler.SymanticReturnValue == ProcessReturnValue.PRV_ERRORS)
+                if (compiler.SymanticReturnValue == ProcessReturnValue.PRV_ERRORS)
                 {
                     error = true;
                 }
+                else if (compiler.SymanticReturnValue == ProcessReturnValue.PRV_NONE)
+                {
+                    noComplete = true;
+                }
 
-               
-                       // Output warnigns and errors
-                        OutputSymanticAnalyzerWarningsAndErrors();
 
-                        // Output AST
-                        OutputAST();
+                // Output warnigns and errors
+                OutputSymanticAnalyzerWarningsAndErrors();
 
-                        // Output updated symbol table
-                        OutputSymbolTable();
+                // Output AST
+                OutputAST();
 
-                        // Set check flag on process
-                        if( !error )
-                            checkBoxSyamnticsSuccess.Checked = true;
+                // Output updated symbol table
+                OutputSymbolTable();
 
-                        // Set phase 
-                        phase = 3;
-                    
-                
+                // Set check flag on process
+                if (!error)
+                    checkBoxSyamnticsSuccess.Checked = true;
+
+                // Set phase 
+                phase = 3;
             }
-            
+
+            // Check if no Symantic Analysis errors 
+            if (!error && !noComplete)
+            {
+                // Set error flag on error
+                if (compiler.OptimizationReturnValue == ProcessReturnValue.PRV_ERRORS)
+                    error = true;
+                else if (compiler.OptimizationReturnValue == ProcessReturnValue.PRV_NONE)
+                    noComplete = true;
+
+                // Output op codes
+                OutputOpCodes();
+
+                // Output errors and warnings
+                OutputOpCodeGenerationWarningsErrors();
+
+                // Check if no error
+                if (!error)
+                {
+                    // Check process complete flag 
+                    checkBoxOptimizationSuccess.Checked = true;
+
+                    // Check if ooutput op code to file option is set
+                    if (compiler.OpCodeGen.OutputOpCodesToFile)
+                        OutputOpCodesToFile();
+                }
+
+                // Set phase indiator
+                phase = 4;
+            }
+
             //Check if at least lex passed
             if (phase >= 1)
             {
@@ -972,14 +967,14 @@ namespace CompilerInterface
             }
 
             // Check if parse, lex, and symantics passed
-            if( phase >= 3 )
+            if (phase >= 3)
             {
                 //Output warnings and error count for symantics
                 labelSymanticAnalyzerWarningTotal.Text = String.Format("{0,2}", compiler.SymanticAnalyzer.WarningCount);
                 labelSymanticAnalyzerErrorTotal.Text = String.Format("{0,2}", compiler.SymanticAnalyzer.ErrorCount);
 
                 //Output return values for symantics and compiler
-                if( compiler.SymanticReturnValue == ProcessReturnValue.PRV_ERRORS )
+                if (compiler.SymanticReturnValue == ProcessReturnValue.PRV_ERRORS)
                 {
                     labelSymanticAnalyzerReturnValue.Text = "Symantic Analysis returned with errors.";
                     labelCompilerReturnValue.Text = "Symantic Analyzer returned with errors. \nCan not perform Code Generation.";
@@ -1009,89 +1004,222 @@ namespace CompilerInterface
             //Check if invalid source
             if (phase == 10)
             {
-                labelCompilerReturnValue.Text = "Empty source file. Could not continue."; 
+                labelCompilerReturnValue.Text = "Empty source file. Could not continue.";
                 labelLexerReturnValue.Text = "Lexer returned with errors.";
             }
+        }
+
+        // Outputs op codes to text area
+        private void OutputOpCodes()
+        {
+
+        }
+
+        // Outputs op code gen warings and errors
+        public void OutputOpCodeGenerationWarningsErrors()
+        {
+        }
+
+        // Outputs generated op codes to file
+        public void OutputOpCodesToFile()
+        {
+        }
+
+        #endregion
+
+        #region Control Event Handlers
+
+        //Reset all output and source box
+        private void buttonReset_Click(object sender, EventArgs e)
+        {
+            ResetAllTabs(true);
+        }
+
+        // Compiles source
+        private void buttonCompile_Click(object sender, EventArgs e)
+        {
+            Compile();
         }
 
         //Toggle token stream to file option on clicked
         private void checkBoxOutputOpCodesToFile_CheckedChanged(object sender, EventArgs e)
         {
-            optionSaveTokenStreamToFile = !optionSaveTokenStreamToFile;
+            ToggleOutputOPCodesToFile(checkBoxOutputOpCodesToFile.Checked);
         }
-
 
         //Toggles show all parse error chain or just first error
         private void checkBoxShowParseErrorChain_CheckedChanged(object sender, EventArgs e)
         {
-            compiler.Parser.ShowErrorChain = !compiler.Parser.ShowErrorChain;
+            ToggleShowParseErrorChain(checkBoxShowParseErrorChain.Checked);
         }
 
         //Toggles enabling message events to speed up compilation
         private void checkBoxShowMessages_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBoxShowMessages.Checked)
-            {
-                //Register events
-                compiler.Lexer.LexerMessageEvent += new MessageEventHandler(OutputGeneralMessages);
-                compiler.Lexer.LexerMessageEvent += new MessageEventHandler(OutputLexerMessages);
-                compiler.Parser.ParserMessageEvent += new MessageEventHandler(OutputGeneralMessages);
-                compiler.Parser.ParserMessageEvent += new MessageEventHandler(OutputParserMessages);
-                compiler.SymanticAnalyzer.SymanticAnalyzerMessageEvent += new MessageEventHandler(OutputGeneralMessages);
-                compiler.SymanticAnalyzer.SymanticAnalyzerMessageEvent += new MessageEventHandler(OutputSymanticAnalyzerMessages);
-            }
-            else
-            {
-                //Unregister events
-                compiler.Lexer.LexerMessageEvent -= OutputGeneralMessages;
-                compiler.Lexer.LexerMessageEvent -= OutputLexerMessages;
-                compiler.Parser.ParserMessageEvent -= OutputGeneralMessages;
-                compiler.Parser.ParserMessageEvent -= OutputParserMessages;
-                compiler.SymanticAnalyzer.SymanticAnalyzerMessageEvent -= OutputGeneralMessages;
-                compiler.SymanticAnalyzer.SymanticAnalyzerMessageEvent -= OutputSymanticAnalyzerMessages;
-            }
+            ToggleShowMessages(checkBoxShowMessages.Checked);
         }
 
+        // Saves source file
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Inits
+            String filePath = null;
+            StreamWriter sw = null;
+            FileStream file = null;
+
+            // Create save dialog, starting in MyDocuuments
+            SaveFileDialog dlgSave = new SaveFileDialog();
+            dlgSave.Title = "Save Source File";
+            dlgSave.InitialDirectory = Environment.SpecialFolder.MyDocuments.ToString();
+            dlgSave.Filter = "Text Files(*.txt) |*.txt";
+
+            //Open save dialog and check for ok
+            if (dlgSave.ShowDialog() == DialogResult.OK)
+            {
+                // Get save location
+                filePath = dlgSave.FileName;
+
+                try
+                {
+                    // Create file and open stream writer
+                    file = new FileStream(filePath, FileMode.CreateNew);
+                    sw = new StreamWriter(file);
+
+                    sw.Write(textBoxSource.Text);
+                }
+
+                catch (IOException ex)
+                {
+                    //Show MessageBox describing error
+                    MessageBox.Show(String.Format("Error \"{0}\" occurred saving file '{1}'", ex.Message, filePath)
+                        , "File Error");
+                }
+
+                finally
+                {
+                    if (sw != null)
+                        sw.Close();
+                    file.Close();
+                }
+            }
+
+            dlgSave.Dispose();
+        }
+
+        // Opens source file
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Inits
+            String filePath = null;
+
+            //Create file dialog, starting in MyDocuments
+            OpenFileDialog dlgOpen = new OpenFileDialog();
+            dlgOpen.Title = "Open Source File";
+            dlgOpen.Filter = "Text Files(*.txt)|*.txt|All Files(*,*)|*.*";
+            dlgOpen.InitialDirectory = Environment.SpecialFolder.MyDocuments.ToString();
+
+            //Open dialog and check for OK
+            if (dlgOpen.ShowDialog() == DialogResult.OK)
+            {
+                //Get file path
+                filePath = dlgOpen.FileName;
+
+                //Data members
+                StreamReader sr = null;
+                FileStream file = null;
+
+                //Try open file
+                try
+                {
+                    //Create file stream and open
+                    file = new FileStream(filePath, FileMode.Open);
+
+                    //Create stream reader
+                    sr = new StreamReader(file);
+
+                    //Read entire file into string
+                    String line = sr.ReadToEnd();
+
+                    //Put text into input box
+                    textBoxSource.Text = line;
+                }
+
+                //Catch IOException, and message user
+                catch (IOException ex)
+                {
+                    //Show MessageBox describing error
+                    MessageBox.Show(String.Format("Error \"{0}\" occurred opening file '{1}'", ex.Message, filePath)
+                        , "File Error");
+                }
+
+                //Make sure file is closed
+                finally
+                {
+                    //If stream reader is not null, close stream reader and stream
+                    if (sr != null)
+                        sr.Close();
+
+                    file.Close();
+                }
+            }
+
+            //Dispose of OpenFileDialog
+            dlgOpen.Dispose();
+
+        }
+
+
+        // Exits app
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        // Compiles source
+        private void compileSourceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Compile();
+        }
+
+        // Toggles show messages compiler option
+        private void showMessagesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ToggleShowMessages(showMessagesToolStripMenuItem.Checked);
+        }
+
+        // Toggles show parse error chain compiler option
+        private void showParseErrorChainToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ToggleShowParseErrorChain(showParseErrorChainToolStripMenuItem.Checked);
+        }
+
+        // Toggles output op codes to file compiler option
+        private void outputOpCodesToFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ToggleOutputOPCodesToFile(outputOpCodesToFileToolStripMenuItem.Checked);
+        }
+
+        // Shows general help
+        private void generalHelpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        // Shows grammar 
+        private void grammarToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        // Resets all compiler tabs
+        private void resetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ResetAllTabs(true);
+        }
 
         #endregion
 
-        #region Old Code
 
-        /*
-        private void button1_Click(object sender, EventArgs e)
-        {
-            string s = "C:\\Test\\Test.tst";
-            FileStream sf = new FileStream(s,FileMode.Create);
-            IFormatter f = new BinaryFormatter();
 
-            f.Serialize(sf, compiler.lexer.OutputTokenStream);
-            sf.Close();
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            string s = "C:\\Test\\Test.tst";
-            FileStream sf = new FileStream(s, FileMode.Open);
-            IFormatter f = new BinaryFormatter();
-
-            compiler.lexer.OutputTokenStream = (TokenStream)f.Deserialize(sf);
-
-            //Output token stream
-            listViewTokens.Items.Clear();
-            foreach (Token tk in compiler.lexer.OutputTokenStream)
-            {
-                ListViewItem item = new ListViewItem(tk.Type.ToString());
-                item.SubItems.Add(tk.Line.ToString());
-                item.SubItems.Add(tk.Column.ToString());
-                item.SubItems.Add(tk.Value.ToString());
-
-                listViewTokens.Items.Add(item);
-            }
-            sf.Close();
-        }
-
-        */
-        #endregion
-        
     }
 }

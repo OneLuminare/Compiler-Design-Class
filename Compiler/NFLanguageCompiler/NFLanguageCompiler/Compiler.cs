@@ -16,6 +16,7 @@ namespace NFLanguageCompiler
         ST_LEXER,
         ST_PARSER,
         ST_SYMANTICS,
+        ST_OPCODEGEN,
         ST_NONE
     };
 
@@ -98,12 +99,12 @@ namespace NFLanguageCompiler
     // data logging. Ultimate output is machine code.
     public class Compiler
     {
-        bool noSym = false;
         #region Data Members
 
         public Lexer Lexer;
         public Parser Parser;
         public SymanticAnalyzer SymanticAnalyzer;
+        public OpCodeGenerator OpCodeGen;
         private ArrayList WarningList;
         private ArrayList ErrorList;
 
@@ -139,7 +140,7 @@ namespace NFLanguageCompiler
         }
 
         //Current run code generation return value
-        public ProcessReturnValue CodeGenerationReturnValue
+        public ProcessReturnValue OpCodeGenerationReturnValue
         {
             get;
             set;
@@ -174,6 +175,7 @@ namespace NFLanguageCompiler
             Lexer = new Lexer();
             Parser = new Parser();
             SymanticAnalyzer = new SymanticAnalyzer();
+            OpCodeGen = new OpCodeGenerator();
             WarningList = new ArrayList();
             ErrorList = new ArrayList();
 
@@ -187,6 +189,8 @@ namespace NFLanguageCompiler
             Parser.ParserErrorEvent += new WarningErrorEventHandler(AddError);
             SymanticAnalyzer.SymanticAnalyzerWarningEvent += new WarningErrorEventHandler(AddWarning);
             SymanticAnalyzer.SymanticAnalyzerErrorEvent += new WarningErrorEventHandler(AddError);
+            OpCodeGen.OpCodeGenWarningEvent += new WarningErrorEventHandler(AddWarning);
+            OpCodeGen.OpCodeGenErrorEvent += new WarningErrorEventHandler(AddError);
 
         }
 
@@ -250,7 +254,7 @@ namespace NFLanguageCompiler
             ParserReturnValue = ProcessReturnValue.PRV_NONE;
             SymanticReturnValue = ProcessReturnValue.PRV_NONE;
             OptimizationReturnValue = ProcessReturnValue.PRV_NONE;
-            CodeGenerationReturnValue = ProcessReturnValue.PRV_NONE;
+            OpCodeGenerationReturnValue = ProcessReturnValue.PRV_NONE;
 
             //Reset warning and error lists
             WarningList.Clear();
@@ -272,12 +276,16 @@ namespace NFLanguageCompiler
            if (LexerReturnValue != ProcessReturnValue.PRV_ERRORS)
                 ParserReturnValue = Parser.Parse(Lexer.OutputTokenStream);
 
-            if(!noSym)
-            {
-            // Analyze Symantics if no errors
-            if (ParserReturnValue != ProcessReturnValue.PRV_ERRORS)
-                SymanticReturnValue = SymanticAnalyzer.AnalyzeSymantics(Parser.CSTRootNode);
-            }
+           // Analyze Symantics if no errors
+           if (ParserReturnValue != ProcessReturnValue.PRV_ERRORS)
+                 SymanticReturnValue = SymanticAnalyzer.AnalyzeSymantics(Parser.CSTRootNode);
+
+            // Generate code if no errors
+            
+           if (SymanticReturnValue != ProcessReturnValue.PRV_ERRORS)
+               OpCodeGenerationReturnValue = OpCodeGen.GenerateOpCodes(SymanticAnalyzer.RootASTNode
+                   , SymanticAnalyzer.RootSymbolTableNode);
+             
         }
 
         #endregion

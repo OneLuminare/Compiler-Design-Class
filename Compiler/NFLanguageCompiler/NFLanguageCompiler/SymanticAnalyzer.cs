@@ -83,7 +83,10 @@ namespace NFLanguageCompiler
 
         #region Symantic Analysis Methods
 
-        // General method that 
+        // Starts symantic alnalysis process. Builds an AST from CST, 
+        // then checks var decs, type, and scope.
+        //
+        // Returns: Process return value.
         public ProcessReturnValue AnalyzeSymantics(DynamicBranchTreeNode<CSTValue> rootCSTNode)
         {
             // Inits
@@ -119,6 +122,7 @@ namespace NFLanguageCompiler
             return ret;
         }
 
+        // Checks variable declarations, type, and scope. Starts a recursive process.
         private void CheckVars()
         {
             // Set root to null
@@ -128,6 +132,9 @@ namespace NFLanguageCompiler
             rootSymbolTableNode = CheckVarsRecursive(rootASTNode, rootSymbolTableNode, 0, 0);
         }
 
+        // Recursive check vars method. Checks var decs, type, and scope.
+        // 
+        // Returns: Current symbol table node.
         private DynamicBranchTreeNode<SymbolHashTable> CheckVarsRecursive(ASTNode curASTNode, DynamicBranchTreeNode<SymbolHashTable> curSymbolTable, int blockStmtCount, int totalBlockStmts)
         {
             // Inits
@@ -830,7 +837,7 @@ namespace NFLanguageCompiler
 
         #region AST Creation Methods
 
-
+        // Creates AST from CST.
         public void CreateAST(DynamicBranchTreeNode<CSTValue> rootCSTNode)
         {
             
@@ -842,6 +849,9 @@ namespace NFLanguageCompiler
             rootASTNode = CreateBlockASTNode(true);
         }
 
+        // Create block ast node
+        //
+        // Returns: Created block AST node.
         public BlockASTNode CreateBlockASTNode( bool firstBlock)
         {
             // Inits
@@ -908,6 +918,9 @@ namespace NFLanguageCompiler
             return curASTNode;
         }
 
+        // Create statement ast node
+        //
+        // Returns: Created statement AST node.
         private StatementASTNode CreateStatementASTNode()
         {
             // Inits
@@ -964,6 +977,9 @@ namespace NFLanguageCompiler
             return retASTNode;
         }
 
+        // Create print ast node
+        //
+        // Returns: Created print AST node.
         private PrintStatementASTNode CreatePrintStatementASTNode()
         {
             // Inits
@@ -1002,6 +1018,9 @@ namespace NFLanguageCompiler
             return curASTNode;
         }
 
+        // Create assignment ast node
+        //
+        // Returns: Created assignment AST node.
         private AssignmentStatementASTNode CreateAssignmentStatementASTNode()
         {
             // Inits
@@ -1050,6 +1069,9 @@ namespace NFLanguageCompiler
             return curASTNode;
         }
 
+        // Create var dec ast node
+        //
+        // Returns: Created  AST node.
         private VarDecStatementASTNode CreateVarDecStatementASTNode()
         {
             // Inits
@@ -1106,6 +1128,9 @@ namespace NFLanguageCompiler
             return curASTNode;
         }
 
+        // Create while statement ast node
+        //
+        // Returns: Created  AST node.
         private WhileStatementASTNode CreateWhileStatementASTNode()
         {
             // Inits
@@ -1149,6 +1174,9 @@ namespace NFLanguageCompiler
             return curASTNode;
         }
 
+        // Create if statment ast node
+        //
+        // Returns: Created  AST node.
         private IfStatementASTNode CreateIfStatementASTNode()
         {  // Inits
             ExprASTNode retExprASTNode = null;
@@ -1191,6 +1219,9 @@ namespace NFLanguageCompiler
             return curASTNode;
         }
 
+        // Create expression ast node
+        //
+        // Returns: Created  AST node.
         private ExprASTNode CreateExprASTNode()
         {
             // Inits
@@ -1235,6 +1266,9 @@ namespace NFLanguageCompiler
             return retASTNode;
         }
 
+        // Create int expr ast node
+        //
+        // Returns: Created  AST node.
         private IntExprASTNode CreateIntExprASTNode()
         {
             // Inits
@@ -1300,6 +1334,9 @@ namespace NFLanguageCompiler
             return curASTNode;
         }
 
+        // Create string ast node
+        //
+        // Returns: Created  AST node.
         private StringExprASTNode CreateStringExprASTNode()
         {
             // Inits
@@ -1343,6 +1380,9 @@ namespace NFLanguageCompiler
             return curASTNode;
         }
 
+        // Create boolean expr ast node
+        //
+        // Returns: Created  AST node.
         private BooleanExprASTNode CreateBooleanExprASTNode()
         {
             // Inits
@@ -1420,6 +1460,9 @@ namespace NFLanguageCompiler
             return curASTNode;
         }
 
+        // Create id ast node
+        //
+        // Returns: Created  AST node.
         private IDASTNode CreateIDExprASTNode()
         {
             // Inits

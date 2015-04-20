@@ -9,6 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NFLanguageCompiler", "..\NF
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D17CE9EB-2B59-4733-BF17-6B7CA1EE064D}"
 	ProjectSection(SolutionItems) = preProject
+		..\..\..\..\6502alan-instruction-set.pdf = ..\..\..\..\6502alan-instruction-set.pdf
 		..\grammar.pdf = ..\grammar.pdf
 	EndProjectSection
 EndProject

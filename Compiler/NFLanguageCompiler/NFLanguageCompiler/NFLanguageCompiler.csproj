@@ -68,6 +68,7 @@
     <Compile Include="IntOpASTNode.cs" />
     <Compile Include="Lexer.cs" />
     <Compile Include="Message.cs" />
+    <Compile Include="OpCodeGenerator.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="PrintStatementASTNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
