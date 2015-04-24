@@ -49,14 +49,14 @@ namespace CompilerInterface
             symtblMemory = 0;
 
             //Register events
-            
+            /*
             compiler.Lexer.LexerMessageEvent += new MessageEventHandler(OutputGeneralMessages);
             compiler.Lexer.LexerMessageEvent += new MessageEventHandler(OutputLexerMessages);
             compiler.Parser.ParserMessageEvent += new MessageEventHandler(OutputGeneralMessages);
             compiler.Parser.ParserMessageEvent += new MessageEventHandler(OutputParserMessages);
             compiler.SymanticAnalyzer.SymanticAnalyzerMessageEvent += new MessageEventHandler(OutputGeneralMessages);
             compiler.SymanticAnalyzer.SymanticAnalyzerMessageEvent += new MessageEventHandler(OutputSymanticAnalyzerMessages);
-             
+             */
         }
 
         #endregion
@@ -901,6 +901,7 @@ namespace CompilerInterface
                 {
                     // Check process complete flag 
                     checkBoxOptimizationSuccess.Checked = true;
+                    checkBoxCodeGenSuccess.Checked = true;
 
                     // Check if ooutput op code to file option is set
                     if (compiler.OpCodeGen.OutputOpCodesToFile)
@@ -993,6 +994,33 @@ namespace CompilerInterface
                 }
             }
 
+            // Check if parse, lex, and symantics passed
+            if (phase >= 4)
+            {
+                //Output warnings and error count for symantics
+                labelOpCodeGenWarnings.Text = String.Format("{0,2}", compiler.OpCodeGen.WarningCount);
+                labelOpCodeGenErrors.Text = String.Format("{0,2}", compiler.OpCodeGen.ErrorCount);
+
+                //Output return values for symantics and compiler
+                if (compiler.OpCodeGenerationReturnValue == ProcessReturnValue.PRV_ERRORS)
+                {
+                    labelOpCodeGenProcessReturnValue.Text = "Code Generation returned with errors.";
+                    labelCompilerReturnValue.Text = "Code Generation returned with errors.";
+                }
+                //Output return values for symantics and compiler
+                else if (compiler.OpCodeGenerationReturnValue == ProcessReturnValue.PRV_WARNINGS)
+                {
+                    labelOpCodeGenProcessReturnValue.Text = "Code Generation returned successfully, but with warnings.";
+                    labelCompilerReturnValue.Text = "Code Generation returned successfully, but with warnings.";
+                }
+                //Output return values for symantics and compiler
+                else if (compiler.OpCodeGenerationReturnValue == ProcessReturnValue.PRV_OK)
+                {
+                    labelOpCodeGenProcessReturnValue.Text = "Code Generation returned successfully.";
+                    labelCompilerReturnValue.Text = "Code Generation returned successfully.";
+                }
+            }
+
 
 
             //TODO ERROR WARNING RETURN VALUES
@@ -1012,7 +1040,31 @@ namespace CompilerInterface
         // Outputs op codes to text area
         private void OutputOpCodes()
         {
+            /* DEBUGGING CODE 
+            BlockSizeTableEntry entry = null;
+            textBoxOpCodes.Text = "";
+            for (int i = 0; i < compiler.OpCodeGen.blockSizeTable.Count; i++)
+            {
+                entry = (BlockSizeTableEntry)compiler.OpCodeGen.blockSizeTable[i];
+                textBoxOpCodes.Text += String.Format("Block ID: {0} Start Byte: {1} End Byte: {2}", entry.BlockID, entry.StartByte, entry.EndByte);
+            }
+             * */
+            int n = 0;
+            while (n < compiler.OpCodeGen.OpCodeData.Length)
+            {
+                if ((n + 16) < compiler.OpCodeGen.OpCodeData.Length)
+                {
+                    textBoxOpCodes.Text += compiler.OpCodeGen.OpCodeData.Substring(n, 16);
+                    n = n + 16;
+                }
+                else
+                {
+                    textBoxOpCodes.Text += compiler.OpCodeGen.OpCodeData.Substring(n, (compiler.OpCodeGen.OpCodeData.Length - n));
+                    n = compiler.OpCodeGen.OpCodeData.Length;
+                }
 
+                textBoxOpCodes.Text += '\n';
+            }
         }
 
         // Outputs op code gen warings and errors

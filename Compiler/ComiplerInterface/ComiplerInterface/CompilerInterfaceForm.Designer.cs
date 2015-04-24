@@ -134,7 +134,22 @@
             this.treeViewSymbolTable = new System.Windows.Forms.TreeView();
             this.labelSymbolTable = new System.Windows.Forms.Label();
             this.tabPageOptimization = new System.Windows.Forms.TabPage();
+            this.labelOpCodes = new System.Windows.Forms.Label();
             this.tabPageCodeGeneration = new System.Windows.Forms.TabPage();
+            this.textBoxOpCodes = new System.Windows.Forms.TextBox();
+            this.labelOpCodesLabel = new System.Windows.Forms.Label();
+            this.labelOpCodGenMessagesLabel = new System.Windows.Forms.Label();
+            this.textBoxOpCodeGenMessages = new System.Windows.Forms.TextBox();
+            this.labelOpCodeGenErrors = new System.Windows.Forms.Label();
+            this.labelOpCodeGenErrorsLabel = new System.Windows.Forms.Label();
+            this.labelOpCodeGenWarnings = new System.Windows.Forms.Label();
+            this.labelOpCodeGenWarningsLabel = new System.Windows.Forms.Label();
+            this.labelOpCodeGenProcessReturnValue = new System.Windows.Forms.Label();
+            this.labelOpCodeGenProcessReturnValueLabel = new System.Windows.Forms.Label();
+            this.labelOpCodeGenWarningsAndErrorsLabel = new System.Windows.Forms.Label();
+            this.listViewOpCodeGenWarningsErrors = new System.Windows.Forms.ListView();
+            this.columnHeaderOpCodeGenType = new System.Windows.Forms.ColumnHeader();
+            this.columnHeaderOpCodeGenMessage = new System.Windows.Forms.ColumnHeader();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -156,26 +171,11 @@
             this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
-            this.labelOpCodes = new System.Windows.Forms.Label();
             this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader9 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader10 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader11 = new System.Windows.Forms.ColumnHeader();
-            this.listViewOpCodeGenWarningsErrors = new System.Windows.Forms.ListView();
-            this.columnHeaderOpCodeGenType = new System.Windows.Forms.ColumnHeader();
-            this.columnHeaderOpCodeGenMessage = new System.Windows.Forms.ColumnHeader();
-            this.labelOpCodeGenWarningsAndErrorsLabel = new System.Windows.Forms.Label();
-            this.labelOpCodeGenProcessReturnValueLabel = new System.Windows.Forms.Label();
-            this.labelOpCodeGenProcessReturnValue = new System.Windows.Forms.Label();
-            this.labelOpCodeGenWarningsLabel = new System.Windows.Forms.Label();
-            this.labelOpCodeGenWarnings = new System.Windows.Forms.Label();
-            this.labelOpCodeGenErrorsLabel = new System.Windows.Forms.Label();
-            this.labelOpCodeGenErrors = new System.Windows.Forms.Label();
-            this.textBoxOpCodeGenMessages = new System.Windows.Forms.TextBox();
-            this.labelOpCodGenMessagesLabel = new System.Windows.Forms.Label();
-            this.labelOpCodesLabel = new System.Windows.Forms.Label();
-            this.textBoxOpCodes = new System.Windows.Forms.TextBox();
             this.tabControlMain.SuspendLayout();
             this.tabPageSource.SuspendLayout();
             this.groupBoxOptions.SuspendLayout();
@@ -391,8 +391,6 @@
             // checkBoxShowMessages
             // 
             this.checkBoxShowMessages.AutoSize = true;
-            this.checkBoxShowMessages.Checked = true;
-            this.checkBoxShowMessages.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxShowMessages.Location = new System.Drawing.Point(6, 65);
             this.checkBoxShowMessages.Name = "checkBoxShowMessages";
             this.checkBoxShowMessages.Size = new System.Drawing.Size(104, 17);
@@ -1157,6 +1155,15 @@
             this.tabPageOptimization.Text = "Optimization";
             this.tabPageOptimization.UseVisualStyleBackColor = true;
             // 
+            // labelOpCodes
+            // 
+            this.labelOpCodes.AutoSize = true;
+            this.labelOpCodes.Location = new System.Drawing.Point(9, 11);
+            this.labelOpCodes.Name = "labelOpCodes";
+            this.labelOpCodes.Size = new System.Drawing.Size(54, 13);
+            this.labelOpCodes.TabIndex = 0;
+            this.labelOpCodes.Text = "Op Codes";
+            // 
             // tabPageCodeGeneration
             // 
             this.tabPageCodeGeneration.Controls.Add(this.textBoxOpCodes);
@@ -1177,6 +1184,127 @@
             this.tabPageCodeGeneration.TabIndex = 5;
             this.tabPageCodeGeneration.Text = "Code Generation";
             this.tabPageCodeGeneration.UseVisualStyleBackColor = true;
+            // 
+            // textBoxOpCodes
+            // 
+            this.textBoxOpCodes.Location = new System.Drawing.Point(9, 33);
+            this.textBoxOpCodes.Multiline = true;
+            this.textBoxOpCodes.Name = "textBoxOpCodes";
+            this.textBoxOpCodes.ReadOnly = true;
+            this.textBoxOpCodes.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBoxOpCodes.Size = new System.Drawing.Size(446, 478);
+            this.textBoxOpCodes.TabIndex = 11;
+            // 
+            // labelOpCodesLabel
+            // 
+            this.labelOpCodesLabel.AutoSize = true;
+            this.labelOpCodesLabel.Location = new System.Drawing.Point(9, 9);
+            this.labelOpCodesLabel.Name = "labelOpCodesLabel";
+            this.labelOpCodesLabel.Size = new System.Drawing.Size(54, 13);
+            this.labelOpCodesLabel.TabIndex = 10;
+            this.labelOpCodesLabel.Text = "Op Codes";
+            // 
+            // labelOpCodGenMessagesLabel
+            // 
+            this.labelOpCodGenMessagesLabel.AutoSize = true;
+            this.labelOpCodGenMessagesLabel.Location = new System.Drawing.Point(471, 106);
+            this.labelOpCodGenMessagesLabel.Name = "labelOpCodGenMessagesLabel";
+            this.labelOpCodGenMessagesLabel.Size = new System.Drawing.Size(55, 13);
+            this.labelOpCodGenMessagesLabel.TabIndex = 9;
+            this.labelOpCodGenMessagesLabel.Text = "Messages";
+            // 
+            // textBoxOpCodeGenMessages
+            // 
+            this.textBoxOpCodeGenMessages.Location = new System.Drawing.Point(474, 132);
+            this.textBoxOpCodeGenMessages.Multiline = true;
+            this.textBoxOpCodeGenMessages.Name = "textBoxOpCodeGenMessages";
+            this.textBoxOpCodeGenMessages.ReadOnly = true;
+            this.textBoxOpCodeGenMessages.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBoxOpCodeGenMessages.Size = new System.Drawing.Size(299, 379);
+            this.textBoxOpCodeGenMessages.TabIndex = 8;
+            // 
+            // labelOpCodeGenErrors
+            // 
+            this.labelOpCodeGenErrors.AutoSize = true;
+            this.labelOpCodeGenErrors.Location = new System.Drawing.Point(621, 75);
+            this.labelOpCodeGenErrors.Name = "labelOpCodeGenErrors";
+            this.labelOpCodeGenErrors.Size = new System.Drawing.Size(19, 13);
+            this.labelOpCodeGenErrors.TabIndex = 7;
+            this.labelOpCodeGenErrors.Text = "00";
+            // 
+            // labelOpCodeGenErrorsLabel
+            // 
+            this.labelOpCodeGenErrorsLabel.AutoSize = true;
+            this.labelOpCodeGenErrorsLabel.Location = new System.Drawing.Point(575, 75);
+            this.labelOpCodeGenErrorsLabel.Name = "labelOpCodeGenErrorsLabel";
+            this.labelOpCodeGenErrorsLabel.Size = new System.Drawing.Size(40, 13);
+            this.labelOpCodeGenErrorsLabel.TabIndex = 6;
+            this.labelOpCodeGenErrorsLabel.Text = "Errors :";
+            // 
+            // labelOpCodeGenWarnings
+            // 
+            this.labelOpCodeGenWarnings.AutoSize = true;
+            this.labelOpCodeGenWarnings.Location = new System.Drawing.Point(535, 75);
+            this.labelOpCodeGenWarnings.Name = "labelOpCodeGenWarnings";
+            this.labelOpCodeGenWarnings.Size = new System.Drawing.Size(19, 13);
+            this.labelOpCodeGenWarnings.TabIndex = 5;
+            this.labelOpCodeGenWarnings.Text = "00";
+            // 
+            // labelOpCodeGenWarningsLabel
+            // 
+            this.labelOpCodeGenWarningsLabel.AutoSize = true;
+            this.labelOpCodeGenWarningsLabel.Location = new System.Drawing.Point(471, 75);
+            this.labelOpCodeGenWarningsLabel.Name = "labelOpCodeGenWarningsLabel";
+            this.labelOpCodeGenWarningsLabel.Size = new System.Drawing.Size(58, 13);
+            this.labelOpCodeGenWarningsLabel.TabIndex = 4;
+            this.labelOpCodeGenWarningsLabel.Text = "Warnings :";
+            // 
+            // labelOpCodeGenProcessReturnValue
+            // 
+            this.labelOpCodeGenProcessReturnValue.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.labelOpCodeGenProcessReturnValue.Location = new System.Drawing.Point(474, 33);
+            this.labelOpCodeGenProcessReturnValue.Name = "labelOpCodeGenProcessReturnValue";
+            this.labelOpCodeGenProcessReturnValue.Size = new System.Drawing.Size(166, 32);
+            this.labelOpCodeGenProcessReturnValue.TabIndex = 3;
+            // 
+            // labelOpCodeGenProcessReturnValueLabel
+            // 
+            this.labelOpCodeGenProcessReturnValueLabel.AutoSize = true;
+            this.labelOpCodeGenProcessReturnValueLabel.Location = new System.Drawing.Point(471, 9);
+            this.labelOpCodeGenProcessReturnValueLabel.Name = "labelOpCodeGenProcessReturnValueLabel";
+            this.labelOpCodeGenProcessReturnValueLabel.Size = new System.Drawing.Size(169, 13);
+            this.labelOpCodeGenProcessReturnValueLabel.TabIndex = 2;
+            this.labelOpCodeGenProcessReturnValueLabel.Text = "Op Code Generation Return Value";
+            // 
+            // labelOpCodeGenWarningsAndErrorsLabel
+            // 
+            this.labelOpCodeGenWarningsAndErrorsLabel.AutoSize = true;
+            this.labelOpCodeGenWarningsAndErrorsLabel.Location = new System.Drawing.Point(9, 524);
+            this.labelOpCodeGenWarningsAndErrorsLabel.Name = "labelOpCodeGenWarningsAndErrorsLabel";
+            this.labelOpCodeGenWarningsAndErrorsLabel.Size = new System.Drawing.Size(104, 13);
+            this.labelOpCodeGenWarningsAndErrorsLabel.TabIndex = 1;
+            this.labelOpCodeGenWarningsAndErrorsLabel.Text = "Warnings And Errors";
+            // 
+            // listViewOpCodeGenWarningsErrors
+            // 
+            this.listViewOpCodeGenWarningsErrors.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeaderOpCodeGenType,
+            this.columnHeaderOpCodeGenMessage});
+            this.listViewOpCodeGenWarningsErrors.Location = new System.Drawing.Point(9, 549);
+            this.listViewOpCodeGenWarningsErrors.Name = "listViewOpCodeGenWarningsErrors";
+            this.listViewOpCodeGenWarningsErrors.Size = new System.Drawing.Size(764, 127);
+            this.listViewOpCodeGenWarningsErrors.TabIndex = 0;
+            this.listViewOpCodeGenWarningsErrors.UseCompatibleStateImageBehavior = false;
+            this.listViewOpCodeGenWarningsErrors.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeaderOpCodeGenType
+            // 
+            this.columnHeaderOpCodeGenType.Text = "Type";
+            // 
+            // columnHeaderOpCodeGenMessage
+            // 
+            this.columnHeaderOpCodeGenMessage.Text = "Message";
+            this.columnHeaderOpCodeGenMessage.Width = 700;
             // 
             // menuStrip1
             // 
@@ -1243,8 +1371,9 @@
             // compileSourceToolStripMenuItem
             // 
             this.compileSourceToolStripMenuItem.Name = "compileSourceToolStripMenuItem";
-            this.compileSourceToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this.compileSourceToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.compileSourceToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift)
+                        | System.Windows.Forms.Keys.C)));
+            this.compileSourceToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
             this.compileSourceToolStripMenuItem.Text = "Compile Source";
             this.compileSourceToolStripMenuItem.Click += new System.EventHandler(this.compileSourceToolStripMenuItem_Click);
             // 
@@ -1252,7 +1381,7 @@
             // 
             this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
             this.resetToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-            this.resetToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.resetToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
             this.resetToolStripMenuItem.Text = "Reset";
             this.resetToolStripMenuItem.Click += new System.EventHandler(this.resetToolStripMenuItem_Click);
             // 
@@ -1339,15 +1468,6 @@
             this.columnHeader6.Text = "Message";
             this.columnHeader6.Width = 807;
             // 
-            // labelOpCodes
-            // 
-            this.labelOpCodes.AutoSize = true;
-            this.labelOpCodes.Location = new System.Drawing.Point(9, 11);
-            this.labelOpCodes.Name = "labelOpCodes";
-            this.labelOpCodes.Size = new System.Drawing.Size(54, 13);
-            this.labelOpCodes.TabIndex = 0;
-            this.labelOpCodes.Text = "Op Codes";
-            // 
             // columnHeader7
             // 
             this.columnHeader7.Text = "Type";
@@ -1369,127 +1489,6 @@
             // 
             this.columnHeader11.Text = "Message";
             this.columnHeader11.Width = 807;
-            // 
-            // listViewOpCodeGenWarningsErrors
-            // 
-            this.listViewOpCodeGenWarningsErrors.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeaderOpCodeGenType,
-            this.columnHeaderOpCodeGenMessage});
-            this.listViewOpCodeGenWarningsErrors.Location = new System.Drawing.Point(9, 549);
-            this.listViewOpCodeGenWarningsErrors.Name = "listViewOpCodeGenWarningsErrors";
-            this.listViewOpCodeGenWarningsErrors.Size = new System.Drawing.Size(764, 127);
-            this.listViewOpCodeGenWarningsErrors.TabIndex = 0;
-            this.listViewOpCodeGenWarningsErrors.UseCompatibleStateImageBehavior = false;
-            this.listViewOpCodeGenWarningsErrors.View = System.Windows.Forms.View.Details;
-            // 
-            // columnHeaderOpCodeGenType
-            // 
-            this.columnHeaderOpCodeGenType.Text = "Type";
-            // 
-            // columnHeaderOpCodeGenMessage
-            // 
-            this.columnHeaderOpCodeGenMessage.Text = "Message";
-            this.columnHeaderOpCodeGenMessage.Width = 700;
-            // 
-            // labelOpCodeGenWarningsAndErrorsLabel
-            // 
-            this.labelOpCodeGenWarningsAndErrorsLabel.AutoSize = true;
-            this.labelOpCodeGenWarningsAndErrorsLabel.Location = new System.Drawing.Point(9, 524);
-            this.labelOpCodeGenWarningsAndErrorsLabel.Name = "labelOpCodeGenWarningsAndErrorsLabel";
-            this.labelOpCodeGenWarningsAndErrorsLabel.Size = new System.Drawing.Size(104, 13);
-            this.labelOpCodeGenWarningsAndErrorsLabel.TabIndex = 1;
-            this.labelOpCodeGenWarningsAndErrorsLabel.Text = "Warnings And Errors";
-            // 
-            // labelOpCodeGenProcessReturnValueLabel
-            // 
-            this.labelOpCodeGenProcessReturnValueLabel.AutoSize = true;
-            this.labelOpCodeGenProcessReturnValueLabel.Location = new System.Drawing.Point(471, 9);
-            this.labelOpCodeGenProcessReturnValueLabel.Name = "labelOpCodeGenProcessReturnValueLabel";
-            this.labelOpCodeGenProcessReturnValueLabel.Size = new System.Drawing.Size(169, 13);
-            this.labelOpCodeGenProcessReturnValueLabel.TabIndex = 2;
-            this.labelOpCodeGenProcessReturnValueLabel.Text = "Op Code Generation Return Value";
-            // 
-            // labelOpCodeGenProcessReturnValue
-            // 
-            this.labelOpCodeGenProcessReturnValue.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.labelOpCodeGenProcessReturnValue.Location = new System.Drawing.Point(474, 33);
-            this.labelOpCodeGenProcessReturnValue.Name = "labelOpCodeGenProcessReturnValue";
-            this.labelOpCodeGenProcessReturnValue.Size = new System.Drawing.Size(166, 32);
-            this.labelOpCodeGenProcessReturnValue.TabIndex = 3;
-            // 
-            // labelOpCodeGenWarningsLabel
-            // 
-            this.labelOpCodeGenWarningsLabel.AutoSize = true;
-            this.labelOpCodeGenWarningsLabel.Location = new System.Drawing.Point(471, 75);
-            this.labelOpCodeGenWarningsLabel.Name = "labelOpCodeGenWarningsLabel";
-            this.labelOpCodeGenWarningsLabel.Size = new System.Drawing.Size(58, 13);
-            this.labelOpCodeGenWarningsLabel.TabIndex = 4;
-            this.labelOpCodeGenWarningsLabel.Text = "Warnings :";
-            // 
-            // labelOpCodeGenWarnings
-            // 
-            this.labelOpCodeGenWarnings.AutoSize = true;
-            this.labelOpCodeGenWarnings.Location = new System.Drawing.Point(535, 75);
-            this.labelOpCodeGenWarnings.Name = "labelOpCodeGenWarnings";
-            this.labelOpCodeGenWarnings.Size = new System.Drawing.Size(19, 13);
-            this.labelOpCodeGenWarnings.TabIndex = 5;
-            this.labelOpCodeGenWarnings.Text = "00";
-            // 
-            // labelOpCodeGenErrorsLabel
-            // 
-            this.labelOpCodeGenErrorsLabel.AutoSize = true;
-            this.labelOpCodeGenErrorsLabel.Location = new System.Drawing.Point(575, 75);
-            this.labelOpCodeGenErrorsLabel.Name = "labelOpCodeGenErrorsLabel";
-            this.labelOpCodeGenErrorsLabel.Size = new System.Drawing.Size(40, 13);
-            this.labelOpCodeGenErrorsLabel.TabIndex = 6;
-            this.labelOpCodeGenErrorsLabel.Text = "Errors :";
-            // 
-            // labelOpCodeGenErrors
-            // 
-            this.labelOpCodeGenErrors.AutoSize = true;
-            this.labelOpCodeGenErrors.Location = new System.Drawing.Point(621, 75);
-            this.labelOpCodeGenErrors.Name = "labelOpCodeGenErrors";
-            this.labelOpCodeGenErrors.Size = new System.Drawing.Size(19, 13);
-            this.labelOpCodeGenErrors.TabIndex = 7;
-            this.labelOpCodeGenErrors.Text = "00";
-            // 
-            // textBoxOpCodeGenMessages
-            // 
-            this.textBoxOpCodeGenMessages.Location = new System.Drawing.Point(474, 132);
-            this.textBoxOpCodeGenMessages.Multiline = true;
-            this.textBoxOpCodeGenMessages.Name = "textBoxOpCodeGenMessages";
-            this.textBoxOpCodeGenMessages.ReadOnly = true;
-            this.textBoxOpCodeGenMessages.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxOpCodeGenMessages.Size = new System.Drawing.Size(299, 379);
-            this.textBoxOpCodeGenMessages.TabIndex = 8;
-            // 
-            // labelOpCodGenMessagesLabel
-            // 
-            this.labelOpCodGenMessagesLabel.AutoSize = true;
-            this.labelOpCodGenMessagesLabel.Location = new System.Drawing.Point(471, 106);
-            this.labelOpCodGenMessagesLabel.Name = "labelOpCodGenMessagesLabel";
-            this.labelOpCodGenMessagesLabel.Size = new System.Drawing.Size(55, 13);
-            this.labelOpCodGenMessagesLabel.TabIndex = 9;
-            this.labelOpCodGenMessagesLabel.Text = "Messages";
-            // 
-            // labelOpCodesLabel
-            // 
-            this.labelOpCodesLabel.AutoSize = true;
-            this.labelOpCodesLabel.Location = new System.Drawing.Point(9, 9);
-            this.labelOpCodesLabel.Name = "labelOpCodesLabel";
-            this.labelOpCodesLabel.Size = new System.Drawing.Size(54, 13);
-            this.labelOpCodesLabel.TabIndex = 10;
-            this.labelOpCodesLabel.Text = "Op Codes";
-            // 
-            // textBoxOpCodes
-            // 
-            this.textBoxOpCodes.Location = new System.Drawing.Point(9, 33);
-            this.textBoxOpCodes.Multiline = true;
-            this.textBoxOpCodes.Name = "textBoxOpCodes";
-            this.textBoxOpCodes.ReadOnly = true;
-            this.textBoxOpCodes.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxOpCodes.Size = new System.Drawing.Size(446, 478);
-            this.textBoxOpCodes.TabIndex = 11;
             // 
             // CompilerInterfaceForm
             // 

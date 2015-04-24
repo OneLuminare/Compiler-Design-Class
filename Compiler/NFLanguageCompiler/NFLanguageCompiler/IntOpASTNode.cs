@@ -100,5 +100,76 @@ namespace NFLanguageCompiler
         }
 
         #endregion
+
+        #region ASTNode Overides
+
+        // Gens opp codes for int operation add. 
+        // Results are in the accum.
+        //
+        // Returns: Number of bytes generated.
+        public override int GenOpCodes(OpCodeGenParam param)
+        {
+            // Inits
+            VarTableEntry varEntry = null;
+            int bytes = 0;
+            int bytes2 = 0;
+
+            // Load accummulator with constant
+            param.opCodes.AppendFormat("A9 0{0} ", intVal.Value);
+
+            // Get avaialbe stack location
+            varEntry = param.tables.CreateTempVarTableEntry();
+
+            // Set in use flag
+            varEntry.InUse = true;
+
+            // Increment var in use flag
+            param.tables.IncVarIsUseCount();
+
+            // Store accumulator in stack location
+            param.opCodes.AppendFormat("8D V{0} 00 ", varEntry.VarID);
+
+            // Increment bytes
+            bytes += 5;
+
+            // Update bytes
+            param.curByte += bytes;
+         
+            // Check if expr is not null
+            if (expr != null)
+            {
+                // Gen op codes for expr
+                bytes2 += expr.GenOpCodes(param);
+            }
+            // Else expr is null
+            else
+            {
+                // Move 0 to accumulator
+                param.opCodes.Append("A9 00 ");
+                
+                // Increment bytes
+                bytes2 += 2;
+            }
+
+            // Add temp var to accumulator
+            param.opCodes.AppendFormat("6D V{0} 00 ", varEntry.VarID);
+
+            // Increment bytes
+            bytes2 += 3;
+
+            // Set temp var not in use
+            varEntry.InUse = false;
+
+            // Decrement counter
+            param.tables.DecVarInUseCount();
+
+            // Update total bytes
+            param.curByte += bytes2;
+
+            // Return bytes added
+            return bytes + bytes2;
+        }
+
+        #endregion
     }
 }

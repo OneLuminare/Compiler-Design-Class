@@ -102,5 +102,129 @@ namespace NFLanguageCompiler
 
         #endregion
 
+        #region ASTNode Overides
+
+        // Gens op codes for comparision of boolean expr == or !=,
+        // and puts results in accum. 1 for true, 0 for false.
+        //
+        // Returns: Number of bytes generated.
+        public override int GenOpCodes(OpCodeGenParam param)
+        {
+            // Inits
+            VarTableEntry varEntryTemp = null;
+            int bytes = 0;
+            int bytes2 = 0;
+
+            // ### Checking Expr 1 ### //
+
+            // Gen op codes for expr one
+            bytes += exprOne.GenOpCodes(param);
+
+            // ### Check if not only bool val, as if it was  ### //
+            // ### the value is just left in the accumulator ### //
+
+            // Check if expr 2 is not null
+            if (exprTwo != null)
+            {
+                // ### Add acc results from expr 1 ### //
+
+                // Add temp var for expr one results
+                varEntryTemp = param.tables.CreateTempVarTableEntry();
+
+                // Set in use
+                varEntryTemp.InUse = true;
+
+                // Increment var in use
+                param.tables.IncVarIsUseCount();
+
+                // Move value of accumulator to temp var
+                param.opCodes.AppendFormat("8D V{0} 00 ",varEntryTemp.VarID); 
+
+                // ### Generate expr 2 value and put in accumm ### //
+
+                // Update bytes
+                param.curByte += bytes;
+
+                // Gen op codes for expr two
+                bytes2 += exprTwo.GenOpCodes(param);
+
+                // ### Compare values of temp var (expr 1), and accum (expr2) ### //
+                // ### Put results in accumulator.                            ### //
+
+                // Load temp value from first expr into reg x
+                param.opCodes.AppendFormat("AE V{0} 00 ", varEntryTemp.VarID);
+
+                // Move accum into same temp val
+                param.opCodes.AppendFormat("8D V{0} 00 ", varEntryTemp.VarID);
+
+                // Increment bytes
+                bytes2 += 9;
+
+                // Check if equals
+                if (value == BOOLOP_TYPE.BOOLOP_EQUALS)
+                {
+                    // Set false in accum
+                    param.opCodes.Append("A9 00 ");
+
+                    // Compare x to temp var
+                    param.opCodes.AppendFormat("EC V{0} 00 ", varEntryTemp.VarID);
+
+                    // Branch 3 bytes if equl
+                    param.opCodes.Append("D0 03 ");
+
+                    // Set true in accum (skipped on not equals)
+                    param.opCodes.Append("A9 01 ");
+
+                    // Increment bytes
+                    bytes2 += 9;
+                }
+                // Else not equals
+                else
+                {
+                    // Compare x to accumlator
+                    param.opCodes.AppendFormat("EC V{0} 00 ", varEntryTemp.VarID);
+
+                    // Branch 14 (0E) bytes if not equl
+                    param.opCodes.Append("D0 0E ");
+
+                    // Set falst to accu 
+                    param.opCodes.Append("A9 00 ");
+
+                    // Load x with last temp value
+                    param.opCodes.AppendFormat("AE V{0} 00 ", varEntryTemp.VarID);
+
+                    // Increment this temp value
+                    param.opCodes.AppendFormat("EE V{0} 00 ", varEntryTemp.VarID);
+
+                    // Compare x to accumlator (nowing it will branch)
+                    // this is a forced jump
+                    param.opCodes.AppendFormat("EC V{0} 00 ", varEntryTemp.VarID);
+
+                    // Branch 3 bytes (a forced jump)
+                    param.opCodes.Append("D0 03 ");
+
+                    // Set true to accumlator (only reached by first branch)
+                    param.opCodes.Append("A9 01 ");
+
+                    // Increment bytes
+                    bytes2 += 20;
+                }
+
+                // Reset in use flag for temp var
+                varEntryTemp.InUse = false;
+
+                // Decremeent in use flag
+                param.tables.DecVarInUseCount();           
+            }
+
+            // Update total bytes
+            param.curByte += bytes2;
+
+            // Return number of bytes 
+            return bytes + bytes2;
+        }
+
+        #endregion
+
     }
 }

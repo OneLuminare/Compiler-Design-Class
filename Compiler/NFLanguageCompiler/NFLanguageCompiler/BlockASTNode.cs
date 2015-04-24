@@ -61,5 +61,86 @@ namespace NFLanguageCompiler
         }
 
         #endregion
+
+        // Gens op codes for all statments in block.
+        // Manges which symbol table is current.
+        // Keeps table of start and end of blocks.
+        // All vars allocated on stack in this block
+        // are set to not in use.
+        //
+        // Returns: Number of bytes generated.
+        public override int GenOpCodes(OpCodeGenParam param)
+        {
+            // Inits
+            int nextSymbIndex = 0;
+            int bytesAdded = 0;
+            ASTNode curNode = null;
+            BlockSizeTableEntry entry = null;
+            VarTableEntry varEntry = null;
+            SymbolHashTable curSymbTable = null;
+            SymbolTableEntry[] symbEntries = null;
+
+            // Check if not root symbol table
+            if (param.curSymbTable.Parent != null)
+            {
+                // Move into next symbol table child
+                param.curSymbTable = param.curSymbTable.GetChild(param.curSymbTableIndex);
+
+                // Record last symb index
+                nextSymbIndex = param.curSymbTableIndex + 1;
+
+                // Set current symbol table index to 0
+                param.curSymbTableIndex = 0;
+            }
+
+            // Record current symbol table
+            curSymbTable = param.curSymbTable.Data;
+
+            // Add new entry to block size table
+            entry = new BlockSizeTableEntry(param.curBlockID, param.curByte);
+            param.tables.AddBlockSizeTableEntry(entry);
+            param.curBlockID++;
+
+            // Cycle through stmts calling their gen op code
+            curNode = this.leftMostChild;
+            while (curNode != null)
+            {
+                // Call child statment gen op code method
+                bytesAdded += curNode.GenOpCodes(param);
+
+                // Get next symbling
+                curNode = curNode.RightSibling;
+            }
+
+            // Reset cur symbol table index
+            param.curSymbTableIndex = nextSymbIndex;
+
+            // Set end byte of block
+            entry.EndByte = entry.StartByte + bytesAdded;
+
+            // Cycle through symbol table
+            symbEntries = curSymbTable.GetAllItems();
+            for (int i = 0; i < symbEntries.Length; i++)
+            {
+                // Get item from temp var table
+                varEntry = param.tables.GetVarTableEntry(symbEntries[i].EntryID);
+
+                // Check if exists
+                if (varEntry != null)
+                {
+                    // Set not in use flag
+                    varEntry.InUse = false;
+
+                    // Decrement var in use count
+                    param.tables.DecVarInUseCount();
+                }
+            }
+
+            // Update bytes added
+            param.curByte += bytesAdded;
+
+            // Return number of bytes 
+ 	        return bytesAdded;
+        }
     }
 }

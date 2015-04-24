@@ -82,5 +82,31 @@ namespace NFLanguageCompiler
         }
 
         #endregion
+
+        #region ASTNode Overides
+
+        // Gens op codes to create string on heap,
+        // and load address in accumulator.
+        //
+        // Returns: Number of bytes generated.
+        public override int GenOpCodes(OpCodeGenParam param)
+        {
+            // Inits
+            HeapTableEntry heapEntry = null; ;
+
+            // Gen op codes for loading string
+            heapEntry = param.GenOpCodes_LoadString(Value);
+
+            // Load accumulator with heap address
+            param.opCodes.AppendFormat("A9 H{0} ", heapEntry.HeapID);
+
+            // Increment bytes
+            param.curByte += 2;
+
+            // Return cur num bytes
+            return param.curByte;
+        }
+
+        #endregion
     }
 }

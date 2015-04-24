@@ -72,5 +72,38 @@ namespace NFLanguageCompiler
         }
 
         #endregion
+
+        #region ASTNode Overrides
+
+        // Generates op codes for expr, which is put in accum.
+        // This value is then loaded into var's value.
+        //
+        // Returns: Number of op code bytes added.
+        public override int GenOpCodes(OpCodeGenParam param)
+        {
+            // Inits
+            VarTableEntry varEntry = null;
+            int bytes = 0;
+
+            // Gen op codes for expr , value in accum
+            bytes += expr.GenOpCodes(param);
+            
+            // Retreive temp placehold from var table
+            varEntry = param.tables.GetVarTableEntry(id.SymbolTableEntry.EntryID);
+
+            // Move accumlator to memory
+            param.opCodes.AppendFormat("8D V{0} 00 ", varEntry.VarID);
+
+            // Increment bytes
+            bytes += 3;
+
+            // Update total bytes
+            param.curByte += bytes;
+
+            // Return bytesa added
+            return bytes;
+        }
+
+        #endregion
     }
 }

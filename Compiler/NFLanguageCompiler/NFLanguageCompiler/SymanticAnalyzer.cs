@@ -21,6 +21,7 @@ namespace NFLanguageCompiler
         DynamicBranchTreeNode<SymbolHashTable> rootSymbolTableNode;
         DynamicBranchTreeNode<SymbolHashTable> curSymbolTableNode;
         BlockASTNode rootASTNode;
+        int nextSymbolTableID;
 
         #endregion
 
@@ -74,6 +75,7 @@ namespace NFLanguageCompiler
            rootSymbolTableNode = new DynamicBranchTreeNode<SymbolHashTable>(new SymbolHashTable());
            curSymbolTableNode = null;
            rootASTNode = new BlockASTNode();
+           nextSymbolTableID = 0;
 
             WarningCount = 0;
             ErrorCount = 0;
@@ -135,7 +137,8 @@ namespace NFLanguageCompiler
         // Recursive check vars method. Checks var decs, type, and scope.
         // 
         // Returns: Current symbol table node.
-        private DynamicBranchTreeNode<SymbolHashTable> CheckVarsRecursive(ASTNode curASTNode, DynamicBranchTreeNode<SymbolHashTable> curSymbolTable, int blockStmtCount, int totalBlockStmts)
+        private DynamicBranchTreeNode<SymbolHashTable> CheckVarsRecursive(ASTNode curASTNode
+            , DynamicBranchTreeNode<SymbolHashTable> curSymbolTable, int blockStmtCount, int totalBlockStmts)
         {
             // Inits
             DynamicBranchTreeNode<SymbolHashTable> newSymbolTable = null;
@@ -206,7 +209,12 @@ namespace NFLanguageCompiler
                         entry.DataType = DataType.DT_INT;
                     else if (varDecASTNode.Type.Value == VAR_TYPE.VARTYPE_STRING)
                         entry.DataType = DataType.DT_STRING;
+
                     entry.ID = varDecASTNode.Id.Value;
+
+                    // Assign a reference id and set next
+                    entry.EntryID = nextSymbolTableID;
+                    nextSymbolTableID++;
 
                     // Check if exists in symbol table
                     found = curSymbolTable.Data.CheckCollision(entry.ID);
@@ -217,6 +225,9 @@ namespace NFLanguageCompiler
                     if (!found)
                     {
                         curSymbolTable.Data.AddItem(entry);
+
+                        // Set pointer to symbol table entry on ID ast node
+                        varDecASTNode.Id.SymbolTableEntry = entry;
                     }
                     // Else send error as their was a collision
                     else
@@ -255,11 +266,14 @@ namespace NFLanguageCompiler
                     {
                         line = assignmentASTNode.StartToken.Line;
                         col = assignmentASTNode.StartToken.Column;
-                        SendError(new Message(String.Format("Undeclared variable. Variable {0} on line {1} column {2} was never declared.", entry.ID, line, col), line, col, GrammarProcess.GP_ASSIGNMENTSTATEMENT, SystemType.ST_SYMANTICS));
+                        SendError(new Message(String.Format("Undeclared variable. Variable {0} on line {1} column {2} was never declared.", assignmentASTNode.Id.Value, line, col), line, col, GrammarProcess.GP_ASSIGNMENTSTATEMENT, SystemType.ST_SYMANTICS));
                         error = true;
                     }
                     else
                     {
+                        // Set pointer to symbol table entry on ID ast node
+                        assignmentASTNode.Id.SymbolTableEntry = entry;
+
                         // Check if int expression is int expr
                         if (assignmentASTNode.Expr is IntExprASTNode)
                         {
@@ -322,6 +336,9 @@ namespace NFLanguageCompiler
                             // Check if entry was found in symbol table
                             if (found)
                             {
+                                // Set pointer to symbol table entry on ID ast node
+                                idASTNode.SymbolTableEntry = entry2;
+
                                 // send warning if using var before initialized
                                 if (!entry2.Initialized)
                                 {
@@ -396,6 +413,9 @@ namespace NFLanguageCompiler
                                 // Check if found
                                 if (found)
                                 {
+                                    // Set pointer to symbol table entry on ID ast node
+                                    idASTNode.SymbolTableEntry = entry;
+
                                     // send warning if using var before initialized
                                     if (!entry.Initialized)
                                     {
@@ -460,6 +480,9 @@ namespace NFLanguageCompiler
                                 // Check if found
                                 if (found)
                                 {
+                                    // Set pointer to symbol table entry on ID ast node
+                                    idASTNode.SymbolTableEntry = entry;
+
                                     // send warning if using var before initialized
                                     if (!entry.Initialized)
                                     {
@@ -524,6 +547,9 @@ namespace NFLanguageCompiler
                                 // Check if found
                                 if (found)
                                 {
+                                    // Set pointer to symbol table entry on ID ast node
+                                    idASTNode.SymbolTableEntry = entry;
+
                                     // send warning if using var before initialized
                                     if (!entry.Initialized)
                                     {
@@ -582,6 +608,9 @@ namespace NFLanguageCompiler
                         // Check if var found
                         if (found)
                         {
+                            // Set pointer to symbol table entry on ID ast node
+                            idASTNode.SymbolTableEntry = entry;
+
                             // send warning if using var before initialized
                             if (!entry.Initialized)
                             {
@@ -613,6 +642,9 @@ namespace NFLanguageCompiler
                                 // If found check if types are same
                                 if (found)
                                 {
+                                    // Set pointer to symbol table entry on ID ast node
+                                    idASTNode2.SymbolTableEntry = entry2;
+
                                     // send warning if using var before initialized
                                     if (!entry2.Initialized)
                                     {
@@ -687,6 +719,9 @@ namespace NFLanguageCompiler
                                 }
                                 else
                                 {
+                                    // Set pointer to symbol table entry on ID ast node
+                                    idASTNode2.SymbolTableEntry = entry2;
+
                                     // send warning if using var before initialized
                                     if (!entry2.Initialized)
                                     {
@@ -730,6 +765,9 @@ namespace NFLanguageCompiler
                         // Check if declared
                         if (found)
                         {
+                            // Set pointer to symbol table entry on ID ast node
+                            idASTNode.SymbolTableEntry = entry;
+
                             // send warning if using var before initialized
                             if (!entry.Initialized)
                             {
@@ -802,6 +840,9 @@ namespace NFLanguageCompiler
                         }
                         else
                         {
+                            // Set pointer to symbol table entry on ID ast node
+                            idASTNode.SymbolTableEntry = entry;
+
                             // send warning if using var before initialized
                             if (!entry.Initialized)
                             {

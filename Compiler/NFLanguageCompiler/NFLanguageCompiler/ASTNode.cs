@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 
@@ -220,5 +221,34 @@ namespace NFLanguageCompiler
         #endregion
 
         #endregion
+
+        #region Virtual Methods
+
+        // Virtual method for generating opcodes.
+        // ASTNode types that will gen code will implment this function.
+        // Returns number of bytes added to source.
+        //
+        // Returns: Number of bytes generated.
+        public virtual int GenOpCodes(OpCodeGenParam param)
+        {
+            return 0;
+        }
+
+        #endregion
+        /*
+        #region ASTNode Overides
+
+        // Virtual method for generating opcodes.
+        // ASTNode types that will gen code will implment this function.
+        // Returns number of bytes added to source.
+        //
+        // Returns: Number of bytes generated.
+        public override int GenOpCodes(OpCodeGenParam param)
+        {
+            return 0;
+        }
+
+        #endregion
+         * */
     }
 }

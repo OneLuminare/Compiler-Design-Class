@@ -13,6 +13,7 @@ namespace NFLanguageCompiler
     {
         #region Data Members
 
+        private int entryID;
         private char id;
         private DataType type;
         private int memoryLocation;
@@ -133,6 +134,13 @@ namespace NFLanguageCompiler
             set { initialized = value; }
         }
 
+        // Prop for entry ID
+        public int EntryID
+        {
+            get { return entryID; }
+            set { entryID = value; }
+        }
+
         #endregion
 
         #region Constructors
@@ -146,28 +154,29 @@ namespace NFLanguageCompiler
             stringValue = String.Empty;
             memoryLocation = 0;
             initialized = false;
+            entryID = 0;
         }
 
         //Set char value constructor
         public SymbolTableEntry(char id, DataType type, int memoryLocation, char value)
-            : this( id,type,memoryLocation,(byte)value,String.Empty,false)
+            : this( id,type,memoryLocation,(byte)value,String.Empty,false,0)
         {
         }
 
         //Set int value constructor
         public SymbolTableEntry(char id, DataType type, int memoryLocation, int value)
-            : this(id, type, memoryLocation, (byte)value, String.Empty,false)
+            : this(id, type, memoryLocation, (byte)value, String.Empty,false,0)
         {
         }
 
         //Set string value constructor
         public SymbolTableEntry(char id, DataType type, int memoryLocation, String value)
-            : this(id, type, memoryLocation, (byte)0, value, false)
+            : this(id, type, memoryLocation, (byte)0, value, false,0)
         {
         }
 
         //Master set constructor
-        public SymbolTableEntry(char id, DataType type, int memoryLocation, byte byteValue, String stringValue,bool init)
+        public SymbolTableEntry(char id, DataType type, int memoryLocation, byte byteValue, String stringValue,bool init,int entryID)
         {
             this.id = id;
             this.type = type;
@@ -175,6 +184,7 @@ namespace NFLanguageCompiler
             this.stringValue = stringValue;
             this.memoryLocation = memoryLocation;
             this.initialized = init;
+            this.entryID = entryID;
         }
 
         //Deserialiaation constructor
@@ -186,6 +196,7 @@ namespace NFLanguageCompiler
             byteValue = (byte)info.GetValue("Byte Value", typeof(byte));
             stringValue = (String)info.GetValue("String Value", typeof(String));
             initialized = (bool)info.GetValue("Initialized", typeof(bool));
+            entryID = (int)info.GetValue("EntryID", typeof(int));
         }
 
         #endregion
@@ -198,7 +209,7 @@ namespace NFLanguageCompiler
 
         public override string ToString()
         {
-            return String.Format("ID: {0} Type: {1} Byte Value: {2} String Value: \"{3}\" Memory Location: {4} Initialized: {5}",id,type,byteValue,stringValue,memoryLocation,initialized);
+            return String.Format("ID: {0} Entry ID: {1} Type: {2} Byte Value: {3} String Value: \"{4}\" Memory Location: {5} Initialized: {6}",id,entryID,type,byteValue,stringValue,memoryLocation,initialized);
         }
 
         #endregion
@@ -215,6 +226,7 @@ namespace NFLanguageCompiler
             info.AddValue("Byte Value", byteValue, typeof(byte));
             info.AddValue("String Value", stringValue, typeof(String));
             info.AddValue("Initialized", initialized, typeof(bool));
+            info.AddValue("EntryID", entryID, typeof(int));
         }
 
         #endregion

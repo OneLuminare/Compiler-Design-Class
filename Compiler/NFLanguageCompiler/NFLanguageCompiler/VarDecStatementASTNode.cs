@@ -72,5 +72,42 @@ namespace NFLanguageCompiler
         }
 
         #endregion
+
+        #region ASTNode Overides
+
+        // Gens code that allocates 00 to a location in memory,
+        // tracked in var table.
+        //
+        // Returns: Number of bytes generated.
+        public override int GenOpCodes(OpCodeGenParam param)
+        {
+            // Inits
+            VarTableEntry varEntry = null;
+
+            // Create var table entry for this 
+            varEntry = param.tables.CreateVarTableEntry(id.SymbolTableEntry);
+
+            // Increment current vars in use
+            param.tables.IncVarIsUseCount();
+
+            // Check if entry found incase of some wierd error
+            if (varEntry != null)
+            {
+                // Load accumlator with 0
+                param.opCodes.Append("A9 00 ");
+
+                // Copy to temp location in memory
+                param.opCodes.AppendFormat("8D V{0} 00 ",varEntry.VarID);
+
+                // Add number of bytes
+                param.curByte += 5;
+            }
+
+            // Return cur bytes
+            return 5;
+        }
+
+        #endregion
+
     }
 }

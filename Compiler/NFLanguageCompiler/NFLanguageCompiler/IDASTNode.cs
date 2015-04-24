@@ -15,6 +15,7 @@ namespace NFLanguageCompiler
         #region Data Members
 
         private char value;
+        private SymbolTableEntry symbEntry;
 
         #endregion
 
@@ -32,6 +33,12 @@ namespace NFLanguageCompiler
             }
         }
 
+        public SymbolTableEntry SymbolTableEntry
+        {
+            get { return symbEntry; }
+            set { symbEntry = value; }
+        }
+
         #endregion
 
         #region Constructors
@@ -42,6 +49,7 @@ namespace NFLanguageCompiler
         {
             
             value = ' ';
+            symbEntry = null;
         }
 
         // Set constructor.
@@ -65,5 +73,36 @@ namespace NFLanguageCompiler
         }
 
         #endregion
+
+        #region ASTNode Overides
+
+        // Gens op codes to find address from var table,
+        // and store value in accumulator.
+        //
+        // Returns: Number of bytes generated.
+        public override int GenOpCodes(OpCodeGenParam param)
+        {
+            // Inits
+            VarTableEntry varEntry = null;
+
+            // Find var in var table
+            varEntry = param.tables.GetVarTableEntry(SymbolTableEntry.EntryID);
+
+            // Verify var entry exists
+            if (varEntry != null)
+            {
+                // Load value into accumlator
+                param.opCodes.AppendFormat("AD V{0} 00 ", varEntry.VarID);
+
+                // Inc bytes
+                param.curByte += 3;
+            }
+
+            // Return number of bytes
+            return param.curByte;
+        }
+
+        #endregion
+
     }
 }

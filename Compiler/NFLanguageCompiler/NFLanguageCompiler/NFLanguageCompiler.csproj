@@ -53,6 +53,7 @@
     <Compile Include="AssignmentStatementASTNode.cs" />
     <Compile Include="ASTNode.cs" />
     <Compile Include="BlockASTNode.cs" />
+    <Compile Include="BlockSizeTableEntry.cs" />
     <Compile Include="BooleanExprASTNode.cs" />
     <Compile Include="BoolOpASTNode.cs" />
     <Compile Include="BoolValASTNode.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="Compiler.cs" />
     <Compile Include="CSTValue.cs" />
     <Compile Include="ExprASTNode.cs" />
+    <Compile Include="HeapTableEntry.cs" />
     <Compile Include="IASTNodeValue.cs" />
     <Compile Include="IDASTNode.cs" />
     <Compile Include="IfStatementASTNode.cs" />
@@ -69,6 +71,8 @@
     <Compile Include="Lexer.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="OpCodeGenerator.cs" />
+    <Compile Include="OpCodeGenParam.cs" />
+    <Compile Include="OpCodeGenTempTables.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="PrintStatementASTNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -81,6 +85,7 @@
     <Compile Include="TokenStream.cs" />
     <Compile Include="TypeASTNode.cs" />
     <Compile Include="VarDecStatementASTNode.cs" />
+    <Compile Include="VarListTableEntry.cs" />
     <Compile Include="WhileStatementASTNode.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

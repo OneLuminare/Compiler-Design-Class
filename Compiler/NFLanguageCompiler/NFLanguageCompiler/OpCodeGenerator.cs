@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using DynamicBranchTree;
@@ -14,8 +15,11 @@ namespace NFLanguageCompiler
 
         private int errorCount;
         private int warningCount;
+        private int opCodeBytes;
         private String opCodeData;
         private bool outputOpCodesToFile;
+        private OpCodeGenTempTables tempTables;
+        private StringBuilder tempOpCodeData;
 
         #endregion
 
@@ -49,6 +53,13 @@ namespace NFLanguageCompiler
             set { outputOpCodesToFile = value; }
         }
 
+        // Op code total bytes
+        public int OpCodeBytes
+        {
+            get { return opCodeBytes; }
+            set { opCodeBytes = value; }
+        }
+
         #endregion
 
         #region Delegates and Events
@@ -73,6 +84,9 @@ namespace NFLanguageCompiler
             errorCount = 0;
             opCodeData = "";
             outputOpCodesToFile = false;
+            tempOpCodeData = null;
+            tempTables = null;
+            opCodeBytes = 0;
         }
 
         #endregion
@@ -83,9 +97,26 @@ namespace NFLanguageCompiler
         {
             // Inits
             ProcessReturnValue ret = ProcessReturnValue.PRV_NONE;
+            OpCodeGenParam param;
 
-            // Generate op codes recursively
-            GenerateOpCodesRecursive(rootASTNode, rootSymbolTableNode);
+            // Create temp tables
+            tempTables = new OpCodeGenTempTables();
+            tempOpCodeData = new StringBuilder(250);
+
+            // Create op code gen param
+            param = new OpCodeGenParam(tempOpCodeData, rootSymbolTableNode, tempTables);
+
+            // Gen op codes
+            rootASTNode.GenOpCodes(param);
+
+            // Fill in memory locations and jump sizes
+            FillInTempOpCodeValues();
+
+            // Set op code from string builder
+            opCodeData = tempOpCodeData.ToString();
+
+            // Set op code total bytes
+            opCodeBytes = TotalOpCodeBytes();
 
             //Determine return value
             if (ErrorCount > 0)
@@ -98,23 +129,14 @@ namespace NFLanguageCompiler
             //Return code
             return ret;
         }
-
-        // Recursive generate opcode method. Travels AST generating op codes to OpCodeData string
-        public void GenerateOpCodesRecursive(ASTNode curASTNode, DynamicBranchTreeNode<SymbolHashTable> curSymbolTable)
+       
+        private void FillInTempOpCodeValues()
         {
-            // Switch on node type
-            /*
-            switch (curASTNode.GetType())
-            {
-                case ASTNodeType.ASTTYPE_BLOCK:
-                    // Move into 
-                    break;
+        }
 
-                case ASTNodeType.ASTTYPE_VARDEC:
-
-                    break;
-            }
-             */
+        private int TotalOpCodeBytes()
+        {
+            return 0;
         }
 
         #endregion

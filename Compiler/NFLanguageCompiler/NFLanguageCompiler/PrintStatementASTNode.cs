@@ -64,5 +64,145 @@ namespace NFLanguageCompiler
         }
 
         #endregion
+
+        #region ASTNode Overides
+
+        // Gens op codes for print statment.
+        // Calls system to print based on type of expr.
+        //
+        // Returns: Number of bytes generated.
+        public override int GenOpCodes(OpCodeGenParam param)
+        {
+            // Inits
+            int bytes = 0;
+            VarTableEntry varEntry = null;
+            VarTableEntry varEntryTrue = null;
+            VarTableEntry varEntryFalse = null;
+            HeapTableEntry heapEntryTrue = null;
+            HeapTableEntry heapEntryFalse = null;
+            IDASTNode idASTNode = null;
+
+            // Gen op codes for expr. Results in accum
+            bytes += expr.GenOpCodes(param);
+
+            // Create temp var on stack
+            varEntry = param.tables.CreateTempVarTableEntry();
+            varEntry.InUse = true;
+            param.tables.IncVarIsUseCount();
+
+            // Load accumlator to memory (results from expr )
+            param.opCodes.AppendFormat("8D V{0} 00 ", varEntry.VarID);
+
+            bytes += 3;
+
+            // Check if int expr, or var dec of type int
+            if ( (expr is IntExprASTNode) ||
+                ( (expr is IDASTNode) && ( ((IDASTNode)expr).SymbolTableEntry.DataType == DataType.DT_INT) ) )
+            {
+                // Load 1 int x reg
+                param.opCodes.Append("A2 01 ");
+
+                // Load into y register
+                param.opCodes.AppendFormat("AC V{0} 00 ",varEntry.VarID);
+
+                // Inc bytes
+                bytes += 5;
+            }
+            // Else check if bool expr, or var dec with boolean type
+            else if ( (expr is BooleanExprASTNode) ||
+                     ( (expr is IDASTNode) && ( ((IDASTNode)expr).SymbolTableEntry.DataType == DataType.DT_BOOLEAN) ) )
+            {
+                // Create strings for true and false on heap.
+                // If already on their it wont allocate new 
+                // ones, but use the same.
+                heapEntryTrue = param.GenOpCodes_LoadString("true");
+                heapEntryFalse = param.GenOpCodes_LoadString("false");
+
+                // Create temp vars on stack for true
+                varEntryTrue = param.tables.CreateTempVarTableEntry();
+                varEntryTrue.InUse = true;
+                param.tables.IncVarIsUseCount();
+
+                // Create temp var on stack for false
+                varEntryFalse = param.tables.CreateTempVarTableEntry();
+                varEntryFalse.InUse = true;
+                param.tables.IncVarIsUseCount();
+
+                // Load accumlator to memory
+                param.opCodes.AppendFormat("8D V{0} 00 ", varEntry.VarID);
+
+                // Load true add in acc
+                param.opCodes.AppendFormat("A9 H{0} ", heapEntryTrue.HeapID);
+
+                // Move to temp var
+                param.opCodes.AppendFormat("8D V{0} 00 ", varEntryTrue.VarID);
+
+                // Load true add in acc
+                param.opCodes.AppendFormat("A9 H{0} ", heapEntryFalse.HeapID);
+
+                // Move to temp var
+                param.opCodes.AppendFormat("8D V{0} 00 ", varEntryFalse.VarID);
+
+                // Load 01 int x reg
+                param.opCodes.Append("A2 01 ");
+
+                // Load false into y reg
+                param.opCodes.AppendFormat("AC V{0} 00 ", varEntryFalse.VarID);
+
+                // Compare results with results from acc
+                param.opCodes.AppendFormat("EC V{0} 00 ", varEntry.VarID);
+
+                // Branch on not equal x bytes
+                param.opCodes.Append("D0 04 ");
+
+                // Load true into y reg
+                param.opCodes.AppendFormat("AC V{0} 00 ", varEntryTrue.VarID);
+
+                // Load 2 int x reg
+                param.opCodes.Append("A2 02 ");
+
+                // Make system call
+                param.opCodes.Append("FF ");
+
+                // Inc bytes
+                bytes += 26;
+
+                // Set temp vars not in use
+                varEntryTrue.InUse = false;
+                varEntryFalse.InUse = false;
+                param.tables.DecVarInUseCount();
+                param.tables.DecVarInUseCount();
+
+            }
+
+            // Else check if string expr or var of string type
+            else if ((expr is StringExprASTNode) ||
+                     ((expr is IDASTNode) && (((IDASTNode)expr).SymbolTableEntry.DataType == DataType.DT_STRING)))
+            {
+                // Load expr res into y reg
+                param.opCodes.AppendFormat("AC V{0} 00 ", varEntry.VarID);
+
+                // Load 2 int x reg
+                param.opCodes.Append("A2 02 ");
+
+                // Make system call
+                param.opCodes.Append("FF ");
+
+                // Increment bytes
+                bytes += 6;
+            }
+
+            // Reset temp var
+            varEntry.InUse = false;
+            param.tables.DecVarInUseCount();
+
+            // Increment total bytes
+            param.curByte += bytes;
+
+            // Return bytes added
+            return bytes;
+        }
+
+        #endregion
     }
 }

@@ -72,5 +72,24 @@ namespace NFLanguageCompiler
         }
 
         #endregion
+
+        #region ASTNode Overides
+
+        // Puts int value into accum.
+        //
+        // Returns: Number of bytes generated.
+        public override int GenOpCodes(OpCodeGenParam param)
+        {
+            // Load value into accum
+            param.opCodes.AppendFormat("A9 {0} ", Value.ToString("D2"));
+
+            // Increment total bytes
+            param.curByte += 2;
+
+            // Return number of bytes
+            return 2;
+        }
+
+        #endregion
     }
 }

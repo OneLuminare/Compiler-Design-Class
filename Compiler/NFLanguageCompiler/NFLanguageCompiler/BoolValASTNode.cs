@@ -85,5 +85,34 @@ namespace NFLanguageCompiler
         }
 
         #endregion
+
+        #region ASTNode Overides
+
+        // Loads accum with 1 on true, 0 on false.
+        //
+        // Returns: Number of bytes generated.
+        public override int GenOpCodes(OpCodeGenParam param)
+        {
+            // Check if true
+            if (Value == BOOLVAL_TYPE.BOOLVAL_TRUE)
+            {
+                // Load accumulator with 1
+                param.opCodes.Append("A9 01 ");
+            }
+            // Else false
+            else
+            {
+                // Load accumulator with 0
+                param.opCodes.Append("A9 00 ");
+            }
+
+            // Increment bytes
+            param.curByte += 2;
+
+            // Return current number of bytes
+            return 2;
+        }
+
+        #endregion
     }
 }
