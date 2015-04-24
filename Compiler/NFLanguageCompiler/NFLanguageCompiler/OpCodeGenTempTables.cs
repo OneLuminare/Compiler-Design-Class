@@ -144,6 +144,26 @@ namespace NFLanguageCompiler
             return ret;
         }
 
+        // Get var table entry by index
+        //
+        // Throws: IndexOutOfRangeException
+        // Returns: Entry at given index.
+        public VarTableEntry GetVarTableEntryByIndex(int index)
+        {
+            //Inits
+            VarTableEntry ret = null;
+
+            if (index >= varTable.Count || index < 0)
+            {
+                throw new IndexOutOfRangeException("OpCodeVarTable entry idex out of range.");
+            }
+            else
+                ret = (VarTableEntry)varTable[index];
+
+            // Return var table entry
+            return ret;
+        }
+
         // Creates a var table entry based on symbol table entry,
         // and calculates current in use off set (position).
         //
@@ -256,6 +276,25 @@ namespace NFLanguageCompiler
 
         #region Heap Table Methods
 
+        // Find heap entry by index.
+        //
+        // Throws: IndexOutOfRangeException
+        // Returns: Entry for given index.
+        public HeapTableEntry GetHeapTableEntryByIndex(int index)
+        {
+            // Inits
+            HeapTableEntry ret = null;
+
+            // Check for errors
+            if ((index >= heapTable.Count) || index < 0)
+                throw new IndexOutOfRangeException("OpCodeGen heap table out of range.");
+            else
+                ret = (HeapTableEntry)heapTable[index];
+
+            // Return entry
+            return ret;
+        }
+
         // Finds heap table entry by id.
         //
         // Returns: Heap table entry with id or null if not found
@@ -348,6 +387,29 @@ namespace NFLanguageCompiler
         public void ClearHeapTable()
         {
             heapTable.Clear();
+        }
+
+        // Gets total heap size.
+        //
+        // Returns: Total heap size.
+        public int TotalHeapSize()
+        {
+            // Inits
+            int heapSize = 0;
+            HeapTableEntry entry = null;
+
+            // Cycle through heap table
+            for (int i = 0; i < heapTable.Count; i++)
+            {
+                // Get heap entry
+                entry = (HeapTableEntry)heapTable[i];
+
+                // Calc total
+                heapSize += entry.Length;
+            }
+
+            // Return heap size
+            return heapSize;
         }
    
         #endregion

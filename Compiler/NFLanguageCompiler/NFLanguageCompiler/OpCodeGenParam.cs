@@ -71,12 +71,12 @@ namespace NFLanguageCompiler
                     opCodes.AppendFormat("A9 {0} ", (int)str[i]);
 
                     // Move accum to heap location
-                    opCodes.AppendFormat("8D H{0}OFF{1} 00 ", heapEntry.HeapID, i);
+                    opCodes.AppendFormat("8D H{0}S{1} 00 ", heapEntry.HeapID, i);
                 }
 
                 // Add finishing 0
                 opCodes.Append("A9 00 ");
-                opCodes.AppendFormat("8D H{0}OFF{1} 00 ", heapEntry.HeapID, str.Length);
+                opCodes.AppendFormat("8D H{0}S{1} 00 ", heapEntry.HeapID, str.Length);
 
                 // Increment bytes
                 curByte += (str.Length + 1) * 5;

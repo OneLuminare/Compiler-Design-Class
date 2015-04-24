@@ -109,7 +109,7 @@ namespace NFLanguageCompiler
             param.opCodes.AppendFormat("EC V{0} 00 ", varEntry.VarID);
 
             // Branch to end of block
-            param.opCodes.AppendFormat("D0 B{0}OFF{1} ", param.curBlockID, 12);
+            param.opCodes.AppendFormat("D0 B{0}S{1} ", param.curBlockID, 12);
 
             // Incrmeent bytes
             bytes += 7;

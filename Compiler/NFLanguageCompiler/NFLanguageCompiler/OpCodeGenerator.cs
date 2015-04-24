@@ -7,6 +7,15 @@ using DynamicBranchTree;
 
 namespace NFLanguageCompiler
 {
+    public struct OpCodeData
+    {
+        public int totalBytes;
+        public int stackStart;
+        public int stackSize;
+        public int heapStart;
+        public int heapSize;
+    }
+
     // Final state of compilation, turns AST into a sequence of 
     // op codes executable on the 6502 chipset.
     public class OpCodeGenerator
@@ -20,6 +29,7 @@ namespace NFLanguageCompiler
         private bool outputOpCodesToFile;
         private OpCodeGenTempTables tempTables;
         private StringBuilder tempOpCodeData;
+        private OpCodeData programData;
 
         #endregion
 
@@ -57,8 +67,14 @@ namespace NFLanguageCompiler
         public int OpCodeBytes
         {
             get { return opCodeBytes; }
-            set { opCodeBytes = value; }
         }
+
+        // Get program data
+        public OpCodeData ProgramData
+        {
+            get { return programData; }
+        }
+
 
         #endregion
 
@@ -109,14 +125,18 @@ namespace NFLanguageCompiler
             // Gen op codes
             rootASTNode.GenOpCodes(param);
 
+            // Add final 00
+            param.opCodes.Append("00 ");
+            param.curByte++;
+
             // Fill in memory locations and jump sizes
-            FillInTempOpCodeValues();
+            programData = FillInTempOpCodeValues(param);
 
             // Set op code from string builder
-            opCodeData = tempOpCodeData.ToString();
+            opCodeData = param.opCodes.ToString();
 
             // Set op code total bytes
-            opCodeBytes = TotalOpCodeBytes();
+            opCodeBytes = programData.totalBytes;
 
             //Determine return value
             if (ErrorCount > 0)
@@ -130,14 +150,173 @@ namespace NFLanguageCompiler
             return ret;
         }
        
-        private void FillInTempOpCodeValues()
+        // Fills in variable locations, heap locations, and jump size for 
+        // blocks in one pase. Collected some meta data about program.
+        //
+        // Returns: OpCodeData describing memory of program.
+        private OpCodeData FillInTempOpCodeValues(OpCodeGenParam param)
         {
+            // Inits          
+            int zeros = 0;
+            int num = 0;
+            int localOffSet = 0;
+            int curByte = 0;
+            String[] strings = null;
+            String s = null;
+            String[] offStrings = null;
+            String o = null;
+            VarTableEntry varEntry = null;
+            HeapTableEntry heapEntry = null;
+            BlockSizeTableEntry blockEntry = null;
+            OpCodeData programData = new OpCodeData();
+
+            // Determin stack size
+            programData.stackSize = param.tables.MaxVarUsage;
+            programData.stackStart = param.curByte + 1;
+
+            // Determine heap size
+            programData.heapSize = param.tables.TotalHeapSize();
+            programData.heapStart = param.curByte + programData.stackSize + 1;
+
+            // Dertermine number of 00 to write
+            zeros = programData.stackSize + programData.heapSize;
+
+            
+            // Update size of file
+            param.curByte += zeros;
+
+            // Set program data size
+            programData.totalBytes = param.curByte;
+
+            // Fill in memory locations for heap
+            for (int i = 0; i < param.tables.HeapTableCount(); i++)
+            {
+                heapEntry = param.tables.GetHeapTableEntryByIndex(i);
+
+                heapEntry.MemoryLocation = programData.heapStart + curByte;
+
+                curByte += heapEntry.Length;
+            }
+
+
+            // Split string
+            strings = param.opCodes.ToString().Split(' ');
+
+            // Cycle through codes
+            for (int i = 0; i < strings.Length; i++)
+            {
+                // Set string
+                s = strings[i];
+
+                // Verify valid string
+                if (s.Length > 0)
+                {
+                    // Check for V (var table
+                    if (s[0] == 'V')
+                    {
+                        // Get number off string
+                        num = int.Parse(s.Substring(1, s.Length - 1));
+
+                        // Find entry
+                        varEntry = param.tables.GetVarTableEntry(num);
+
+                        // Replace entry with address
+                        if (varEntry != null)
+                        {
+                            strings[i] = String.Format("{0}", (programData.stackStart + varEntry.Offset).ToString("X"));
+                        }
+                    }
+                    // Check for H (heap)
+                    else if (s[0] == 'H')
+                    {
+                        // Get number off string
+                        num = int.Parse(s.Substring(1, s.Length - 1));
+
+
+                        // Find entry
+                        heapEntry = param.tables.GetHeapTableEntry(num);
+
+                        // Split of F
+                        offStrings = s.Split('S');
+
+
+                        // Get offf num if valid
+                        if (offStrings.Length > 1)
+                        {
+                            o = offStrings[1];
+
+                            localOffSet = int.Parse(o.Substring(1, o.Length - 1));
+                        }
+                        else
+                            localOffSet = 0;
+
+
+                        // Replace entry with address
+                        if (heapEntry != null)
+                        {
+                            strings[i] = String.Format("{0}", (heapEntry.MemoryLocation + localOffSet).ToString("X"));
+                        }
+                    }
+                    // Else if block parse flag
+                    else if (s[0] == 'B')
+                    {
+                        // Get number off string
+                        num = int.Parse(s.Substring(1, s.Length - 1));
+
+
+                        // Find entry ( happens to work out that block id = index )
+                        blockEntry = param.tables.GetBlockSizeTableEntry(num);
+
+
+                        // Split of F
+                        offStrings = s.Split('S');
+
+
+                        // Get offf num if valid
+                        if (offStrings.Length > 1)
+                        {
+                            o = offStrings[1];
+
+                            localOffSet = int.Parse(o.Substring(1, o.Length - 1));
+                        }
+                        else
+                            localOffSet = 0;
+
+                        // Replace entry with address
+                        if (blockEntry != null)
+                        {
+                            strings[i] = String.Format("{0}", (blockEntry.EndByte + 1 + localOffSet).ToString("X"));
+                        }
+                    }
+                }
+            }
+
+            // Reset op codes
+            param.opCodes = new StringBuilder(256);
+
+            // Reassemble string
+            for (int i = 0; i < strings.Length; i++)
+            {
+                s = strings[i];
+                if (s.Length > 0)
+                {
+                    param.opCodes.Append(s);
+                    param.opCodes.Append(" ");
+                }
+            }
+
+            // Add 00 to op codes
+            for (int i = 0; i < zeros; i++)
+            {
+                param.opCodes.Append("00 ");
+            }
+
+            
+            // Return program data
+            return programData;
         }
 
-        private int TotalOpCodeBytes()
-        {
-            return 0;
-        }
+
 
         #endregion
 
