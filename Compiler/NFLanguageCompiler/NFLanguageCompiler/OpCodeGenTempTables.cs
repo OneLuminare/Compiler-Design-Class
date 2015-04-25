@@ -266,7 +266,7 @@ namespace NFLanguageCompiler
 
             // Check if not found, than add 1 to count
             if (!found)
-                offset = tableCount + 1;
+                offset = tableCount;
 
             // Return next off set
             return offset;

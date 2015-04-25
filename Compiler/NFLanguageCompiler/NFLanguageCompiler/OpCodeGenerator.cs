@@ -165,6 +165,7 @@ namespace NFLanguageCompiler
             String s = null;
             String[] offStrings = null;
             String o = null;
+            int len = 0;   
             VarTableEntry varEntry = null;
             HeapTableEntry heapEntry = null;
             BlockSizeTableEntry blockEntry = null;
@@ -178,26 +179,40 @@ namespace NFLanguageCompiler
             programData.heapSize = param.tables.TotalHeapSize();
             programData.heapStart = param.curByte + programData.stackSize + 1;
 
-            // Dertermine number of 00 to write
-            zeros = programData.stackSize + programData.heapSize;
 
+
+            // Write 00 over stack
+            zeros = programData.stackSize;
+            for (int i = 0; i < zeros; i++)
+            {
+                param.opCodes.Append("00 ");
+            }
             
             // Update size of file
             param.curByte += zeros;
 
-            // Set program data size
-            programData.totalBytes = param.curByte;
+            
 
             // Fill in memory locations for heap
             for (int i = 0; i < param.tables.HeapTableCount(); i++)
             {
                 heapEntry = param.tables.GetHeapTableEntryByIndex(i);
 
-                heapEntry.MemoryLocation = programData.heapStart + curByte;
+                heapEntry.MemoryLocation = programData.heapStart + curByte - 1;
+
+                // Write char
+                for (int n = 1; n < heapEntry.StringValue.Length; n++)
+                {
+                    param.opCodes.AppendFormat("{0} ", ((int)heapEntry.StringValue[n]).ToString("X2"));
+                }
+                param.opCodes.Append("00 ");
+                param.curByte += heapEntry.Length + 1;
 
                 curByte += heapEntry.Length;
             }
 
+            // Set program data size
+            programData.totalBytes = param.curByte;
 
             // Split string
             strings = param.opCodes.ToString().Split(' ');
@@ -223,14 +238,23 @@ namespace NFLanguageCompiler
                         // Replace entry with address
                         if (varEntry != null)
                         {
-                            strings[i] = String.Format("{0}", (programData.stackStart + varEntry.Offset).ToString("X"));
+                            strings[i] = String.Format("{0}", (programData.stackStart + varEntry.Offset - 1).ToString("X2"));
                         }
                     }
                     // Check for H (heap)
                     else if (s[0] == 'H')
                     {
+                        // Find length to s or end
+                        len = s.Length;
+                        for (int n = 1; n < s.Length; n++)
+                        {
+                            if (s[n] == 'S')
+                                len = n;
+                        }
+
+
                         // Get number off string
-                        num = int.Parse(s.Substring(1, s.Length - 1));
+                        num = int.Parse(s.Substring(1, len - 1));
 
 
                         // Find entry
@@ -245,7 +269,7 @@ namespace NFLanguageCompiler
                         {
                             o = offStrings[1];
 
-                            localOffSet = int.Parse(o.Substring(1, o.Length - 1));
+                            localOffSet = int.Parse(o.Substring(0, o.Length));
                         }
                         else
                             localOffSet = 0;
@@ -254,14 +278,22 @@ namespace NFLanguageCompiler
                         // Replace entry with address
                         if (heapEntry != null)
                         {
-                            strings[i] = String.Format("{0}", (heapEntry.MemoryLocation + localOffSet).ToString("X"));
+                            strings[i] = String.Format("{0}", (heapEntry.MemoryLocation + localOffSet ).ToString("X2"));
                         }
                     }
                     // Else if block parse flag
                     else if (s[0] == 'B')
                     {
+                        // Find length to s or end
+                        len = s.Length;
+                        for (int n = 1; n < s.Length; n++)
+                        {
+                            if (s[n] == 'S')
+                                len = n;
+                        }
+
                         // Get number off string
-                        num = int.Parse(s.Substring(1, s.Length - 1));
+                        num = int.Parse(s.Substring(1, len - 1));
 
 
                         // Find entry ( happens to work out that block id = index )
@@ -277,7 +309,7 @@ namespace NFLanguageCompiler
                         {
                             o = offStrings[1];
 
-                            localOffSet = int.Parse(o.Substring(1, o.Length - 1));
+                            localOffSet = int.Parse(o.Substring(0, o.Length));
                         }
                         else
                             localOffSet = 0;
@@ -285,7 +317,7 @@ namespace NFLanguageCompiler
                         // Replace entry with address
                         if (blockEntry != null)
                         {
-                            strings[i] = String.Format("{0}", (blockEntry.EndByte + 1 + localOffSet).ToString("X"));
+                            strings[i] = String.Format("{0}", (blockEntry.EndByte +  localOffSet - 1).ToString("X2"));
                         }
                     }
                 }
@@ -303,12 +335,6 @@ namespace NFLanguageCompiler
                     param.opCodes.Append(s);
                     param.opCodes.Append(" ");
                 }
-            }
-
-            // Add 00 to op codes
-            for (int i = 0; i < zeros; i++)
-            {
-                param.opCodes.Append("00 ");
             }
 
             

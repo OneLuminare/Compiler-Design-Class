@@ -98,7 +98,7 @@ namespace NFLanguageCompiler
             bytes += 3;
 
             // Update total bytes
-            param.curByte += bytes;
+            param.curByte += 3;
 
             // Return bytesa added
             return bytes;

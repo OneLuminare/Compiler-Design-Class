@@ -142,11 +142,11 @@ namespace NFLanguageCompiler
 
                 // ### Generate expr 2 value and put in accumm ### //
 
-                // Update bytes
-                param.curByte += bytes;
+                
+
 
                 // Gen op codes for expr two
-                bytes2 += exprTwo.GenOpCodes(param);
+                bytes += exprTwo.GenOpCodes(param);
 
                 // ### Compare values of temp var (expr 1), and accum (expr2) ### //
                 // ### Put results in accumulator.                            ### //
@@ -158,7 +158,10 @@ namespace NFLanguageCompiler
                 param.opCodes.AppendFormat("8D V{0} 00 ", varEntryTemp.VarID);
 
                 // Increment bytes
-                bytes2 += 9;
+                bytes += 9;
+
+                // Update bytes
+                param.curByte += 9;
 
                 // Check if equals
                 if (value == BOOLOP_TYPE.BOOLOP_EQUALS)
@@ -214,11 +217,13 @@ namespace NFLanguageCompiler
                 varEntryTemp.InUse = false;
 
                 // Decremeent in use flag
-                param.tables.DecVarInUseCount();           
+                param.tables.DecVarInUseCount();
+
+                // Update total bytes
+                param.curByte += bytes2;
             }
 
-            // Update total bytes
-            param.curByte += bytes2;
+            
 
             // Return number of bytes 
             return bytes + bytes2;

@@ -57,8 +57,8 @@ namespace NFLanguageCompiler
         public HeapTableEntry(int heapID, String strValue)
         {
             this.heapID = heapID;
-            this.length = strValue.Length + 1;
-            this.stringValue = stringValue;
+            this.length = strValue.Length;
+            this.stringValue = strValue.ToString();
             this.memoryLocation = 0;
         }
 

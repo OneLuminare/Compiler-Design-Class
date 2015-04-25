@@ -106,10 +106,10 @@ namespace NFLanguageCompiler
             bytes += 10;
 
             // Update bytes
-            param.curByte += bytes;
+            param.curByte += 10;
 
             // Gen op codes for block
-            bytes2 += block.GenOpCodes(param);
+            bytes += block.GenOpCodes(param);
 
             // Set temp var not in use
             varEntry.InUse = false;
@@ -118,10 +118,10 @@ namespace NFLanguageCompiler
             param.tables.DecVarInUseCount();
 
             // Update bytes
-            param.curByte += bytes2;
+            //param.curByte += bytes2;
 
             // Return bytes added
-            return bytes + bytes2;
+            return bytes;
 
         }
 

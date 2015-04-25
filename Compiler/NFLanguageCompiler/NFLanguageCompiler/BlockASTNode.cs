@@ -137,7 +137,7 @@ namespace NFLanguageCompiler
             }
 
             // Update bytes added
-            param.curByte += bytesAdded;
+            //param.curByte += bytesAdded;
 
             // Return number of bytes 
  	        return bytesAdded;

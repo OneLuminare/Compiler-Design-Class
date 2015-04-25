@@ -92,10 +92,21 @@ namespace NFLanguageCompiler
         public override int GenOpCodes(OpCodeGenParam param)
         {
             // Inits
-            HeapTableEntry heapEntry = null; ;
+            HeapTableEntry heapEntry = null; 
+            
+            // Check if heap entry exists
+            heapEntry = param.tables.GetHeapTableEntry(Value);
+
+            // Create new heap entry if one does not exist
+            if (heapEntry == null)
+            {
+                heapEntry = new HeapTableEntry(param.curHeapID, Value);
+                param.curHeapID++;
+                param.tables.AddHeapTableEntry(heapEntry);
+            }
 
             // Gen op codes for loading string
-            heapEntry = param.GenOpCodes_LoadString(Value);
+            //heapEntry = param.GenOpCodes_LoadString(Value);
 
             // Load accumulator with heap address
             param.opCodes.AppendFormat("A9 H{0} ", heapEntry.HeapID);
