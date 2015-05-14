@@ -97,17 +97,19 @@ namespace NFLanguageCompiler
             if (Value == BOOLVAL_TYPE.BOOLVAL_TRUE)
             {
                 // Load accumulator with 1
-                param.opCodes.Append("A9 01 ");
+                //param.opCodes.Append("A9 01 ");
+                param.AddBytes(0xA9, 0x01);
             }
             // Else false
             else
             {
                 // Load accumulator with 0
-                param.opCodes.Append("A9 00 ");
+                //param.opCodes.Append("A9 00 ");
+                param.AddBytes(0xA9, 0x00);
             }
 
             // Increment bytes
-            param.curByte += 2;
+            //param.curByte += 2;
 
             // Return current number of bytes
             return 2;

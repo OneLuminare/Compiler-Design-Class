@@ -81,10 +81,11 @@ namespace NFLanguageCompiler
         public override int GenOpCodes(OpCodeGenParam param)
         {
             // Load value into accum
-            param.opCodes.AppendFormat("A9 {0} ", Value.ToString("D2"));
+            //param.opCodes.AppendFormat("A9 {0} ", Value.ToString("D2"));
+            param.AddBytes(0xA9, (byte)Value);
 
             // Increment total bytes
-            param.curByte += 2;
+            //param.curByte += 2;
 
             // Return number of bytes
             return 2;

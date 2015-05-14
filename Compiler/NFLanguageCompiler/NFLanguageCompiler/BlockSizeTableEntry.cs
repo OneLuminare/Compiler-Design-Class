@@ -37,6 +37,11 @@ namespace NFLanguageCompiler
             set { endByte = value; }
         }
 
+        public int BlockSize
+        {
+            get{ return endByte - startByte + 1; }
+        }
+
         #endregion
 
         #region Constructors

@@ -91,22 +91,39 @@ namespace NFLanguageCompiler
             param.tables.IncVarIsUseCount();
 
             // Load accumlator to memory (results from expr )
-            param.opCodes.AppendFormat("8D V{0} 00 ", varEntry.VarID);
+            //param.opCodes.AppendFormat("8D V{0} 00 ", varEntry.VarID);
+            param.AddBytes(0x8D);
+            param.AddByteForUpdate('V', varEntry.VarID);
+            param.AddBytes(0x00);
 
             bytes += 3;
+
+            // Inc cur bytes
+            //param.curByte += 3;
 
             // Check if int expr, or var dec of type int
             if ( (expr is IntExprASTNode) ||
                 ( (expr is IDASTNode) && ( ((IDASTNode)expr).SymbolTableEntry.DataType == DataType.DT_INT) ) )
             {
                 // Load 1 int x reg
-                param.opCodes.Append("A2 01 ");
+                //param.opCodes.Append("A2 01 ");
+                param.AddBytes(0xA2, 0x01);
 
                 // Load into y register
-                param.opCodes.AppendFormat("AC V{0} 00 ",varEntry.VarID);
+                //param.opCodes.AppendFormat("AC V{0} 00 ",varEntry.VarID);
+                param.AddBytes(0xAC);
+                param.AddByteForUpdate('V', varEntry.VarID);
+                param.AddBytes(0x00);
+
+                // Make system call
+                //param.opCodes.Append("FF ");
+                param.AddBytes(0xFF);
 
                 // Inc bytes
-                bytes += 5;
+                bytes += 6;
+
+                // Inc cur bytes
+               // param.curByte += 6;
             }
             // Else check if bool expr, or var dec with boolean type
             else if ( (expr is BooleanExprASTNode) ||
@@ -115,9 +132,11 @@ namespace NFLanguageCompiler
                 // Create strings for true and false on heap.
                 // If already on their it wont allocate new 
                 // ones, but use the same.
-                heapEntryTrue = param.GenOpCodes_LoadString("true");
-                heapEntryFalse = param.GenOpCodes_LoadString("false");
 
+                heapEntryTrue = param.tables.AddHeapTableEntry(param, "true");
+                heapEntryFalse = param.tables.AddHeapTableEntry(param, "false");
+
+                
                 // Create temp vars on stack for true
                 varEntryTrue = param.tables.CreateTempVarTableEntry();
                 varEntryTrue.InUse = true;
@@ -128,50 +147,79 @@ namespace NFLanguageCompiler
                 varEntryFalse.InUse = true;
                 param.tables.IncVarIsUseCount();
 
-                // Load accumlator to memory
-                param.opCodes.AppendFormat("8D V{0} 00 ", varEntry.VarID);
-
-                // Load true add in acc
-                param.opCodes.AppendFormat("A9 H{0} ", heapEntryTrue.HeapID);
-
-                // Move to temp var
-                param.opCodes.AppendFormat("8D V{0} 00 ", varEntryTrue.VarID);
-
-                // Load true add in acc
-                param.opCodes.AppendFormat("A9 H{0} ", heapEntryFalse.HeapID);
+                // Load true string address in acc               
+                //param.opCodes.AppendFormat("A9 H{0} ", heapEntryTrue.HeapID);
+                param.AddBytes(0xA9);
+                param.AddByteForUpdate('H', heapEntryTrue.HeapID);
 
                 // Move to temp var
-                param.opCodes.AppendFormat("8D V{0} 00 ", varEntryFalse.VarID);
+                //param.opCodes.AppendFormat("8D V{0} 00 ", varEntryTrue.VarID);
+                param.AddBytes(0x8D);
+                param.AddByteForUpdate('V', varEntryTrue.VarID);
+                param.AddBytes(0x00);
 
-                // Load 01 int x reg
-                param.opCodes.Append("A2 01 ");
+                
+                // Load true add in acc
+                //param.opCodes.AppendFormat("A9 H{0} ", heapEntryFalse.HeapID);
+                param.AddBytes(0xA9);
+                param.AddByteForUpdate('H', heapEntryFalse.HeapID);
+
+                // Move to temp var
+                //param.opCodes.AppendFormat("8D V{0} 00 ", varEntryFalse.VarID);
+                param.AddBytes(0x8D);
+                param.AddByteForUpdate('V', varEntryFalse.VarID);
+                param.AddBytes(0x00);
+                
+
+               
 
                 // Load false into y reg
-                param.opCodes.AppendFormat("AC V{0} 00 ", varEntryFalse.VarID);
+                //param.opCodes.AppendFormat("AC V{0} 00 ", varEntryFalse.VarID);
+                param.AddBytes(0xAC);
+                param.AddByteForUpdate('V', varEntryFalse.VarID);
+                param.AddBytes(0x00);
+
+                // Load 01 int x reg
+                //param.opCodes.Append("A2 01 ");
+                param.AddBytes(0xA2, 0x01);
 
                 // Compare results with results from acc
-                param.opCodes.AppendFormat("EC V{0} 00 ", varEntry.VarID);
+                //param.opCodes.AppendFormat("EC V{0} 00 ", varEntry.VarID);
+                param.AddBytes(0xEC);
+                param.AddByteForUpdate('V', varEntry.VarID);
+                param.AddBytes(0x00);
 
                 // Branch on not equal x bytes
-                param.opCodes.Append("D0 04 ");
+                //param.opCodes.Append("D0 04 ");
+                param.AddBytes(0xD0, 0x03);
 
                 // Load true into y reg
-                param.opCodes.AppendFormat("AC V{0} 00 ", varEntryTrue.VarID);
+                //param.opCodes.AppendFormat("AC V{0} 00 ", varEntryTrue.VarID);
+                param.AddBytes(0xAC);
+                param.AddByteForUpdate('V', varEntryTrue.VarID);
+                param.AddBytes(0x00);
 
                 // Load 2 int x reg
-                param.opCodes.Append("A2 02 ");
+                //param.opCodes.Append("A2 02 ");
+                param.AddBytes(0xA2, 0x02);
 
                 // Make system call
-                param.opCodes.Append("FF ");
+                //param.opCodes.Append("FF ");
+                param.AddBytes(0xFF);
 
                 // Inc bytes
                 bytes += 26;
 
+                // Inc cur bytes
+                //param.curByte += 26;
+
+                /*
                 // Set temp vars not in use
                 varEntryTrue.InUse = false;
                 varEntryFalse.InUse = false;
                 param.tables.DecVarInUseCount();
                 param.tables.DecVarInUseCount();
+                 * */
 
             }
 
@@ -179,25 +227,32 @@ namespace NFLanguageCompiler
             else if ((expr is StringExprASTNode) ||
                      ((expr is IDASTNode) && (((IDASTNode)expr).SymbolTableEntry.DataType == DataType.DT_STRING)))
             {
+                // Load into temp var
+                //param.opCodes.AppendFormat("8D 
                 // Load expr res into y reg
-                param.opCodes.AppendFormat("AC V{0} 00 ", varEntry.VarID);
+                //param.opCodes.AppendFormat("AC V{0} 00 ", varEntry.VarID);
+                param.AddBytes(0xAC);
+                param.AddByteForUpdate('V', varEntry.VarID);
+                param.AddBytes(0x00);
 
                 // Load 2 int x reg
-                param.opCodes.Append("A2 02 ");
+                //param.opCodes.Append("A2 02 ");
+                param.AddBytes(0xA2, 0x02);
 
                 // Make system call
-                param.opCodes.Append("FF ");
+                //param.opCodes.Append("FF ");
+                param.AddBytes(0xFF);
 
                 // Increment bytes
                 bytes += 6;
+
+                // Inc cur bytes
+                //param.curByte += 6;
             }
 
             // Reset temp var
             varEntry.InUse = false;
             param.tables.DecVarInUseCount();
-
-            // Increment total bytes
-            param.curByte += bytes;
 
             // Return bytes added
             return bytes;

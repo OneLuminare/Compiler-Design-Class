@@ -91,25 +91,33 @@ namespace NFLanguageCompiler
             param.tables.IncVarIsUseCount();
 
             // Move results into temp memory
-            param.opCodes.AppendFormat("8D V{0} 00 ", varEntry.VarID);
+            //param.opCodes.AppendFormat("8D V{0} 00 ", varEntry.VarID);
+            param.AddBytes(0x8D);
+            param.AddByteForUpdate('V', varEntry.VarID);
+            param.AddBytes(0x00);
 
             // Load 1 into accum
-            param.opCodes.Append("A2 01 ");
+            //param.opCodes.Append("A2 01 ");
+            param.AddBytes(0xA2, 0x01);
 
             // Compare temp (res of expr) to true (1)
-            param.opCodes.AppendFormat("EC V{0} 00 ", varEntry.VarID);
+            //param.opCodes.AppendFormat("EC V{0} 00 ", varEntry.VarID);
+            param.AddBytes(0xEC);
+            param.AddByteForUpdate('V', varEntry.VarID);
+            param.AddBytes(0x00);
 
-            // Branch to end of block
-            param.opCodes.AppendFormat("D0 B{0} ", param.curBlockID);
+            // Branch to end of block (using curBlockID, as gen op
+            // will use this id and incremement it. The current 
+            // block at any time is really curBlockID - 1 ).
+            //param.opCodes.AppendFormat("D0 B{0} ", param.curBlockID);
+            param.AddBytes(0xD0);
+            param.AddByteForUpdate('B', param.curBlockID);
 
             // Incrmeent bytes
             bytes += 10;
 
             // Update bytes
-            param.curByte += 10;
-
-            // Gen op codes for block
-            bytes += block.GenOpCodes(param);
+            //param.curByte += 10;
 
             // Set temp var not in use
             varEntry.InUse = false;
@@ -117,8 +125,8 @@ namespace NFLanguageCompiler
             // Decremeent in use count
             param.tables.DecVarInUseCount();
 
-            // Update bytes
-            //param.curByte += bytes2;
+            // Gen op codes for block
+            bytes += block.GenOpCodes(param);
 
             // Return bytes added
             return bytes;

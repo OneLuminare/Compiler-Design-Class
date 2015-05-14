@@ -95,27 +95,18 @@ namespace NFLanguageCompiler
             HeapTableEntry heapEntry = null; 
             
             // Check if heap entry exists
-            heapEntry = param.tables.GetHeapTableEntry(Value);
-
-            // Create new heap entry if one does not exist
-            if (heapEntry == null)
-            {
-                heapEntry = new HeapTableEntry(param.curHeapID, Value);
-                param.curHeapID++;
-                param.tables.AddHeapTableEntry(heapEntry);
-            }
-
-            // Gen op codes for loading string
-            //heapEntry = param.GenOpCodes_LoadString(Value);
+            heapEntry = param.tables.AddHeapTableEntry(param, Value);
 
             // Load accumulator with heap address
-            param.opCodes.AppendFormat("A9 H{0} ", heapEntry.HeapID);
+            //param.opCodes.AppendFormat("A9 H{0} ", heapEntry.HeapID);
+            param.AddBytes(0xA9);
+            param.AddByteForUpdate('H', heapEntry.HeapID);
 
             // Increment bytes
-            param.curByte += 2;
+            //param.curByte += 2;
 
             // Return cur num bytes
-            return param.curByte;
+            return 2;
         }
 
         #endregion

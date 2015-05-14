@@ -113,7 +113,7 @@ namespace NFLanguageCompiler
             // Inits
             VarTableEntry varEntryTemp = null;
             int bytes = 0;
-            int bytes2 = 0;
+            int index = 0;
 
             // ### Checking Expr 1 ### //
 
@@ -130,103 +130,115 @@ namespace NFLanguageCompiler
 
                 // Add temp var for expr one results
                 varEntryTemp = param.tables.CreateTempVarTableEntry();
+                //varEntryTemp2 = param.tables.CreateTempVarTableEntry();
 
                 // Set in use
                 varEntryTemp.InUse = true;
+                //varEntryTemp2.InUse = true;
 
                 // Increment var in use
                 param.tables.IncVarIsUseCount();
+                //param.tables.IncVarIsUseCount();
 
                 // Move value of accumulator to temp var
-                param.opCodes.AppendFormat("8D V{0} 00 ",varEntryTemp.VarID); 
+                //param.opCodes.AppendFormat("8D V{0} 00 ",varEntryTemp.VarID);
+                param.AddBytes(0x8D);
+                param.AddByteForUpdate('V', varEntryTemp.VarID);
+                param.AddBytes(0x00);
 
                 // ### Generate expr 2 value and put in accumm ### //
 
-                
+                // Update current bytes
+                //param.curByte += 3;
 
 
                 // Gen op codes for expr two
                 bytes += exprTwo.GenOpCodes(param);
 
+                // Move value of accumulator (expression 2 results) to temp var
+                //param.opCodes.AppendFormat("8D V{0} 00 ",varEntryTemp.VarID);
+                //param.AddBytes(0x8D);
+                //param.AddByteForUpdate('V', varEntryTemp2.VarID);
+                //param.AddBytes(0x00);
+                
                 // ### Compare values of temp var (expr 1), and accum (expr2) ### //
                 // ### Put results in accumulator.                            ### //
 
                 // Load temp value from first expr into reg x
-                param.opCodes.AppendFormat("AE V{0} 00 ", varEntryTemp.VarID);
+                //param.opCodes.AppendFormat("AE V{0} 00 ", varEntryTemp.VarID);
+                param.AddBytes(0xAE);
+                param.AddByteForUpdate('V', varEntryTemp.VarID);
+                param.AddBytes(0x00);
 
                 // Move accum into same temp val
-                param.opCodes.AppendFormat("8D V{0} 00 ", varEntryTemp.VarID);
+                //param.opCodes.AppendFormat("8D V{0} 00 ", varEntryTemp.VarID);
+                param.AddBytes(0x8D);
+                param.AddByteForUpdate('V', varEntryTemp.VarID);
+                param.AddBytes(0x00);
 
                 // Increment bytes
                 bytes += 9;
 
                 // Update bytes
-                param.curByte += 9;
+                //param.curByte += 6;
 
                 // Check if equals
                 if (value == BOOLOP_TYPE.BOOLOP_EQUALS)
                 {
-                    // Set false in accum
-                    param.opCodes.Append("A9 00 ");
-
-                    // Compare x to temp var
-                    param.opCodes.AppendFormat("EC V{0} 00 ", varEntryTemp.VarID);
-
-                    // Branch 3 bytes if equl
-                    param.opCodes.Append("D0 03 ");
-
-                    // Set true in accum (skipped on not equals)
-                    param.opCodes.Append("A9 01 ");
-
-                    // Increment bytes
-                    bytes2 += 9;
+                    // Set false in accum "A9 00 "
+                    //param.opCodes.Append("A9 00 ");
+                   param.AddBytes(0xA9, 0x00);
+                    //param.AddBytes(0xA2, 0x00);
                 }
-                // Else not equals
                 else
                 {
-                    // Compare x to accumlator
-                    param.opCodes.AppendFormat("EC V{0} 00 ", varEntryTemp.VarID);
-
-                    // Branch 14 (0E) bytes if not equl
-                    param.opCodes.Append("D0 0E ");
-
-                    // Set falst to accu 
-                    param.opCodes.Append("A9 00 ");
-
-                    // Load x with last temp value
-                    param.opCodes.AppendFormat("AE V{0} 00 ", varEntryTemp.VarID);
-
-                    // Increment this temp value
-                    param.opCodes.AppendFormat("EE V{0} 00 ", varEntryTemp.VarID);
-
-                    // Compare x to accumlator (nowing it will branch)
-                    // this is a forced jump
-                    param.opCodes.AppendFormat("EC V{0} 00 ", varEntryTemp.VarID);
-
-                    // Branch 3 bytes (a forced jump)
-                    param.opCodes.Append("D0 03 ");
-
-                    // Set true to accumlator (only reached by first branch)
-                    param.opCodes.Append("A9 01 ");
-
-                    // Increment bytes
-                    bytes2 += 20;
+                    // Set true in accum 
+                    //param.opCodes.Append("A9 01 ");
+                    param.AddBytes(0xA9, 0x01);
+                    //param.AddBytes(0xA2, 0x01);
                 }
+
+                // Compare x to temp var
+                //param.opCodes.AppendFormat("EC V{0} 00 ", varEntryTemp.VarID);
+                param.AddBytes(0xEC);
+                param.AddByteForUpdate('V', varEntryTemp.VarID);
+                param.AddBytes(0x00);
+
+                // Branch 2 bytes if equl
+                //param.opCodes.Append("D0 02 ");
+                param.AddBytes(0xD0, 0x02);
+
+               // Check if equals
+                if (value == BOOLOP_TYPE.BOOLOP_EQUALS)
+                {
+                    // Set true in accum (skip in nnot equal)
+                    //param.opCodes.Append("A9 01 ");
+                    param.AddBytes(0xA9, 0x01);
+                }
+                else
+                {
+                    // Set false in accum (skip in nnot equal)
+                    //param.opCodes.Append("A9 00 ");
+                    param.AddBytes(0xA9, 0x00);
+                }
+
+                // Increment bytes
+                bytes += 9;
+
+                // Update total bytes
+                //param.curByte += 9;   
 
                 // Reset in use flag for temp var
                 varEntryTemp.InUse = false;
 
                 // Decremeent in use flag
                 param.tables.DecVarInUseCount();
-
-                // Update total bytes
-                param.curByte += bytes2;
             }
 
             
 
             // Return number of bytes 
-            return bytes + bytes2;
+            return bytes;
         }
 
         #endregion

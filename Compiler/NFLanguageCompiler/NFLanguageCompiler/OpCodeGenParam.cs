@@ -13,78 +13,104 @@ namespace NFLanguageCompiler
         #region Data Memembers
 
         public StringBuilder opCodes;
+        public byte[] opCodeDataBytes;
         public DynamicBranchTreeNode<SymbolHashTable> curSymbTable;
         public OpCodeGenTempTables tables;
         public int curByte;
         public int curSymbTableIndex;
         public int curBlockID;
         public int curHeapID;
+        public bool firstBlock;
+        public ArrayList insertBytes;
 
         #endregion
 
         #region Constructors
 
         // Default constructor. Must be created with necessary components.
-        public OpCodeGenParam(StringBuilder opCodes, DynamicBranchTreeNode<SymbolHashTable> curSymbTable
+        public OpCodeGenParam(StringBuilder opCodes, byte[] opCodeDataBytes, DynamicBranchTreeNode<SymbolHashTable> curSymbTable
             , OpCodeGenTempTables tables)
         {
             this.opCodes = opCodes;
+            this.opCodeDataBytes = opCodeDataBytes;
             this.tables = tables;
             this.curSymbTable = curSymbTable;
             curByte = 0;
             curSymbTableIndex = 0;
             curBlockID = 0;
             curHeapID = 50;
+            firstBlock = true;
+            insertBytes = new ArrayList(20);
+
         }
 
         #endregion
 
         #region Helper Methods
 
-        // Generates op codes for loading string into 
-        // a heap location. Returns heap entry. If 
-        // same string already in heap, returns pointer
-        // to that one.
-        //
-        // Returns: Heap entry for string.
-        public HeapTableEntry GenOpCodes_LoadString(String str)
+        public int AddBytes(params byte[] bytes)
         {
-            // Inits
-            HeapTableEntry heapEntry = null;
-
-            // Check if str is already in heap
-            heapEntry = tables.GetHeapTableEntry(str);
-
-            // Verify entry not already in heap
-            if (heapEntry == null)
+            // Cycle through bytes
+            for (int i = 0; i < bytes.Length; i++)
             {
-
-                // Create new heap entry
-                heapEntry = new HeapTableEntry(curHeapID, str);
-                curHeapID++;
-                tables.AddHeapTableEntry(heapEntry);
-
-                // Load values into heap entry
-                for (int i = 0; i < str.Length; i++)
-                {
-                    // Move value into accum
-                    opCodes.AppendFormat("A9 {0} ", (int)str[i]);
-
-                    // Move accum to heap location
-                    opCodes.AppendFormat("8D H{0}S{1} 00 ", heapEntry.HeapID, i);
-                }
-
-                // Add finishing 0
-                opCodes.Append("A9 00 ");
-                opCodes.AppendFormat("8D H{0}S{1} 00 ", heapEntry.HeapID, str.Length);
-
-                // Increment bytes
-                curByte += (str.Length + 1) * 5;
+                // Add byte to array
+                opCodeDataBytes[curByte + i] = bytes[i];
             }
 
-            // Return heap entry for string
-            return heapEntry;
+            // Increment cur bytes
+            curByte += bytes.Length;
+
+
+            // Return added bytes
+            return bytes.Length;
         }
+            
+        public int AddByteForUpdate(char symbol, int id)
+        {
+            // Add symbol to insert table
+            insertBytes.Add(new TempByteData(curByte, String.Format("{0}{1}",symbol,id)));
+
+            // Add byte
+            opCodeDataBytes[curByte] = 0xEA;
+
+            // Increment cur bytes
+            curByte++;
+
+            // Return 1
+            return 1;
+        }
+
+        public int AddByteForUpdate(char symbol, int id, int shift)
+        {
+            // Add symbol to insert table
+            insertBytes.Add(new TempByteData(curByte, String.Format("{0}{1}S{2}",symbol,id,shift)));
+
+            // Add byte
+            opCodeDataBytes[curByte] = 0xEA;
+
+            // Increment cur bytes
+            curByte++;
+
+            // Return 1
+            return 1;
+        }
+
+        public byte GetByte(int index)
+        {
+            if (index < 0 || index >= opCodeDataBytes.Length)
+                throw new IndexOutOfRangeException("Op code byte index out of range.");
+            
+            return opCodeDataBytes[index];
+        }
+
+        public void SetByte(int index, byte value)
+        {
+            if (index < 0 || index >= opCodeDataBytes.Length)
+                throw new IndexOutOfRangeException("Op code byte index out of range.");
+
+            opCodeDataBytes[index] = value;
+        }
+
 
         #endregion
 

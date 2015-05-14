@@ -357,23 +357,35 @@ namespace NFLanguageCompiler
             return ret;
         }
 
-        // Adds heap table entry if one doesn't exist 
-        // with same string.
-        public void AddHeapTableEntry(HeapTableEntry entry)
+        // Adds heap table entry if one doesn't exist with same string.
+        // If one does exits, returns heap table entry.
+        //
+        // Returns: New or existing heap table entry.
+        public HeapTableEntry AddHeapTableEntry(OpCodeGenParam param,String str)
         {
             // Inits
             HeapTableEntry heapEntry = null;
             
             // Check if entry exists for that string in heap
-            heapEntry = GetHeapTableEntry(entry.StringValue);
+            heapEntry = GetHeapTableEntry(str);
 
             // Check if entry doesn't exist
             if (heapEntry == null)
             {
+                // Create new heap table entry
+                heapEntry = new HeapTableEntry(param.curHeapID, str);
+
+                // Incrment cur heap id
+                param.curHeapID++;
+
                 // Add heap entry to table
-                heapTable.Add(entry);
+                heapTable.Add(heapEntry);
             }
+
+            // Return heap table entry
+            return heapEntry;
         }
+
 
         // Returns count of heap table.
         //

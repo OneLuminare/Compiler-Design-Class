@@ -84,6 +84,7 @@ namespace NFLanguageCompiler
             // Inits
             VarTableEntry varEntry = null;
             int bytes = 0;
+            int curByte = param.curByte;
 
             // Gen op codes for expr , value in accum
             bytes += expr.GenOpCodes(param);
@@ -91,14 +92,17 @@ namespace NFLanguageCompiler
             // Retreive temp placehold from var table
             varEntry = param.tables.GetVarTableEntry(id.SymbolTableEntry.EntryID);
 
-            // Move accumlator to memory
-            param.opCodes.AppendFormat("8D V{0} 00 ", varEntry.VarID);
+            // Move accumlator to memory "8D V{0} 00 "
+            //param.opCodes.AppendFormat("8D V{0} 00 ", varEntry.VarID);
+            param.AddBytes(0x8D);
+            param.AddByteForUpdate('V', varEntry.VarID);
+            param.AddBytes(0x00);
 
             // Increment bytes
             bytes += 3;
 
             // Update total bytes
-            param.curByte += 3;
+            //param.curByte += 3;
 
             // Return bytesa added
             return bytes;

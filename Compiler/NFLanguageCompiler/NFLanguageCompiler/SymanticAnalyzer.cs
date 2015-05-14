@@ -22,6 +22,7 @@ namespace NFLanguageCompiler
         DynamicBranchTreeNode<SymbolHashTable> curSymbolTableNode;
         BlockASTNode rootASTNode;
         int nextSymbolTableID;
+        int collapsedIntOpNodes;
 
         #endregion
 
@@ -58,6 +59,9 @@ namespace NFLanguageCompiler
         //Symantic Analyzer message event
         public event MessageEventHandler SymanticAnalyzerMessageEvent;
 
+        //Symantic Analyzer message event
+        public event MessageEventHandler SymanticAnalyzerGeneralMessageEvent;
+
         //Symantic Analyzer error event
         public event WarningErrorEventHandler SymanticAnalyzerErrorEvent;
 
@@ -76,7 +80,7 @@ namespace NFLanguageCompiler
            curSymbolTableNode = null;
            rootASTNode = new BlockASTNode();
            nextSymbolTableID = 0;
-
+           collapsedIntOpNodes = 0;
             WarningCount = 0;
             ErrorCount = 0;
         }
@@ -94,15 +98,33 @@ namespace NFLanguageCompiler
             // Inits
             ProcessReturnValue ret = ProcessReturnValue.PRV_NONE;
 
+            // Reset error and warning count
+            ErrorCount = 0;
+            WarningCount = 0;
+            collapsedIntOpNodes = 0;
+
 
             // Send Message
-            SendMessage("Creating AST...");
+            SendGeneralMessage("Creating AST...");
 
             // Create AST from CST
             CreateAST(rootCSTNode);
 
+            // Send message
+            SendGeneralMessage("Collapsing constants...");
+
+            // Collapse digit constants
+            collapsedIntOpNodes  = ShrinkAST();
+
+            // Send message
+            SendGeneralMessage("Completed collapsing constants.");
+           
+
             // Send Message
-            SendMessage("Completed AST. Starting symantic analysis...");
+            SendGeneralMessage("Completed AST.");
+
+            // Send message
+            SendGeneralMessage("Starting symantic analysis...");
 
             // Anaylze scope, types, and existance
             CheckVars();
@@ -110,7 +132,7 @@ namespace NFLanguageCompiler
             // Check for unreachable code
 
             // Send Message
-            SendMessage("Symantic analysis complete.");
+            SendGeneralMessage("Symantic analysis complete.");
 
             // Set return value
             if (ErrorCount > 0)
@@ -874,6 +896,67 @@ namespace NFLanguageCompiler
             return parentSymbolTable;
         }
 
+        private int ShrinkAST()
+        {
+            IDASTNode idNode = null;
+            int nodesReduced = 0;
+
+            ShrinkASTRecursive(rootASTNode, ref idNode, ref nodesReduced);
+
+            return nodesReduced;
+        }
+
+        private int ShrinkASTRecursive(ASTNode curNode,ref IDASTNode idNode,ref int rfNodesReduced)
+        {
+            // Inits
+            ASTNode childNode = null;
+            IntOpASTNode intASTNode = null;
+            IDASTNode idASTNode = null;
+            int count = 0;
+
+            if (curNode is IntOpASTNode)
+            {
+                intASTNode = (IntOpASTNode)curNode;
+
+                if (intASTNode.Expr != null)
+                {
+                    if (intASTNode.Expr is IntOpASTNode)
+                    {
+                        count = ShrinkASTRecursive(intASTNode.Expr, ref idNode,ref rfNodesReduced) + intASTNode.IntVal.Value;
+
+                        intASTNode.DivorceChild(idNode);
+                        intASTNode.AdoptChild(idNode);
+                        intASTNode.DivorceChild(intASTNode.Expr);
+
+                        intASTNode.Expr = idNode;
+                        intASTNode.IntVal.Value = count;
+
+                        // Incrment node reduce
+                        rfNodesReduced++;
+                    }
+
+                    else if (intASTNode.Expr is IDASTNode)
+                    {
+                        idNode = (IDASTNode)intASTNode.Expr;
+
+                        count = intASTNode.IntVal.Value; ;
+                    }
+                }
+            }
+            else
+            {
+
+                childNode = curNode.LeftMostChild;
+                while (childNode != null)
+                {
+                    ShrinkASTRecursive(childNode, ref idNode, ref rfNodesReduced);
+                    childNode = childNode.RightSibling;
+                }
+            }
+
+            return count;
+        }
+
         #endregion
 
         #region AST Creation Methods
@@ -1384,7 +1467,11 @@ namespace NFLanguageCompiler
             StringBuilder sb = new StringBuilder(20);
             StringExprASTNode curASTNode = null;
             DynamicBranchTreeNode<CSTValue> charListCSTNode = null;
+            DynamicBranchTreeNode<CSTValue> charValueCSTNode = null;
             DynamicBranchTreeNode<CSTValue> parentCSTNode;
+
+            // Initalize string builder
+            //sb.s
 
             // Set parent node to current
             parentCSTNode = curCSTNode;
@@ -1392,10 +1479,30 @@ namespace NFLanguageCompiler
             // Create new string expr ast node
             curASTNode = new StringExprASTNode();
 
-            // Get first charlist CST node
-            charListCSTNode = parentCSTNode;
+            // Get first charlist
+            charListCSTNode = curCSTNode.GetChild(1);
 
-            // Set current node to first child, either char or lamda
+            // Get first charvalue (or lamda)
+            charValueCSTNode = charListCSTNode.GetChild(0);
+
+            // Check if child char value is not lamda
+            while (charValueCSTNode.Data.Grammar != GrammarProcess.GP_LAMDA)
+            {
+                // Add char value to string
+                sb.Append(charValueCSTNode.Data.Token.Value);
+
+                // Get next charlist
+                charListCSTNode = charListCSTNode.GetChild(1);
+
+                // Get next char value
+                charValueCSTNode = charListCSTNode.GetChild(0);
+            }
+            /*
+            // Get first charlist CST node
+            charListCSTNode.GetChild(1) = parentCSTNode;
+
+            // Set current node to first child, char node 
+            // (must be there even in empty string)
             curCSTNode = charListCSTNode.GetChild(0);
 
             // Loop through char nodes adding to string value
@@ -1410,6 +1517,7 @@ namespace NFLanguageCompiler
                 // Get next char node
                 curCSTNode = charListCSTNode.GetChild(0);
             }
+             * */
 
             // Set string value to ast node
             curASTNode.Value = sb.ToString();
@@ -1528,6 +1636,15 @@ namespace NFLanguageCompiler
         {
             if (SymanticAnalyzerMessageEvent != null)
                 SymanticAnalyzerMessageEvent(msg);
+        }
+
+        //Sends general message event
+        private void SendGeneralMessage(String msg)
+        {
+            if (SymanticAnalyzerGeneralMessageEvent != null)
+                SymanticAnalyzerGeneralMessageEvent(msg);
+
+            SendMessage(msg);
         }
 
         // Send warning event

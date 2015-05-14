@@ -65,33 +65,6 @@ namespace NFLanguageCompiler
         {
         }
 
-        /*
-        // Basic set constructor.
-        public BooleanExprASTNode(BOOLEXPR_TYPE value)
-            : this()
-        {
-            this.value = value;
-        }
-
-        // Set constructor for type one: ( EXPR BOOLOP EXPR )
-        public BooleanExprASTNode(ExprASTNode expr1, BoolOpASTNode boolOp, ExprASTNode expr2)
-            : this()
-        {
-            value = BOOLEXPR_TYPE.BET_ONE;
-            this.exprOne = expr1;
-            this.boolOp = boolOp;
-            this.exprTwo = expr2;
-        }
-
-        // Set constructor for type two: BOOLVAL
-        public BooleanExprASTNode(BoolValASTNode boolVal)
-            : this()
-        {
-            value = BOOLEXPR_TYPE.BET_TWO;
-            this.boolVal = boolVal;
-        }
-         * */
-
         #endregion
 
         #region Object Overrides
@@ -99,12 +72,7 @@ namespace NFLanguageCompiler
         public override string ToString()
         {
             String ret = null;
-            /*
-            if (value == BOOLEXPR_TYPE.BET_ONE)
-                ret =  String.Format("Boolean Expression: {0} {1} {2}", exprOne.ToString(), boolOp.ToString(), exprTwo.ToString());
-            else
-                ret = String.Format("Boolean Expression: {0}",boolVal.ToString());
-             * */
+
             ret = "Boolean Expression";
 
             return ret;

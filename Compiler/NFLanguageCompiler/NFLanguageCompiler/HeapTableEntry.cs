@@ -57,7 +57,9 @@ namespace NFLanguageCompiler
         public HeapTableEntry(int heapID, String strValue)
         {
             this.heapID = heapID;
-            this.length = strValue.Length;
+            // Set length to 1 greater than, 
+            // as '00' is added to end of string
+            this.length = strValue.Length + 1;
             this.stringValue = strValue.ToString();
             this.memoryLocation = 0;
         }

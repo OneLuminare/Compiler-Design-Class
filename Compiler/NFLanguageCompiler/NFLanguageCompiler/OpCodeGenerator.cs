@@ -30,6 +30,7 @@ namespace NFLanguageCompiler
         private OpCodeGenTempTables tempTables;
         private StringBuilder tempOpCodeData;
         private OpCodeData programData;
+        private byte[] opCodeDataBytes;
 
         #endregion
 
@@ -75,6 +76,11 @@ namespace NFLanguageCompiler
             get { return programData; }
         }
 
+        // Get op code byte array
+        public byte[] OpCodeDataBytes
+        {
+            get { return opCodeDataBytes; }
+        }
 
         #endregion
 
@@ -82,6 +88,9 @@ namespace NFLanguageCompiler
 
         //Message event
         public event MessageEventHandler OpCodeGenMessageEvent;
+
+        // General Message Event
+        public event MessageEventHandler OpCodeGenGeneralMessageEvent;
 
         //Error event
         public event WarningErrorEventHandler OpCodeGenErrorEvent;
@@ -99,6 +108,7 @@ namespace NFLanguageCompiler
             warningCount = 0;
             errorCount = 0;
             opCodeData = "";
+            opCodeDataBytes = null;
             outputOpCodesToFile = false;
             tempOpCodeData = null;
             tempTables = null;
@@ -119,18 +129,48 @@ namespace NFLanguageCompiler
             tempTables = new OpCodeGenTempTables();
             tempOpCodeData = new StringBuilder(250);
 
+            // Create new byte array
+            opCodeDataBytes = new byte[256];
+
+            // Reset error and warning count
+            errorCount = 0;
+            warningCount = 0;
+
             // Create op code gen param
-            param = new OpCodeGenParam(tempOpCodeData, rootSymbolTableNode, tempTables);
+            param = new OpCodeGenParam(tempOpCodeData, opCodeDataBytes, rootSymbolTableNode, tempTables);
+
+            // Send message
+            SendGeneralMessage("Starting code generation phase...");
+
+            // Send message
+            SendGeneralMessage("Generating op codes...");
 
             // Gen op codes
             rootASTNode.GenOpCodes(param);
 
+            // Send message
+            SendGeneralMessage("Op code generation complete.");
+
+
             // Add final 00
-            param.opCodes.Append("00 ");
-            param.curByte++;
+            //param.opCodes.Append("00 ");
+            //param.curByte++;
+            param.AddBytes(0x00);
+
+            // Send message
+            SendGeneralMessage("Inserting memory locations...");
 
             // Fill in memory locations and jump sizes
             programData = FillInTempOpCodeValues(param);
+
+            // Send message
+            SendGeneralMessage("Completed inserting memory locations.");
+
+            // Send message
+            SendGeneralMessage("Code generation phase complete.");
+
+            // Send message
+            SendGeneralMessage("Compilation complete.");
 
             // Set op code from string builder
             opCodeData = param.opCodes.ToString();
@@ -170,14 +210,15 @@ namespace NFLanguageCompiler
             HeapTableEntry heapEntry = null;
             BlockSizeTableEntry blockEntry = null;
             OpCodeData programData = new OpCodeData();
+            TempByteData byteData = null;
 
             // Determin stack size
             programData.stackSize = param.tables.MaxVarUsage;
-            programData.stackStart = param.curByte + 1;
+            programData.stackStart = param.curByte ;
 
             // Determine heap size
             programData.heapSize = param.tables.TotalHeapSize();
-            programData.heapStart = param.curByte + programData.stackSize + 1;
+            programData.heapStart = param.curByte + programData.stackSize;
 
 
 
@@ -185,159 +226,151 @@ namespace NFLanguageCompiler
             zeros = programData.stackSize;
             for (int i = 0; i < zeros; i++)
             {
-                param.opCodes.Append("00 ");
+                //param.opCodes.Append("00 ");
+                param.AddBytes(0x00);
             }
             
             // Update size of file
-            param.curByte += zeros;
+            //param.curByte += zeros;
 
-            
+            // Send message
+            SendGeneralMessage("Creating strings in memory...");
 
             // Fill in memory locations for heap
             for (int i = 0; i < param.tables.HeapTableCount(); i++)
             {
                 heapEntry = param.tables.GetHeapTableEntryByIndex(i);
 
-                heapEntry.MemoryLocation = programData.heapStart + curByte - 1;
+                heapEntry.MemoryLocation = programData.heapStart + curByte ;
 
                 // Write char
-                for (int n = 1; n < heapEntry.StringValue.Length; n++)
+                for (int n = 0; n < heapEntry.StringValue.Length; n++)
                 {
-                    param.opCodes.AppendFormat("{0} ", ((int)heapEntry.StringValue[n]).ToString("X2"));
+                    //param.opCodes.AppendFormat("{0} ", ((int)heapEntry.StringValue[n]).ToString("X2"));
+                    param.AddBytes((byte)heapEntry.StringValue[n]);
                 }
-                param.opCodes.Append("00 ");
-                param.curByte += heapEntry.Length + 1;
+                //param.opCodes.Append("00 ");
+                param.AddBytes(0x00);
+                //param.curByte += heapEntry.Length + 1;
 
                 curByte += heapEntry.Length;
             }
 
+            // Send message
+            SendGeneralMessage("String creation complete.");
+
             // Set program data size
             programData.totalBytes = param.curByte;
 
-            // Split string
-            strings = param.opCodes.ToString().Split(' ');
 
             // Cycle through codes
-            for (int i = 0; i < strings.Length; i++)
+            for (int i = 0; i < param.insertBytes.Count; i++)
             {
-                // Set string
-                s = strings[i];
+                // Get byte data
+                byteData = (TempByteData)param.insertBytes[i];
 
-                // Verify valid string
-                if (s.Length > 0)
+                // Get place holder string
+                s = byteData.VarSymbol;
+
+                // Check for V (var table
+                if (s[0] == 'V')
                 {
-                    // Check for V (var table
-                    if (s[0] == 'V')
+                    // Get number off string
+                    num = int.Parse(s.Substring(1, s.Length - 1));
+
+                    // Find entry
+                    varEntry = param.tables.GetVarTableEntry(num);
+
+                    // Replace entry with address
+                    if (varEntry != null)
                     {
-                        // Get number off string
-                        num = int.Parse(s.Substring(1, s.Length - 1));
-
-                        // Find entry
-                        varEntry = param.tables.GetVarTableEntry(num);
-
-                        // Replace entry with address
-                        if (varEntry != null)
-                        {
-                            strings[i] = String.Format("{0}", (programData.stackStart + varEntry.Offset - 1).ToString("X2"));
-                        }
+                        //strings[i] = String.Format("{0}", (programData.stackStart + varEntry.Offset).ToString("X2"));
+                        param.SetByte(byteData.Index, (byte)(programData.stackStart + varEntry.Offset));
                     }
-                    // Check for H (heap)
-                    else if (s[0] == 'H')
+                }
+                // Check for H (heap)
+                else if (s[0] == 'H')
+                {
+                    // Find length to s or end
+                    len = s.Length;
+                    for (int n = 1; n < s.Length; n++)
                     {
-                        // Find length to s or end
-                        len = s.Length;
-                        for (int n = 1; n < s.Length; n++)
-                        {
-                            if (s[n] == 'S')
-                                len = n;
-                        }
-
-
-                        // Get number off string
-                        num = int.Parse(s.Substring(1, len - 1));
-
-
-                        // Find entry
-                        heapEntry = param.tables.GetHeapTableEntry(num);
-
-                        // Split of F
-                        offStrings = s.Split('S');
-
-
-                        // Get offf num if valid
-                        if (offStrings.Length > 1)
-                        {
-                            o = offStrings[1];
-
-                            localOffSet = int.Parse(o.Substring(0, o.Length));
-                        }
-                        else
-                            localOffSet = 0;
-
-
-                        // Replace entry with address
-                        if (heapEntry != null)
-                        {
-                            strings[i] = String.Format("{0}", (heapEntry.MemoryLocation + localOffSet ).ToString("X2"));
-                        }
+                        if (s[n] == 'S')
+                            len = n;
                     }
-                    // Else if block parse flag
-                    else if (s[0] == 'B')
+
+
+                    // Get number off string
+                    num = int.Parse(s.Substring(1, len - 1));
+
+
+                    // Find entry
+                    heapEntry = param.tables.GetHeapTableEntry(num);
+
+                    // Split of F
+                    offStrings = s.Split('S');
+
+
+                    // Get offf num if valid
+                    if (offStrings.Length > 1)
                     {
-                        // Find length to s or end
-                        len = s.Length;
-                        for (int n = 1; n < s.Length; n++)
-                        {
-                            if (s[n] == 'S')
-                                len = n;
-                        }
+                        o = offStrings[1];
 
-                        // Get number off string
-                        num = int.Parse(s.Substring(1, len - 1));
+                        localOffSet = int.Parse(o.Substring(0, o.Length));
+                    }
+                    else
+                        localOffSet = 0;
 
 
-                        // Find entry ( happens to work out that block id = index )
-                        blockEntry = param.tables.GetBlockSizeTableEntry(num);
+                    // Replace entry with address
+                    if (heapEntry != null)
+                    {
+                       // strings[i] = String.Format("{0}", (heapEntry.MemoryLocation + localOffSet).ToString("X2"));
+                        param.SetByte(byteData.Index, (byte)(heapEntry.MemoryLocation + localOffSet));
+                    }
+                }
+                // Else if block parse flag
+                else if (s[0] == 'B')
+                {
+                    // Find length to s or end
+                    len = s.Length;
+                    for (int n = 1; n < s.Length; n++)
+                    {
+                        if (s[n] == 'S')
+                            len = n;
+                    }
+
+                    // Get number off string
+                    num = int.Parse(s.Substring(1, len - 1));
 
 
-                        // Split of F
-                        offStrings = s.Split('S');
+                    // Find entry ( happens to work out that block id = index )
+                    blockEntry = param.tables.GetBlockSizeTableEntry(num);
 
 
-                        // Get offf num if valid
-                        if (offStrings.Length > 1)
-                        {
-                            o = offStrings[1];
+                    // Split of F
+                    offStrings = s.Split('S');
 
-                            localOffSet = int.Parse(o.Substring(0, o.Length));
-                        }
-                        else
-                            localOffSet = 0;
 
-                        // Replace entry with address
-                        if (blockEntry != null)
-                        {
-                            strings[i] = String.Format("{0}", (blockEntry.EndByte +  localOffSet - 1).ToString("X2"));
-                        }
+                    // Get offf num if valid
+                    if (offStrings.Length > 1)
+                    {
+                        o = offStrings[1];
+
+                        localOffSet = int.Parse(o.Substring(0, o.Length));
+                    }
+                    else
+                        localOffSet = 0;
+
+                    // Replace entry with address
+                    if (blockEntry != null)
+                    {
+                        //strings[i] = String.Format("{0}", (blockEntry.BlockSize + localOffSet).ToString("X2"));
+                        param.SetByte(byteData.Index,(byte)(blockEntry.BlockSize + localOffSet));
                     }
                 }
             }
-
-            // Reset op codes
-            param.opCodes = new StringBuilder(256);
-
-            // Reassemble string
-            for (int i = 0; i < strings.Length; i++)
-            {
-                s = strings[i];
-                if (s.Length > 0)
-                {
-                    param.opCodes.Append(s);
-                    param.opCodes.Append(" ");
-                }
-            }
-
-            
+   
             // Return program data
             return programData;
         }
@@ -353,6 +386,15 @@ namespace NFLanguageCompiler
         {
             if (OpCodeGenMessageEvent != null)
                 OpCodeGenMessageEvent(msg);
+        }
+
+        // Send general message event
+        private void SendGeneralMessage(String msg)
+        {
+            if (OpCodeGenGeneralMessageEvent != null)
+                OpCodeGenGeneralMessageEvent(msg);
+
+            SendMessage(msg);
         }
 
         //Sends warning event

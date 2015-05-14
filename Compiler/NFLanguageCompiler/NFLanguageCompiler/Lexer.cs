@@ -49,6 +49,9 @@ namespace NFLanguageCompiler
         // Event handling lexer output messages
         public event MessageEventHandler LexerMessageEvent;
 
+        // Event handling lexer output messages
+        public event MessageEventHandler LexerGeneralMessageEvent;
+
         // Event handling warning messages
         public event WarningErrorEventHandler LexerWarningEvent;
 
@@ -148,6 +151,12 @@ namespace NFLanguageCompiler
             String line = null;
             Char curChar;
             ProcessReturnValue ret;
+
+            // Send message
+            SendGeneralMessage("Starting compilation...");
+
+            // Send message
+            SendGeneralMessage("Starting lex...");
 
             //Splits on lines(line feed). Carriage return if exists is stripped 
             //later. Different text files use different combos of line feed
@@ -842,6 +851,9 @@ namespace NFLanguageCompiler
                 WarningCount++;
             }
 
+            // Send message
+            SendGeneralMessage("Lex complete.");
+
             //Determine return value
             if (OutputTokenStream.Count == 1)
                 ret = ProcessReturnValue.PRV_NONE;
@@ -862,6 +874,18 @@ namespace NFLanguageCompiler
             OutputTokenStream.ClearTokens();
             WarningCount = 0;
             ErrorCount = 0;
+        }
+
+        // Sends general message
+        private void SendGeneralMessage(String msg)
+        {
+            //Send output event
+            if (LexerGeneralMessageEvent != null)
+                LexerGeneralMessageEvent(msg);
+            
+            //Send output event
+            if (LexerMessageEvent != null)
+                LexerMessageEvent(msg);
         }
 
         #endregion

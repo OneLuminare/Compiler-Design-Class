@@ -80,6 +80,9 @@ namespace NFLanguageCompiler
         //Parser message event
         public event MessageEventHandler ParserMessageEvent;
 
+        //Parser message event
+        public event MessageEventHandler ParserGeneralMessageEvent;
+
         //Parser error event
         public event WarningErrorEventHandler ParserErrorEvent;
 
@@ -134,6 +137,12 @@ namespace NFLanguageCompiler
             if (tokenStream.Count == 0)
                 return ProcessReturnValue.PRV_NONE;
 
+            // Send message
+            SendGeneralMessage("Starting parse...");
+
+            // Send message
+            SendGeneralMessage("Creating CST...");
+
             //Start recursize parse functions
             try
             {
@@ -153,6 +162,12 @@ namespace NFLanguageCompiler
                 SendMessage("Parse terminated due to error.");
                 SendError(ex.Message,CurPhase,GetCurToken(),CurTokenIndex);
             }
+
+            // Send message
+            SendGeneralMessage("Completed CST.");
+
+            // Send message
+            SendGeneralMessage("Parse complete.");
 
             //Determin return value
             if (ErrorCount > 0)
@@ -2163,6 +2178,15 @@ namespace NFLanguageCompiler
         {
             if (ParserMessageEvent != null)
                 ParserMessageEvent(msg);
+        }
+
+        //Sends general message event
+        private void SendGeneralMessage(String msg)
+        {
+            if (ParserGeneralMessageEvent != null)
+                ParserGeneralMessageEvent(msg);
+
+            SendMessage(msg);
         }
 
         //Sends warning event

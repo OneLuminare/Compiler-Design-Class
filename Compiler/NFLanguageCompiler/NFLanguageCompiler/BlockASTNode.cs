@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DynamicBranchTree;
 
 namespace NFLanguageCompiler
 {
@@ -79,18 +80,29 @@ namespace NFLanguageCompiler
             VarTableEntry varEntry = null;
             SymbolHashTable curSymbTable = null;
             SymbolTableEntry[] symbEntries = null;
+            DynamicBranchTreeNode<SymbolHashTable> startSymbolTable = null;
+            
+            // Get start symbol table
+            startSymbolTable = param.curSymbTable;
 
             // Check if not root symbol table
-            if (param.curSymbTable.Parent != null)
+            if (!param.firstBlock)
             {
                 // Move into next symbol table child
                 param.curSymbTable = param.curSymbTable.GetChild(param.curSymbTableIndex);
+
 
                 // Record last symb index
                 nextSymbIndex = param.curSymbTableIndex + 1;
 
                 // Set current symbol table index to 0
                 param.curSymbTableIndex = 0;
+            }
+            // Else root table
+            else
+            {
+                // Set first block flag false
+                param.firstBlock = false;
             }
 
             // Record current symbol table
@@ -115,8 +127,11 @@ namespace NFLanguageCompiler
             // Reset cur symbol table index
             param.curSymbTableIndex = nextSymbIndex;
 
+            // Reset cur symbol table
+            param.curSymbTable = startSymbolTable;
+
             // Set end byte of block
-            entry.EndByte = entry.StartByte + bytesAdded;
+            entry.EndByte = param.curByte - 1;
 
             // Cycle through symbol table
             symbEntries = curSymbTable.GetAllItems();
@@ -126,7 +141,7 @@ namespace NFLanguageCompiler
                 varEntry = param.tables.GetVarTableEntry(symbEntries[i].EntryID);
 
                 // Check if exists
-                if (varEntry != null)
+                if (varEntry != null )
                 {
                     // Set not in use flag
                     varEntry.InUse = false;

@@ -87,6 +87,12 @@ namespace CompilerInterface
             textBoxSymanticAnalyzerMessages.AppendText(msg + '\n');
         }
 
+        // Ouputs op code gen messages
+        private void OutputOpCodeGeneratorMessages(String msg)
+        {
+            textBoxOpCodeGenMessages.AppendText(msg + '\n');
+        }
+
         #endregion
 
         #region General Methods
@@ -377,6 +383,55 @@ namespace CompilerInterface
             }
         }
 
+        // Output all Symantic Analysis warnings and errors to list view control
+        private void OutputOpCodeGenWarningsAndErrors()
+        {
+            //Inits
+            NFLanguageCompiler.Message msg = null;
+            ListViewItem item = null;
+
+            //Clear warnings and errors
+            listViewOpCodeGenWarningsErrors.Items.Clear();
+
+            //Output parser warnings
+            for (int i = 0; i < compiler.WarningCount; i++)
+            {
+                //Get Message object
+                msg = compiler.GetWarning(i);
+
+                //Verify parser warning
+                if (msg.System == SystemType.ST_OPCODEGEN)
+                {
+                    //Create list view item
+                    item = new ListViewItem("Warning");
+                    item.SubItems.Add(msg.Text);
+
+                    //Add item
+                    listViewOpCodeGenWarningsErrors.Items.Add(item);
+                }
+            }
+
+            //Output all errors
+            for (int i = 0; i < compiler.ErrorCount; i++)
+            {
+                //Get Message object
+                msg = compiler.GetError(i);
+
+                //Verify parser warning
+                if (msg.System == SystemType.ST_OPCODEGEN)
+                {
+                    //Createl list view item
+                    item = new ListViewItem("Error");
+                    item.SubItems.Add(msg.Text);
+
+                    //Add item to list
+
+                    listViewOpCodeGenWarningsErrors.Items.Add(item);
+                }
+            }
+        }
+
+        // Output all opcode gen warnings and errors
         //Resets all forms for new compilation
         private void ResetAllTabs(bool includeSource)
         {
@@ -738,20 +793,32 @@ namespace CompilerInterface
             if (show)
             {
                 //Register events
+                compiler.Lexer.LexerGeneralMessageEvent -= OutputGeneralMessages;
+                compiler.Lexer.LexerGeneralMessageEvent -= OutputLexerMessages;
                 compiler.Lexer.LexerMessageEvent += new MessageEventHandler(OutputGeneralMessages);
                 compiler.Lexer.LexerMessageEvent += new MessageEventHandler(OutputLexerMessages);
+                compiler.Parser.ParserGeneralMessageEvent -= OutputGeneralMessages;
+                compiler.Parser.ParserGeneralMessageEvent -= OutputParserMessages;
                 compiler.Parser.ParserMessageEvent += new MessageEventHandler(OutputGeneralMessages);
                 compiler.Parser.ParserMessageEvent += new MessageEventHandler(OutputParserMessages);
+                compiler.SymanticAnalyzer.SymanticAnalyzerGeneralMessageEvent -= OutputGeneralMessages;
+                compiler.SymanticAnalyzer.SymanticAnalyzerGeneralMessageEvent -= OutputSymanticAnalyzerMessages;
                 compiler.SymanticAnalyzer.SymanticAnalyzerMessageEvent += new MessageEventHandler(OutputGeneralMessages);
                 compiler.SymanticAnalyzer.SymanticAnalyzerMessageEvent += new MessageEventHandler(OutputSymanticAnalyzerMessages);
             }
             else
             {
                 //Unregister events
+                compiler.Lexer.LexerGeneralMessageEvent += new MessageEventHandler(OutputGeneralMessages);
+                compiler.Lexer.LexerGeneralMessageEvent += new MessageEventHandler(OutputLexerMessages);
                 compiler.Lexer.LexerMessageEvent -= OutputGeneralMessages;
                 compiler.Lexer.LexerMessageEvent -= OutputLexerMessages;
+                compiler.Parser.ParserGeneralMessageEvent += new MessageEventHandler(OutputGeneralMessages);
+                compiler.Parser.ParserGeneralMessageEvent += new MessageEventHandler(OutputParserMessages);
                 compiler.Parser.ParserMessageEvent -= OutputGeneralMessages;
                 compiler.Parser.ParserMessageEvent -= OutputParserMessages;
+                compiler.SymanticAnalyzer.SymanticAnalyzerGeneralMessageEvent += new MessageEventHandler(OutputGeneralMessages);
+                compiler.SymanticAnalyzer.SymanticAnalyzerGeneralMessageEvent += new MessageEventHandler(OutputSymanticAnalyzerMessages);
                 compiler.SymanticAnalyzer.SymanticAnalyzerMessageEvent -= OutputGeneralMessages;
                 compiler.SymanticAnalyzer.SymanticAnalyzerMessageEvent -= OutputSymanticAnalyzerMessages;
             }
@@ -764,7 +831,7 @@ namespace CompilerInterface
             //Inits
             bool error = false;
             bool noComplete = false;
-            int phase = 10;
+            int phase = 0;
 
             //Clear last output messages
             ResetAllTabs(false);
@@ -1049,6 +1116,10 @@ namespace CompilerInterface
                 textBoxOpCodes.Text += String.Format("Block ID: {0} Start Byte: {1} End Byte: {2}", entry.BlockID, entry.StartByte, entry.EndByte);
             }
              * */
+
+            /*
+            textBoxOpCodes.Text = "";
+
             int n = 0;
             while (n < compiler.OpCodeGen.OpCodeData.Length)
             {
@@ -1065,6 +1136,22 @@ namespace CompilerInterface
 
                 textBoxOpCodes.Text += '\n';
             }
+             * */
+
+            textBoxOpCodes.Text = "";
+
+            int nBytesPerLine = 5;
+            StringBuilder sb = new StringBuilder(256);
+            for (int i = 0; i < compiler.OpCodeGen.ProgramData.totalBytes; i++)
+            {
+                sb.AppendFormat("{0} ", compiler.OpCodeGen.OpCodeDataBytes[i].ToString("X2"));
+
+                if ( ((i + 1) % nBytesPerLine) == 0)
+                    sb.Append("\r\n");
+            }
+
+            textBoxOpCodes.Text = sb.ToString();
+
         }
 
         // Outputs op code gen warings and errors
@@ -1269,7 +1356,14 @@ namespace CompilerInterface
             ResetAllTabs(true);
         }
 
+        private void buttonUpdate_Click(object sender, EventArgs e)
+        {
+
+        }
+
         #endregion
+
+      
 
 
 

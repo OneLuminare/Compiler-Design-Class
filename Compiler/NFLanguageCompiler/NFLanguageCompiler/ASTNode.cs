@@ -207,6 +207,53 @@ namespace NFLanguageCompiler
             return parent;
         }
 
+        public void DivorceChild(ASTNode node)
+        {
+            ASTNode curNode = null;
+            ASTNode leftMostNode = null;
+
+            curNode = node.parent.leftMostChild;
+            while (curNode != null)
+            {
+                if (curNode != node)
+                {
+                    if (leftMostNode == null)
+                        leftMostNode = curNode;
+
+                    curNode.leftMostSibling = leftMostNode;
+                }
+
+                if (curNode.rightSibling == node)
+                {
+                    curNode.rightSibling = node.rightSibling;
+                }
+
+                curNode = curNode.rightSibling;
+            }
+
+            /*
+            if (node.LeftMostSibling != node)
+            {
+                node.LeftMostSibling.rightSibling = node.rightSibling;
+            }
+            else
+            {
+                node.parent.leftMostChild = node.rightSibling;
+
+                if (node.rightSibling != null)
+                {
+                    node.rightSibling.leftMostSibling = null;
+
+                }
+                
+            }
+             * */
+
+            node.parent = null;
+            node.leftMostSibling = node;
+            node.rightSibling = null;
+        }
+
         #region Object Overrides
 
         public override string ToString()

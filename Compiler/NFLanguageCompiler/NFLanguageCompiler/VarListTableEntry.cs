@@ -55,6 +55,7 @@ namespace NFLanguageCompiler
             varEntry = null;
             offset = -1;
             inUse = true;
+ 
         }
 
         // Set constructor

@@ -93,13 +93,16 @@ namespace NFLanguageCompiler
             {
                 // Load value into accumlator
                 param.opCodes.AppendFormat("AD V{0} 00 ", varEntry.VarID);
+                param.AddBytes(0xAD);
+                param.AddByteForUpdate('V', varEntry.VarID);
+                param.AddBytes(0x00);
 
                 // Inc bytes
-                param.curByte += 3;
+                //param.curByte += 3;
             }
 
             // Return number of bytes
-            return param.curByte;
+            return 3;
         }
 
         #endregion
