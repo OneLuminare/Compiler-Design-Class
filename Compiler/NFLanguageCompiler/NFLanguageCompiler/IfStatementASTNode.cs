@@ -77,56 +77,63 @@ namespace NFLanguageCompiler
             int bytes = 0;
             int bytes2 = 0;
             VarTableEntry varEntry = null;
+            try
+            {
+                // Gen op codes for boolean exp ( results in accum )
+                bytes += expr.GenOpCodes(param);
 
-            // Gen op codes for boolean exp ( results in accum )
-            bytes += expr.GenOpCodes(param);
+                // Create new temp var
+                varEntry = param.tables.CreateTempVarTableEntry();
 
-            // Create new temp var
-            varEntry = param.tables.CreateTempVarTableEntry();
+                // Set in use flag
+                varEntry.InUse = true;
 
-            // Set in use flag
-            varEntry.InUse = true;
+                // Increment in use count
+                param.tables.IncVarIsUseCount();
 
-            // Increment in use count
-            param.tables.IncVarIsUseCount();
+                // Move results into temp memory
+                //param.opCodes.AppendFormat("8D V{0} 00 ", varEntry.VarID);
+                param.AddBytes(0x8D);
+                param.AddByteForUpdate('V', varEntry.VarID);
+                param.AddBytes(0x00);
 
-            // Move results into temp memory
-            //param.opCodes.AppendFormat("8D V{0} 00 ", varEntry.VarID);
-            param.AddBytes(0x8D);
-            param.AddByteForUpdate('V', varEntry.VarID);
-            param.AddBytes(0x00);
+                // Load 1 into accum
+                //param.opCodes.Append("A2 01 ");
+                param.AddBytes(0xA2, 0x01);
 
-            // Load 1 into accum
-            //param.opCodes.Append("A2 01 ");
-            param.AddBytes(0xA2, 0x01);
+                // Compare temp (res of expr) to true (1)
+                //param.opCodes.AppendFormat("EC V{0} 00 ", varEntry.VarID);
+                param.AddBytes(0xEC);
+                param.AddByteForUpdate('V', varEntry.VarID);
+                param.AddBytes(0x00);
 
-            // Compare temp (res of expr) to true (1)
-            //param.opCodes.AppendFormat("EC V{0} 00 ", varEntry.VarID);
-            param.AddBytes(0xEC);
-            param.AddByteForUpdate('V', varEntry.VarID);
-            param.AddBytes(0x00);
+                // Branch to end of block (using curBlockID, as gen op
+                // will use this id and incremement it. The current 
+                // block at any time is really curBlockID - 1 ).
+                //param.opCodes.AppendFormat("D0 B{0} ", param.curBlockID);
+                param.AddBytes(0xD0);
+                param.AddByteForUpdate('B', param.curBlockID);
 
-            // Branch to end of block (using curBlockID, as gen op
-            // will use this id and incremement it. The current 
-            // block at any time is really curBlockID - 1 ).
-            //param.opCodes.AppendFormat("D0 B{0} ", param.curBlockID);
-            param.AddBytes(0xD0);
-            param.AddByteForUpdate('B', param.curBlockID);
+                // Incrmeent bytes
+                bytes += 10;
 
-            // Incrmeent bytes
-            bytes += 10;
+                // Update bytes
+                //param.curByte += 10;
 
-            // Update bytes
-            //param.curByte += 10;
+                // Set temp var not in use
+                varEntry.InUse = false;
 
-            // Set temp var not in use
-            varEntry.InUse = false;
+                // Decremeent in use count
+                param.tables.DecVarInUseCount();
 
-            // Decremeent in use count
-            param.tables.DecVarInUseCount();
+                // Gen op codes for block
+                bytes += block.GenOpCodes(param);
+            }
 
-            // Gen op codes for block
-            bytes += block.GenOpCodes(param);
+            catch (IndexOutOfRangeException ex)
+            {
+                throw ex;
+            }
 
             // Return bytes added
             return bytes;

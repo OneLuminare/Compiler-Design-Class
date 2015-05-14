@@ -80,10 +80,17 @@ namespace NFLanguageCompiler
         // Returns: Number of bytes generated.
         public override int GenOpCodes(OpCodeGenParam param)
         {
-            // Load value into accum
-            //param.opCodes.AppendFormat("A9 {0} ", Value.ToString("D2"));
-            param.AddBytes(0xA9, (byte)Value);
+            try
+            {
+                // Load value into accum
+                //param.opCodes.AppendFormat("A9 {0} ", Value.ToString("D2"));
+                param.AddBytes(0xA9, (byte)Value);
+            }
 
+            catch (IndexOutOfRangeException ex)
+            {
+                throw ex;
+            }
             // Increment total bytes
             //param.curByte += 2;
 

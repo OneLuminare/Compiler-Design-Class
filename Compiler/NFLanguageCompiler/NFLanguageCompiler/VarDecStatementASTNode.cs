@@ -94,15 +94,23 @@ namespace NFLanguageCompiler
             // Check if entry found incase of some wierd error
             if (varEntry != null)
             {
-                // Load accumlator with 0
-                //param.opCodes.Append("A9 00 ");
-                param.AddBytes(0xA9, 0x00);
+                try
+                {
+                    // Load accumlator with 0
+                    //param.opCodes.Append("A9 00 ");
+                    param.AddBytes(0xA9, 0x00);
 
-                // Copy to temp location in memory
-                //param.opCodes.AppendFormat("8D V{0} 00 ",varEntry.VarID);
-                param.AddBytes(0x8D);
-                param.AddByteForUpdate('V', varEntry.VarID);
-                param.AddBytes(0x00);
+                    // Copy to temp location in memory
+                    //param.opCodes.AppendFormat("8D V{0} 00 ",varEntry.VarID);
+                    param.AddBytes(0x8D);
+                    param.AddByteForUpdate('V', varEntry.VarID);
+                    param.AddBytes(0x00);
+                }
+
+                catch (IndexOutOfRangeException ex)
+                {
+                    throw ex;
+                }
 
                 // Add number of bytes
                // param.curByte += 5;

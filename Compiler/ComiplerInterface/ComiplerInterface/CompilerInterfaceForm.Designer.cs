@@ -136,6 +136,23 @@
             this.tabPageOptimization = new System.Windows.Forms.TabPage();
             this.labelOpCodes = new System.Windows.Forms.Label();
             this.tabPageCodeGeneration = new System.Windows.Forms.TabPage();
+            this.groupBoxDisplay = new System.Windows.Forms.GroupBox();
+            this.buttonUpdate = new System.Windows.Forms.Button();
+            this.lblBytesPerRow = new System.Windows.Forms.Label();
+            this.groupBoxProgramData = new System.Windows.Forms.GroupBox();
+            this.lblHeapSizeBytes = new System.Windows.Forms.Label();
+            this.lblStackSizeBytes = new System.Windows.Forms.Label();
+            this.lblLengthBytes = new System.Windows.Forms.Label();
+            this.lblHeapSize = new System.Windows.Forms.Label();
+            this.lblStackSize = new System.Windows.Forms.Label();
+            this.lblHeapStart = new System.Windows.Forms.Label();
+            this.lblStackStart = new System.Windows.Forms.Label();
+            this.lblHeapSizeLabel = new System.Windows.Forms.Label();
+            this.lblHeapStartLabel = new System.Windows.Forms.Label();
+            this.lblStackSizeLabel = new System.Windows.Forms.Label();
+            this.lblStackStartLabel = new System.Windows.Forms.Label();
+            this.lblLength = new System.Windows.Forms.Label();
+            this.lblLengthLabel = new System.Windows.Forms.Label();
             this.textBoxOpCodes = new System.Windows.Forms.TextBox();
             this.labelOpCodesLabel = new System.Windows.Forms.Label();
             this.labelOpCodGenMessagesLabel = new System.Windows.Forms.Label();
@@ -176,24 +193,7 @@
             this.columnHeader9 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader10 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader11 = new System.Windows.Forms.ColumnHeader();
-            this.lblLengthLabel = new System.Windows.Forms.Label();
-            this.groupBoxProgramData = new System.Windows.Forms.GroupBox();
-            this.lblLength = new System.Windows.Forms.Label();
-            this.lblStackStartLabel = new System.Windows.Forms.Label();
-            this.lblStackSizeLabel = new System.Windows.Forms.Label();
-            this.lblHeapStartLabel = new System.Windows.Forms.Label();
-            this.lblHeapSizeLabel = new System.Windows.Forms.Label();
-            this.lblStackStart = new System.Windows.Forms.Label();
-            this.lblHeapStart = new System.Windows.Forms.Label();
-            this.lblStackSize = new System.Windows.Forms.Label();
-            this.lblHeapSize = new System.Windows.Forms.Label();
-            this.lblLengthBytes = new System.Windows.Forms.Label();
-            this.lblStackSizeBytes = new System.Windows.Forms.Label();
-            this.lblHeapSizeBytes = new System.Windows.Forms.Label();
-            this.groupBoxDisplay = new System.Windows.Forms.GroupBox();
-            this.textBoxDisplayedBytesPerRow = new System.Windows.Forms.TextBox();
-            this.lblBytesPerRow = new System.Windows.Forms.Label();
-            this.buttonUpdate = new System.Windows.Forms.Button();
+            this.spinnerDisplayedBytesPerRow = new System.Windows.Forms.NumericUpDown();
             this.tabControlMain.SuspendLayout();
             this.tabPageSource.SuspendLayout();
             this.groupBoxOptions.SuspendLayout();
@@ -204,9 +204,10 @@
             this.tabPageSymbolTable.SuspendLayout();
             this.tabPageOptimization.SuspendLayout();
             this.tabPageCodeGeneration.SuspendLayout();
-            this.menuStrip1.SuspendLayout();
-            this.groupBoxProgramData.SuspendLayout();
             this.groupBoxDisplay.SuspendLayout();
+            this.groupBoxProgramData.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.spinnerDisplayedBytesPerRow)).BeginInit();
             this.SuspendLayout();
             // 
             // textBoxSource
@@ -1207,6 +1208,176 @@
             this.tabPageCodeGeneration.Text = "Code Generation";
             this.tabPageCodeGeneration.UseVisualStyleBackColor = true;
             // 
+            // groupBoxDisplay
+            // 
+            this.groupBoxDisplay.Controls.Add(this.spinnerDisplayedBytesPerRow);
+            this.groupBoxDisplay.Controls.Add(this.buttonUpdate);
+            this.groupBoxDisplay.Controls.Add(this.lblBytesPerRow);
+            this.groupBoxDisplay.Location = new System.Drawing.Point(474, 221);
+            this.groupBoxDisplay.Name = "groupBoxDisplay";
+            this.groupBoxDisplay.Size = new System.Drawing.Size(265, 55);
+            this.groupBoxDisplay.TabIndex = 14;
+            this.groupBoxDisplay.TabStop = false;
+            this.groupBoxDisplay.Text = "Display";
+            // 
+            // buttonUpdate
+            // 
+            this.buttonUpdate.Location = new System.Drawing.Point(195, 20);
+            this.buttonUpdate.Name = "buttonUpdate";
+            this.buttonUpdate.Size = new System.Drawing.Size(64, 23);
+            this.buttonUpdate.TabIndex = 2;
+            this.buttonUpdate.Text = "Update";
+            this.buttonUpdate.UseVisualStyleBackColor = true;
+            this.buttonUpdate.Click += new System.EventHandler(this.buttonUpdate_Click);
+            // 
+            // lblBytesPerRow
+            // 
+            this.lblBytesPerRow.AutoSize = true;
+            this.lblBytesPerRow.Location = new System.Drawing.Point(6, 25);
+            this.lblBytesPerRow.Name = "lblBytesPerRow";
+            this.lblBytesPerRow.Size = new System.Drawing.Size(132, 13);
+            this.lblBytesPerRow.TabIndex = 1;
+            this.lblBytesPerRow.Text = "Displayed Bytes Per Row :";
+            // 
+            // groupBoxProgramData
+            // 
+            this.groupBoxProgramData.Controls.Add(this.lblHeapSizeBytes);
+            this.groupBoxProgramData.Controls.Add(this.lblStackSizeBytes);
+            this.groupBoxProgramData.Controls.Add(this.lblLengthBytes);
+            this.groupBoxProgramData.Controls.Add(this.lblHeapSize);
+            this.groupBoxProgramData.Controls.Add(this.lblStackSize);
+            this.groupBoxProgramData.Controls.Add(this.lblHeapStart);
+            this.groupBoxProgramData.Controls.Add(this.lblStackStart);
+            this.groupBoxProgramData.Controls.Add(this.lblHeapSizeLabel);
+            this.groupBoxProgramData.Controls.Add(this.lblHeapStartLabel);
+            this.groupBoxProgramData.Controls.Add(this.lblStackSizeLabel);
+            this.groupBoxProgramData.Controls.Add(this.lblStackStartLabel);
+            this.groupBoxProgramData.Controls.Add(this.lblLength);
+            this.groupBoxProgramData.Controls.Add(this.lblLengthLabel);
+            this.groupBoxProgramData.Location = new System.Drawing.Point(474, 107);
+            this.groupBoxProgramData.Name = "groupBoxProgramData";
+            this.groupBoxProgramData.Size = new System.Drawing.Size(265, 104);
+            this.groupBoxProgramData.TabIndex = 13;
+            this.groupBoxProgramData.TabStop = false;
+            this.groupBoxProgramData.Text = "Program Data";
+            // 
+            // lblHeapSizeBytes
+            // 
+            this.lblHeapSizeBytes.AutoSize = true;
+            this.lblHeapSizeBytes.Location = new System.Drawing.Point(213, 74);
+            this.lblHeapSizeBytes.Name = "lblHeapSizeBytes";
+            this.lblHeapSizeBytes.Size = new System.Drawing.Size(32, 13);
+            this.lblHeapSizeBytes.TabIndex = 25;
+            this.lblHeapSizeBytes.Text = "bytes";
+            // 
+            // lblStackSizeBytes
+            // 
+            this.lblStackSizeBytes.AutoSize = true;
+            this.lblStackSizeBytes.Location = new System.Drawing.Point(213, 49);
+            this.lblStackSizeBytes.Name = "lblStackSizeBytes";
+            this.lblStackSizeBytes.Size = new System.Drawing.Size(32, 13);
+            this.lblStackSizeBytes.TabIndex = 24;
+            this.lblStackSizeBytes.Text = "bytes";
+            // 
+            // lblLengthBytes
+            // 
+            this.lblLengthBytes.AutoSize = true;
+            this.lblLengthBytes.Location = new System.Drawing.Point(98, 25);
+            this.lblLengthBytes.Name = "lblLengthBytes";
+            this.lblLengthBytes.Size = new System.Drawing.Size(32, 13);
+            this.lblLengthBytes.TabIndex = 23;
+            this.lblLengthBytes.Text = "bytes";
+            // 
+            // lblHeapSize
+            // 
+            this.lblHeapSize.AutoSize = true;
+            this.lblHeapSize.Location = new System.Drawing.Point(188, 74);
+            this.lblHeapSize.Name = "lblHeapSize";
+            this.lblHeapSize.Size = new System.Drawing.Size(19, 13);
+            this.lblHeapSize.TabIndex = 22;
+            this.lblHeapSize.Text = "00";
+            // 
+            // lblStackSize
+            // 
+            this.lblStackSize.AutoSize = true;
+            this.lblStackSize.Location = new System.Drawing.Point(188, 49);
+            this.lblStackSize.Name = "lblStackSize";
+            this.lblStackSize.Size = new System.Drawing.Size(19, 13);
+            this.lblStackSize.TabIndex = 21;
+            this.lblStackSize.Text = "00";
+            // 
+            // lblHeapStart
+            // 
+            this.lblHeapStart.AutoSize = true;
+            this.lblHeapStart.Location = new System.Drawing.Point(74, 74);
+            this.lblHeapStart.Name = "lblHeapStart";
+            this.lblHeapStart.Size = new System.Drawing.Size(19, 13);
+            this.lblHeapStart.TabIndex = 20;
+            this.lblHeapStart.Text = "00";
+            // 
+            // lblStackStart
+            // 
+            this.lblStackStart.AutoSize = true;
+            this.lblStackStart.Location = new System.Drawing.Point(74, 49);
+            this.lblStackStart.Name = "lblStackStart";
+            this.lblStackStart.Size = new System.Drawing.Size(19, 13);
+            this.lblStackStart.TabIndex = 19;
+            this.lblStackStart.Text = "00";
+            // 
+            // lblHeapSizeLabel
+            // 
+            this.lblHeapSizeLabel.AutoSize = true;
+            this.lblHeapSizeLabel.Location = new System.Drawing.Point(120, 74);
+            this.lblHeapSizeLabel.Name = "lblHeapSizeLabel";
+            this.lblHeapSizeLabel.Size = new System.Drawing.Size(62, 13);
+            this.lblHeapSizeLabel.TabIndex = 18;
+            this.lblHeapSizeLabel.Text = "Heap Size :";
+            // 
+            // lblHeapStartLabel
+            // 
+            this.lblHeapStartLabel.AutoSize = true;
+            this.lblHeapStartLabel.Location = new System.Drawing.Point(8, 74);
+            this.lblHeapStartLabel.Name = "lblHeapStartLabel";
+            this.lblHeapStartLabel.Size = new System.Drawing.Size(64, 13);
+            this.lblHeapStartLabel.TabIndex = 17;
+            this.lblHeapStartLabel.Text = "Heap Start :";
+            // 
+            // lblStackSizeLabel
+            // 
+            this.lblStackSizeLabel.AutoSize = true;
+            this.lblStackSizeLabel.Location = new System.Drawing.Point(118, 49);
+            this.lblStackSizeLabel.Name = "lblStackSizeLabel";
+            this.lblStackSizeLabel.Size = new System.Drawing.Size(64, 13);
+            this.lblStackSizeLabel.TabIndex = 16;
+            this.lblStackSizeLabel.Text = "Stack Size :";
+            // 
+            // lblStackStartLabel
+            // 
+            this.lblStackStartLabel.AutoSize = true;
+            this.lblStackStartLabel.Location = new System.Drawing.Point(6, 49);
+            this.lblStackStartLabel.Name = "lblStackStartLabel";
+            this.lblStackStartLabel.Size = new System.Drawing.Size(66, 13);
+            this.lblStackStartLabel.TabIndex = 15;
+            this.lblStackStartLabel.Text = "Stack Start :";
+            // 
+            // lblLength
+            // 
+            this.lblLength.AutoSize = true;
+            this.lblLength.Location = new System.Drawing.Point(74, 25);
+            this.lblLength.Name = "lblLength";
+            this.lblLength.Size = new System.Drawing.Size(19, 13);
+            this.lblLength.TabIndex = 14;
+            this.lblLength.Text = "00";
+            // 
+            // lblLengthLabel
+            // 
+            this.lblLengthLabel.AutoSize = true;
+            this.lblLengthLabel.Location = new System.Drawing.Point(26, 25);
+            this.lblLengthLabel.Name = "lblLengthLabel";
+            this.lblLengthLabel.Size = new System.Drawing.Size(46, 13);
+            this.lblLengthLabel.TabIndex = 12;
+            this.lblLengthLabel.Text = "Length :";
+            // 
             // textBoxOpCodes
             // 
             this.textBoxOpCodes.Location = new System.Drawing.Point(9, 33);
@@ -1510,182 +1681,27 @@
             this.columnHeader11.Text = "Message";
             this.columnHeader11.Width = 807;
             // 
-            // lblLengthLabel
+            // spinnerDisplayedBytesPerRow
             // 
-            this.lblLengthLabel.AutoSize = true;
-            this.lblLengthLabel.Location = new System.Drawing.Point(26, 25);
-            this.lblLengthLabel.Name = "lblLengthLabel";
-            this.lblLengthLabel.Size = new System.Drawing.Size(46, 13);
-            this.lblLengthLabel.TabIndex = 12;
-            this.lblLengthLabel.Text = "Length :";
-            // 
-            // groupBoxProgramData
-            // 
-            this.groupBoxProgramData.Controls.Add(this.lblHeapSizeBytes);
-            this.groupBoxProgramData.Controls.Add(this.lblStackSizeBytes);
-            this.groupBoxProgramData.Controls.Add(this.lblLengthBytes);
-            this.groupBoxProgramData.Controls.Add(this.lblHeapSize);
-            this.groupBoxProgramData.Controls.Add(this.lblStackSize);
-            this.groupBoxProgramData.Controls.Add(this.lblHeapStart);
-            this.groupBoxProgramData.Controls.Add(this.lblStackStart);
-            this.groupBoxProgramData.Controls.Add(this.lblHeapSizeLabel);
-            this.groupBoxProgramData.Controls.Add(this.lblHeapStartLabel);
-            this.groupBoxProgramData.Controls.Add(this.lblStackSizeLabel);
-            this.groupBoxProgramData.Controls.Add(this.lblStackStartLabel);
-            this.groupBoxProgramData.Controls.Add(this.lblLength);
-            this.groupBoxProgramData.Controls.Add(this.lblLengthLabel);
-            this.groupBoxProgramData.Location = new System.Drawing.Point(474, 107);
-            this.groupBoxProgramData.Name = "groupBoxProgramData";
-            this.groupBoxProgramData.Size = new System.Drawing.Size(251, 104);
-            this.groupBoxProgramData.TabIndex = 13;
-            this.groupBoxProgramData.TabStop = false;
-            this.groupBoxProgramData.Text = "Program Data";
-            // 
-            // lblLength
-            // 
-            this.lblLength.AutoSize = true;
-            this.lblLength.Location = new System.Drawing.Point(74, 25);
-            this.lblLength.Name = "lblLength";
-            this.lblLength.Size = new System.Drawing.Size(19, 13);
-            this.lblLength.TabIndex = 14;
-            this.lblLength.Text = "00";
-            // 
-            // lblStackStartLabel
-            // 
-            this.lblStackStartLabel.AutoSize = true;
-            this.lblStackStartLabel.Location = new System.Drawing.Point(6, 49);
-            this.lblStackStartLabel.Name = "lblStackStartLabel";
-            this.lblStackStartLabel.Size = new System.Drawing.Size(66, 13);
-            this.lblStackStartLabel.TabIndex = 15;
-            this.lblStackStartLabel.Text = "Stack Start :";
-            // 
-            // lblStackSizeLabel
-            // 
-            this.lblStackSizeLabel.AutoSize = true;
-            this.lblStackSizeLabel.Location = new System.Drawing.Point(118, 49);
-            this.lblStackSizeLabel.Name = "lblStackSizeLabel";
-            this.lblStackSizeLabel.Size = new System.Drawing.Size(64, 13);
-            this.lblStackSizeLabel.TabIndex = 16;
-            this.lblStackSizeLabel.Text = "Stack Size :";
-            // 
-            // lblHeapStartLabel
-            // 
-            this.lblHeapStartLabel.AutoSize = true;
-            this.lblHeapStartLabel.Location = new System.Drawing.Point(8, 74);
-            this.lblHeapStartLabel.Name = "lblHeapStartLabel";
-            this.lblHeapStartLabel.Size = new System.Drawing.Size(64, 13);
-            this.lblHeapStartLabel.TabIndex = 17;
-            this.lblHeapStartLabel.Text = "Heap Start :";
-            // 
-            // lblHeapSizeLabel
-            // 
-            this.lblHeapSizeLabel.AutoSize = true;
-            this.lblHeapSizeLabel.Location = new System.Drawing.Point(120, 74);
-            this.lblHeapSizeLabel.Name = "lblHeapSizeLabel";
-            this.lblHeapSizeLabel.Size = new System.Drawing.Size(62, 13);
-            this.lblHeapSizeLabel.TabIndex = 18;
-            this.lblHeapSizeLabel.Text = "Heap Size :";
-            // 
-            // lblStackStart
-            // 
-            this.lblStackStart.AutoSize = true;
-            this.lblStackStart.Location = new System.Drawing.Point(74, 49);
-            this.lblStackStart.Name = "lblStackStart";
-            this.lblStackStart.Size = new System.Drawing.Size(19, 13);
-            this.lblStackStart.TabIndex = 19;
-            this.lblStackStart.Text = "00";
-            // 
-            // lblHeapStart
-            // 
-            this.lblHeapStart.AutoSize = true;
-            this.lblHeapStart.Location = new System.Drawing.Point(74, 74);
-            this.lblHeapStart.Name = "lblHeapStart";
-            this.lblHeapStart.Size = new System.Drawing.Size(19, 13);
-            this.lblHeapStart.TabIndex = 20;
-            this.lblHeapStart.Text = "00";
-            // 
-            // lblStackSize
-            // 
-            this.lblStackSize.AutoSize = true;
-            this.lblStackSize.Location = new System.Drawing.Point(188, 49);
-            this.lblStackSize.Name = "lblStackSize";
-            this.lblStackSize.Size = new System.Drawing.Size(19, 13);
-            this.lblStackSize.TabIndex = 21;
-            this.lblStackSize.Text = "00";
-            // 
-            // lblHeapSize
-            // 
-            this.lblHeapSize.AutoSize = true;
-            this.lblHeapSize.Location = new System.Drawing.Point(188, 74);
-            this.lblHeapSize.Name = "lblHeapSize";
-            this.lblHeapSize.Size = new System.Drawing.Size(19, 13);
-            this.lblHeapSize.TabIndex = 22;
-            this.lblHeapSize.Text = "00";
-            // 
-            // lblLengthBytes
-            // 
-            this.lblLengthBytes.AutoSize = true;
-            this.lblLengthBytes.Location = new System.Drawing.Point(98, 25);
-            this.lblLengthBytes.Name = "lblLengthBytes";
-            this.lblLengthBytes.Size = new System.Drawing.Size(32, 13);
-            this.lblLengthBytes.TabIndex = 23;
-            this.lblLengthBytes.Text = "bytes";
-            // 
-            // lblStackSizeBytes
-            // 
-            this.lblStackSizeBytes.AutoSize = true;
-            this.lblStackSizeBytes.Location = new System.Drawing.Point(213, 49);
-            this.lblStackSizeBytes.Name = "lblStackSizeBytes";
-            this.lblStackSizeBytes.Size = new System.Drawing.Size(32, 13);
-            this.lblStackSizeBytes.TabIndex = 24;
-            this.lblStackSizeBytes.Text = "bytes";
-            // 
-            // lblHeapSizeBytes
-            // 
-            this.lblHeapSizeBytes.AutoSize = true;
-            this.lblHeapSizeBytes.Location = new System.Drawing.Point(213, 74);
-            this.lblHeapSizeBytes.Name = "lblHeapSizeBytes";
-            this.lblHeapSizeBytes.Size = new System.Drawing.Size(32, 13);
-            this.lblHeapSizeBytes.TabIndex = 25;
-            this.lblHeapSizeBytes.Text = "bytes";
-            // 
-            // groupBoxDisplay
-            // 
-            this.groupBoxDisplay.Controls.Add(this.buttonUpdate);
-            this.groupBoxDisplay.Controls.Add(this.lblBytesPerRow);
-            this.groupBoxDisplay.Controls.Add(this.textBoxDisplayedBytesPerRow);
-            this.groupBoxDisplay.Location = new System.Drawing.Point(474, 221);
-            this.groupBoxDisplay.Name = "groupBoxDisplay";
-            this.groupBoxDisplay.Size = new System.Drawing.Size(248, 55);
-            this.groupBoxDisplay.TabIndex = 14;
-            this.groupBoxDisplay.TabStop = false;
-            this.groupBoxDisplay.Text = "Display";
-            // 
-            // textBoxDisplayedBytesPerRow
-            // 
-            this.textBoxDisplayedBytesPerRow.Location = new System.Drawing.Point(144, 22);
-            this.textBoxDisplayedBytesPerRow.Name = "textBoxDisplayedBytesPerRow";
-            this.textBoxDisplayedBytesPerRow.Size = new System.Drawing.Size(17, 20);
-            this.textBoxDisplayedBytesPerRow.TabIndex = 0;
-            // 
-            // lblBytesPerRow
-            // 
-            this.lblBytesPerRow.AutoSize = true;
-            this.lblBytesPerRow.Location = new System.Drawing.Point(6, 25);
-            this.lblBytesPerRow.Name = "lblBytesPerRow";
-            this.lblBytesPerRow.Size = new System.Drawing.Size(132, 13);
-            this.lblBytesPerRow.TabIndex = 1;
-            this.lblBytesPerRow.Text = "Displayed Bytes Per Row :";
-            // 
-            // buttonUpdate
-            // 
-            this.buttonUpdate.Location = new System.Drawing.Point(178, 20);
-            this.buttonUpdate.Name = "buttonUpdate";
-            this.buttonUpdate.Size = new System.Drawing.Size(64, 23);
-            this.buttonUpdate.TabIndex = 2;
-            this.buttonUpdate.Text = "Update";
-            this.buttonUpdate.UseVisualStyleBackColor = true;
-            this.buttonUpdate.Click += new System.EventHandler(this.buttonUpdate_Click);
+            this.spinnerDisplayedBytesPerRow.Location = new System.Drawing.Point(145, 21);
+            this.spinnerDisplayedBytesPerRow.Maximum = new decimal(new int[] {
+            24,
+            0,
+            0,
+            0});
+            this.spinnerDisplayedBytesPerRow.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.spinnerDisplayedBytesPerRow.Name = "spinnerDisplayedBytesPerRow";
+            this.spinnerDisplayedBytesPerRow.Size = new System.Drawing.Size(44, 20);
+            this.spinnerDisplayedBytesPerRow.TabIndex = 3;
+            this.spinnerDisplayedBytesPerRow.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
             // 
             // CompilerInterfaceForm
             // 
@@ -1716,12 +1732,13 @@
             this.tabPageOptimization.PerformLayout();
             this.tabPageCodeGeneration.ResumeLayout(false);
             this.tabPageCodeGeneration.PerformLayout();
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
-            this.groupBoxProgramData.ResumeLayout(false);
-            this.groupBoxProgramData.PerformLayout();
             this.groupBoxDisplay.ResumeLayout(false);
             this.groupBoxDisplay.PerformLayout();
+            this.groupBoxProgramData.ResumeLayout(false);
+            this.groupBoxProgramData.PerformLayout();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.spinnerDisplayedBytesPerRow)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1891,10 +1908,10 @@
         private System.Windows.Forms.Label lblStackStart;
         private System.Windows.Forms.Label lblHeapSizeLabel;
         private System.Windows.Forms.GroupBox groupBoxDisplay;
-        private System.Windows.Forms.TextBox textBoxDisplayedBytesPerRow;
         private System.Windows.Forms.Label lblHeapSizeBytes;
         private System.Windows.Forms.Button buttonUpdate;
         private System.Windows.Forms.Label lblBytesPerRow;
+        private System.Windows.Forms.NumericUpDown spinnerDisplayedBytesPerRow;
     }
 }
 

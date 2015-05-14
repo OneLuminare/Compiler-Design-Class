@@ -26,7 +26,8 @@ namespace CompilerInterface
         private int symtblStrings;
         private int symtblBools;
         private int symtblMemory;
-        private int block = 0;
+        private int block;
+        private int displayedBytes;
 
         #endregion
 
@@ -47,16 +48,18 @@ namespace CompilerInterface
             symtblStrings = 0;
             symtblBools = 0;
             symtblMemory = 0;
+            block = 0;
+            displayedBytes = 5;
 
             //Register events
-            /*
-            compiler.Lexer.LexerMessageEvent += new MessageEventHandler(OutputGeneralMessages);
-            compiler.Lexer.LexerMessageEvent += new MessageEventHandler(OutputLexerMessages);
-            compiler.Parser.ParserMessageEvent += new MessageEventHandler(OutputGeneralMessages);
-            compiler.Parser.ParserMessageEvent += new MessageEventHandler(OutputParserMessages);
-            compiler.SymanticAnalyzer.SymanticAnalyzerMessageEvent += new MessageEventHandler(OutputGeneralMessages);
-            compiler.SymanticAnalyzer.SymanticAnalyzerMessageEvent += new MessageEventHandler(OutputSymanticAnalyzerMessages);
-             */
+            compiler.Lexer.LexerGeneralMessageEvent += new MessageEventHandler(OutputGeneralMessages);
+            compiler.Lexer.LexerGeneralMessageEvent += new MessageEventHandler(OutputLexerMessages);
+            compiler.Parser.ParserGeneralMessageEvent += new MessageEventHandler(OutputGeneralMessages);
+            compiler.Parser.ParserGeneralMessageEvent += new MessageEventHandler(OutputParserMessages);
+            compiler.SymanticAnalyzer.SymanticAnalyzerGeneralMessageEvent += new MessageEventHandler(OutputGeneralMessages);
+            compiler.SymanticAnalyzer.SymanticAnalyzerGeneralMessageEvent += new MessageEventHandler(OutputSymanticAnalyzerMessages);
+            compiler.OpCodeGen.OpCodeGenGeneralMessageEvent += new MessageEventHandler(OutputGeneralMessages);
+            compiler.OpCodeGen.OpCodeGenGeneralMessageEvent += new MessageEventHandler(OutputOpCodeGeneratorMessages);
         }
 
         #endregion
@@ -159,6 +162,17 @@ namespace CompilerInterface
                     item.SubItems.Add("");
                     item.SubItems.Add(msg.Text);
                 }
+                else if (proc == SystemType.ST_OPCODEGEN)
+                {
+                    item = new ListViewItem(proc.ToString());
+                    item.SubItems.Add("Warning");
+                    item.SubItems.Add("");
+                    item.SubItems.Add("");
+                    item.SubItems.Add("");
+                    item.SubItems.Add("");
+                    item.SubItems.Add("");
+                    item.SubItems.Add(msg.Text);
+                }
 
                 //Add item to list
                 listViewGeneralWarningsAndErrors.Items.Add(item);
@@ -209,6 +223,17 @@ namespace CompilerInterface
                     item.SubItems.Add(msg.Line.ToString());
                     item.SubItems.Add(msg.Column.ToString());
                     item.SubItems.Add(msg.Grammar.ToString());
+                    item.SubItems.Add("");
+                    item.SubItems.Add("");
+                    item.SubItems.Add(msg.Text);
+                }
+                else if (proc == SystemType.ST_OPCODEGEN)
+                {
+                    item = new ListViewItem(proc.ToString());
+                    item.SubItems.Add("Error");
+                    item.SubItems.Add("");
+                    item.SubItems.Add("");
+                    item.SubItems.Add("");
                     item.SubItems.Add("");
                     item.SubItems.Add("");
                     item.SubItems.Add(msg.Text);
@@ -447,6 +472,8 @@ namespace CompilerInterface
             ResetParseOutput();
             ResetSymanticOutput();
             ResetSymbolTableOutput();
+            ResetOpCodeGenOutput();
+            ResetOptimizationOutput();
         }
 
         //Resets source tab
@@ -523,7 +550,7 @@ namespace CompilerInterface
         private void ResetSymanticOutput()
         {
             treeViewAST.Nodes.Clear();
-            textBoxSymanticAnalyzerMessages.Clear();
+            textBoxSymanticAnalyzerMessages.Text = "";
             listViewSymanticAnalyzerWarningsAndErrors.Items.Clear();
 
             labelSymanticAnalyzerReturnValue.Text = "";
@@ -531,6 +558,25 @@ namespace CompilerInterface
             labelSymanticAnalyzerWarningTotal.Text = "00";
         }
 
+        // Resetes op code gen output
+        private void ResetOpCodeGenOutput()
+        {
+            listViewOpCodeGenWarningsErrors.Items.Clear();
+            textBoxOpCodeGenMessages.Text = "";
+            textBoxOpCodes.Text = "";
+
+            labelOpCodeGenProcessReturnValue.Text = "";
+            labelOpCodeGenErrors.Text = "00";
+            labelOpCodeGenWarnings.Text = "00";
+
+            lblLength.Text = "00";
+            lblStackSize.Text = "00";
+            lblStackStart.Text = "00";
+            lblHeapSize.Text = "00";
+            lblHeapStart.Text = "00";
+        }
+
+        
         //Outputs token stream to listviewtokens
         private void OutputTokenSteam()
         {
@@ -775,6 +821,8 @@ namespace CompilerInterface
         {
             outputOpCodesToFileToolStripMenuItem.Checked = show;
             compiler.OpCodeGen.OutputOpCodesToFile = show;
+
+            checkBoxOutputOpCodesToFile.Checked = show;
         }
 
         // Toggles show parse error change option
@@ -782,6 +830,7 @@ namespace CompilerInterface
         {
             showParseErrorChainToolStripMenuItem.Checked = show;
             compiler.Parser.ShowErrorChain = show;
+            checkBoxShowParseErrorChain.Checked = show;
         }
 
         // Toggles show messages option.
@@ -805,6 +854,10 @@ namespace CompilerInterface
                 compiler.SymanticAnalyzer.SymanticAnalyzerGeneralMessageEvent -= OutputSymanticAnalyzerMessages;
                 compiler.SymanticAnalyzer.SymanticAnalyzerMessageEvent += new MessageEventHandler(OutputGeneralMessages);
                 compiler.SymanticAnalyzer.SymanticAnalyzerMessageEvent += new MessageEventHandler(OutputSymanticAnalyzerMessages);
+                compiler.OpCodeGen.OpCodeGenGeneralMessageEvent -= OutputGeneralMessages;
+                compiler.OpCodeGen.OpCodeGenGeneralMessageEvent -= OutputOpCodeGeneratorMessages;
+                compiler.OpCodeGen.OpCodeGenMessageEvent += new MessageEventHandler(OutputGeneralMessages);
+                compiler.OpCodeGen.OpCodeGenMessageEvent += new MessageEventHandler(OutputOpCodeGeneratorMessages);
             }
             else
             {
@@ -821,7 +874,13 @@ namespace CompilerInterface
                 compiler.SymanticAnalyzer.SymanticAnalyzerGeneralMessageEvent += new MessageEventHandler(OutputSymanticAnalyzerMessages);
                 compiler.SymanticAnalyzer.SymanticAnalyzerMessageEvent -= OutputGeneralMessages;
                 compiler.SymanticAnalyzer.SymanticAnalyzerMessageEvent -= OutputSymanticAnalyzerMessages;
+                compiler.OpCodeGen.OpCodeGenGeneralMessageEvent += new MessageEventHandler(OutputGeneralMessages);
+                compiler.OpCodeGen.OpCodeGenGeneralMessageEvent += new MessageEventHandler(OutputOpCodeGeneratorMessages);
+                compiler.OpCodeGen.OpCodeGenMessageEvent -= OutputGeneralMessages;
+                compiler.OpCodeGen.OpCodeGenMessageEvent -= OutputOpCodeGeneratorMessages;
             }
+
+            checkBoxShowMessages.Checked = show;
         }
 
         // Compile source code. Calls all comipler processes, outputs deliverables,
@@ -961,7 +1020,7 @@ namespace CompilerInterface
                 OutputOpCodes();
 
                 // Output errors and warnings
-                OutputOpCodeGenerationWarningsErrors();
+                OutputOpCodeGenWarningsAndErrors();
 
                 // Check if no error
                 if (!error)
@@ -973,6 +1032,12 @@ namespace CompilerInterface
                     // Check if ooutput op code to file option is set
                     if (compiler.OpCodeGen.OutputOpCodesToFile)
                         OutputOpCodesToFile();
+
+                    // Output program data
+                    OutputProgramData();
+
+                    // Output optimizations
+                    OutputOptimizations();
                 }
 
                 // Set phase indiator
@@ -1107,61 +1172,47 @@ namespace CompilerInterface
         // Outputs op codes to text area
         private void OutputOpCodes()
         {
-            /* DEBUGGING CODE 
-            BlockSizeTableEntry entry = null;
-            textBoxOpCodes.Text = "";
-            for (int i = 0; i < compiler.OpCodeGen.blockSizeTable.Count; i++)
-            {
-                entry = (BlockSizeTableEntry)compiler.OpCodeGen.blockSizeTable[i];
-                textBoxOpCodes.Text += String.Format("Block ID: {0} Start Byte: {1} End Byte: {2}", entry.BlockID, entry.StartByte, entry.EndByte);
-            }
-             * */
-
-            /*
             textBoxOpCodes.Text = "";
 
-            int n = 0;
-            while (n < compiler.OpCodeGen.OpCodeData.Length)
-            {
-                if ((n + 16) < compiler.OpCodeGen.OpCodeData.Length)
-                {
-                    textBoxOpCodes.Text += compiler.OpCodeGen.OpCodeData.Substring(n, 16);
-                    n = n + 16;
-                }
-                else
-                {
-                    textBoxOpCodes.Text += compiler.OpCodeGen.OpCodeData.Substring(n, (compiler.OpCodeGen.OpCodeData.Length - n));
-                    n = compiler.OpCodeGen.OpCodeData.Length;
-                }
-
-                textBoxOpCodes.Text += '\n';
-            }
-             * */
-
-            textBoxOpCodes.Text = "";
-
-            int nBytesPerLine = 5;
             StringBuilder sb = new StringBuilder(256);
             for (int i = 0; i < compiler.OpCodeGen.ProgramData.totalBytes; i++)
             {
                 sb.AppendFormat("{0} ", compiler.OpCodeGen.OpCodeDataBytes[i].ToString("X2"));
 
-                if ( ((i + 1) % nBytesPerLine) == 0)
+                if ( ((i + 1) % displayedBytes) == 0)
                     sb.Append("\r\n");
             }
 
             textBoxOpCodes.Text = sb.ToString();
 
         }
-
-        // Outputs op code gen warings and errors
-        public void OutputOpCodeGenerationWarningsErrors()
-        {
-        }
-
+        
         // Outputs generated op codes to file
         public void OutputOpCodesToFile()
         {
+            // # TODO
+        }
+
+        // Outputs program data
+        public void OutputProgramData()
+        {
+            lblLength.Text = String.Format("{0}", compiler.OpCodeGen.ProgramData.totalBytes);
+            lblStackStart.Text = String.Format("{0}", compiler.OpCodeGen.ProgramData.stackStart);
+            lblStackSize.Text = String.Format("{0}", compiler.OpCodeGen.ProgramData.stackSize);
+            lblHeapStart.Text = String.Format("{0}", compiler.OpCodeGen.ProgramData.heapStart);
+            lblHeapSize.Text = String.Format("{0}", compiler.OpCodeGen.ProgramData.heapSize);
+        }
+
+        // Outputs optimizations
+        public void OutputOptimizations()
+        {
+            // # TODO
+        }
+
+        // Resets optimization output
+        private void ResetOptimizationOutput()
+        {
+            // # TODO
         }
 
         #endregion
@@ -1323,31 +1374,34 @@ namespace CompilerInterface
         // Toggles show messages compiler option
         private void showMessagesToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            showMessagesToolStripMenuItem.Checked = !showMessagesToolStripMenuItem.Checked;
             ToggleShowMessages(showMessagesToolStripMenuItem.Checked);
         }
 
         // Toggles show parse error chain compiler option
         private void showParseErrorChainToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            showParseErrorChainToolStripMenuItem.Checked = !showParseErrorChainToolStripMenuItem.Checked;
             ToggleShowParseErrorChain(showParseErrorChainToolStripMenuItem.Checked);
         }
 
         // Toggles output op codes to file compiler option
         private void outputOpCodesToFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            outputOpCodesToFileToolStripMenuItem.Checked = !outputOpCodesToFileToolStripMenuItem.Checked;
             ToggleOutputOPCodesToFile(outputOpCodesToFileToolStripMenuItem.Checked);
         }
 
         // Shows general help
         private void generalHelpToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            // # TODO
         }
 
         // Shows grammar 
         private void grammarToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            // # TODO
         }
 
         // Resets all compiler tabs
@@ -1356,9 +1410,12 @@ namespace CompilerInterface
             ResetAllTabs(true);
         }
 
+        // Redraws op codes with given bytes per row
         private void buttonUpdate_Click(object sender, EventArgs e)
         {
+            displayedBytes = (int)spinnerDisplayedBytesPerRow.Value;
 
+            OutputOpCodes();
         }
 
         #endregion

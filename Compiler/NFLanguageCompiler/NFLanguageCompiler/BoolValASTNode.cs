@@ -93,23 +93,32 @@ namespace NFLanguageCompiler
         // Returns: Number of bytes generated.
         public override int GenOpCodes(OpCodeGenParam param)
         {
-            // Check if true
-            if (Value == BOOLVAL_TYPE.BOOLVAL_TRUE)
+            try
             {
-                // Load accumulator with 1
-                //param.opCodes.Append("A9 01 ");
-                param.AddBytes(0xA9, 0x01);
-            }
-            // Else false
-            else
-            {
-                // Load accumulator with 0
-                //param.opCodes.Append("A9 00 ");
-                param.AddBytes(0xA9, 0x00);
+
+                // Check if true
+                if (Value == BOOLVAL_TYPE.BOOLVAL_TRUE)
+                {
+                    // Load accumulator with 1
+                    //param.opCodes.Append("A9 01 ");
+                    param.AddBytes(0xA9, 0x01);
+                }
+                // Else false
+                else
+                {
+                    // Load accumulator with 0
+                    //param.opCodes.Append("A9 00 ");
+                    param.AddBytes(0xA9, 0x00);
+                }
+
+                // Increment bytes
+                //param.curByte += 2;
             }
 
-            // Increment bytes
-            //param.curByte += 2;
+            catch (IndexOutOfRangeException ex)
+            {
+                throw ex;
+            }
 
             // Return current number of bytes
             return 2;

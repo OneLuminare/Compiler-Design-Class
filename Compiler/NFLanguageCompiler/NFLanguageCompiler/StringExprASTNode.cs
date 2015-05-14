@@ -97,10 +97,18 @@ namespace NFLanguageCompiler
             // Check if heap entry exists
             heapEntry = param.tables.AddHeapTableEntry(param, Value);
 
-            // Load accumulator with heap address
-            //param.opCodes.AppendFormat("A9 H{0} ", heapEntry.HeapID);
-            param.AddBytes(0xA9);
-            param.AddByteForUpdate('H', heapEntry.HeapID);
+            try
+            {
+                // Load accumulator with heap address
+                //param.opCodes.AppendFormat("A9 H{0} ", heapEntry.HeapID);
+                param.AddBytes(0xA9);
+                param.AddByteForUpdate('H', heapEntry.HeapID);
+            }
+
+            catch (IndexOutOfRangeException ex)
+            {
+                throw ex;
+            }
 
             // Increment bytes
             //param.curByte += 2;

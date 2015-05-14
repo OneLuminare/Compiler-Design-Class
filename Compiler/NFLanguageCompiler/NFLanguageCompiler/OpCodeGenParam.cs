@@ -48,11 +48,15 @@ namespace NFLanguageCompiler
 
         #region Helper Methods
 
-        public int AddBytes(params byte[] bytes)
+        public int AddBytes(params byte[] bytes) 
         {
             // Cycle through bytes
             for (int i = 0; i < bytes.Length; i++)
             {
+                // Throw exception on over 255
+                if ((curByte + i) > 255)
+                    throw new IndexOutOfRangeException("Over 256 bytes in program bytes.");
+
                 // Add byte to array
                 opCodeDataBytes[curByte + i] = bytes[i];
             }
@@ -69,6 +73,10 @@ namespace NFLanguageCompiler
         {
             // Add symbol to insert table
             insertBytes.Add(new TempByteData(curByte, String.Format("{0}{1}",symbol,id)));
+
+            // Throw exception on error
+            if (curByte > 255)
+                throw new IndexOutOfRangeException("Over 256 bytes in program bytes.");
 
             // Add byte
             opCodeDataBytes[curByte] = 0xEA;

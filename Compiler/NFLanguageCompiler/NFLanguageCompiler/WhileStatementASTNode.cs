@@ -81,112 +81,119 @@ namespace NFLanguageCompiler
             VarTableEntry varEntry = null;
             VarTableEntry varEntry2 = null;
 
+            try
+            {
+                // Gen op codes for boolean exp ( results in accum )
+                bytes += expr.GenOpCodes(param);
 
-            // Gen op codes for boolean exp ( results in accum )
-            bytes += expr.GenOpCodes(param);
+                // Create new temp var
+                varEntry = param.tables.CreateTempVarTableEntry();
 
-            // Create new temp var
-            varEntry = param.tables.CreateTempVarTableEntry();
+                // Set in use flag
+                varEntry.InUse = true;
 
-            // Set in use flag
-            varEntry.InUse = true;
+                // Increment in use count
+                param.tables.IncVarIsUseCount();
 
-            // Increment in use count
-            param.tables.IncVarIsUseCount();
+                // Move results into temp memory
+                //param.opCodes.AppendFormat("8D V{0} 00 ", varEntry.VarID);
+                param.AddBytes(0x8D);
+                param.AddByteForUpdate('V', varEntry.VarID);
+                param.AddBytes(0x00);
 
-            // Move results into temp memory
-            //param.opCodes.AppendFormat("8D V{0} 00 ", varEntry.VarID);
-            param.AddBytes(0x8D);
-            param.AddByteForUpdate('V', varEntry.VarID);
-            param.AddBytes(0x00);
+                // Incrmeent bytes
+                bytes += 3;
 
-            // Incrmeent bytes
-            bytes += 3;
+                // Capture current byte (where to jump to at end of loop)
+                jumpByte = param.curByte + bytes;
 
-            // Capture current byte (where to jump to at end of loop)
-            jumpByte = param.curByte + bytes;
+                // Load 1 into accum
+                //param.opCodes.Append("A2 01 ");
+                param.AddBytes(0xA2, 0x01);
 
-            // Load 1 into accum
-            //param.opCodes.Append("A2 01 ");
-            param.AddBytes(0xA2, 0x01);
+                // Compare temp (res of expr) to true (1)
+                //param.opCodes.AppendFormat("EC V{0} 00 ", varEntry.VarID);
+                param.AddBytes(0xEC);
+                param.AddByteForUpdate('V', varEntry.VarID);
+                param.AddBytes(0x00);
 
-            // Compare temp (res of expr) to true (1)
-            //param.opCodes.AppendFormat("EC V{0} 00 ", varEntry.VarID);
-            param.AddBytes(0xEC);
-            param.AddByteForUpdate('V', varEntry.VarID);
-            param.AddBytes(0x00);
+                // Branch to end of block, and 12 more to skip
+                // forced jump to begining of while
+                //param.opCodes.AppendFormat("D0 B{0}S{1} ", param.curBlockID, 12);
+                param.AddBytes(0xD0);
+                param.AddByteForUpdate('B', param.curBlockID, 12);
 
-            // Branch to end of block, and 12 more to skip
-            // forced jump to begining of while
-            //param.opCodes.AppendFormat("D0 B{0}S{1} ", param.curBlockID, 12);
-            param.AddBytes(0xD0);
-            param.AddByteForUpdate('B', param.curBlockID, 12);
+                // Incrmeent bytes
+                bytes += 7;
 
-            // Incrmeent bytes
-            bytes += 7;
+                // Set current byte (for calling gen op)
+                //param.curByte += 10;
 
-            // Set current byte (for calling gen op)
-            //param.curByte += 10;
+                // Set temp var not in use
+                varEntry.InUse = false;
 
-            // Set temp var not in use
-            varEntry.InUse = false;
+                // Decremeent in use count
+                param.tables.DecVarInUseCount();
 
-            // Decremeent in use count
-            param.tables.DecVarInUseCount();
+                // Gen op codes for block
+                bytes2 += block.GenOpCodes(param);
 
-            // Gen op codes for block
-            bytes2 += block.GenOpCodes(param);
+                // ### Force NE Jump ### //
 
-            // ### Force NE Jump ### //
+                // Create another new temp var
+                varEntry2 = param.tables.CreateTempVarTableEntry();
 
-            // Create another new temp var
-            varEntry2 = param.tables.CreateTempVarTableEntry();
+                // Set in use
+                varEntry2.InUse = true;
 
-            // Set in use
-            varEntry2.InUse = true;
+                // Inc var in use count
+                param.tables.IncVarIsUseCount();
 
-            // Inc var in use count
-            param.tables.IncVarIsUseCount();
+                // Load 0 into acc
+                //param.opCodes.Append("A9 00 ");
+                param.AddBytes(0xA9, 0x00);
 
-            // Load 0 into acc
-            //param.opCodes.Append("A9 00 ");
-            param.AddBytes(0xA9, 0x00);
+                // Load acc to temp var
+                //param.opCodes.AppendFormat("8D V{0} 00 ", varEntry2.VarID);
+                param.AddBytes(0x8D);
+                param.AddByteForUpdate('V', varEntry2.VarID);
+                param.AddBytes(0x00);
 
-            // Load acc to temp var
-            //param.opCodes.AppendFormat("8D V{0} 00 ", varEntry2.VarID);
-            param.AddBytes(0x8D);
-            param.AddByteForUpdate('V', varEntry2.VarID);
-            param.AddBytes(0x00);
+                // Load 1 into x reg
+                //param.opCodes.Append("A2 01 ");
+                param.AddBytes(0xA2, 0x01);
 
-            // Load 1 into x reg
-            //param.opCodes.Append("A2 01 ");
-            param.AddBytes(0xA2, 0x01);
+                // Compare temp to x (which will always be not equal )
+                //param.opCodes.AppendFormat("EC V{0} 00 ", varEntry2.VarID);
+                param.AddBytes(0xEC);
+                param.AddByteForUpdate('V', varEntry2.VarID);
+                param.AddBytes(0x00);
 
-            // Compare temp to x (which will always be not equal )
-            //param.opCodes.AppendFormat("EC V{0} 00 ", varEntry2.VarID);
-            param.AddBytes(0xEC);
-            param.AddByteForUpdate('V', varEntry2.VarID);
-            param.AddBytes(0x00);
+                // Incremeent bytes
+                bytes2 += 12;
 
-            // Incremeent bytes
-            bytes2 += 12;
+                // Update bytes ( I do it before next statmement for 
+                // caculation of accurate curByte )
+                //param.curByte += 12;
 
-            // Update bytes ( I do it before next statmement for 
-            // caculation of accurate curByte )
-            //param.curByte += 12;
-            
-            // Branch to top of while loop ( note these two bytes already
-            // added to curByte )
-            //param.opCodes.AppendFormat("D0 {0} ",(256 - param.curByte + startByte + 1).ToString("X2"));
-            param.AddBytes(0xD0, (byte)(255 - ( param.curByte - startByte + 1 ) ));
+                // Branch to top of while loop ( note these two bytes already
+                // added to curByte )
+                //param.opCodes.AppendFormat("D0 {0} ",(256 - param.curByte + startByte + 1).ToString("X2"));
+                param.AddBytes(0xD0, (byte)(255 - (param.curByte - startByte + 1)));
 
 
-            // Set temp var not in use
-            varEntry2.InUse = false;
+                // Set temp var not in use
+                varEntry2.InUse = false;
 
-            // Decremeent in use count
-            param.tables.DecVarInUseCount();
+                // Decremeent in use count
+                param.tables.DecVarInUseCount();
 
+            }
+
+            catch (IndexOutOfRangeException ex)
+            {
+                throw ex;
+            }
            
 
             // Return bytes added

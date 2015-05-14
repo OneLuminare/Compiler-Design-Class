@@ -1,0 +1,57 @@
+{
+int a
+a = 5
+boolean b
+b = false
+string s
+s = "nathan"
+print(a)
+print(b)
+print(s)
+}$
+
+{
+int a
+a = 0
+boolean b
+b = false
+while( b == false )
+{
+ print("start")
+while( a != 2 )
+{
+  a = 1 + a
+  print(a)
+}
+b = true
+}
+print("done")
+}$
+
+{
+string s
+s = "test"
+while( s == "test" )
+{
+  print("no forever")
+}
+print("done")
+}$
+
+{
+boolean a
+a = true
+while( (a==false) == true )
+{
+ print("no")
+}
+print("done")
+}$
+
+{
+int a
+a = 5
+print( ( (a == 5 ) == false ) )
+print(false)
+print(5 + a)
+}$

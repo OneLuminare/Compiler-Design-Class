@@ -124,6 +124,7 @@ namespace NFLanguageCompiler
             // Inits
             ProcessReturnValue ret = ProcessReturnValue.PRV_NONE;
             OpCodeGenParam param;
+            bool error = false;
 
             // Create temp tables
             tempTables = new OpCodeGenTempTables();
@@ -146,37 +147,57 @@ namespace NFLanguageCompiler
             SendGeneralMessage("Generating op codes...");
 
             // Gen op codes
-            rootASTNode.GenOpCodes(param);
+            try
+            {
+                rootASTNode.GenOpCodes(param);
+                    
+
+                // Add final 00
+                param.AddBytes(0x00);
+            }
+
+
+            // Catch index out of range exption
+            // on over 256 byte error
+            catch (IndexOutOfRangeException ex)
+            {
+
+                SendError("Program ran over 256 bytes.");
+
+                // Send message
+                SendGeneralMessage("Op code generation complete.");
+
+                error = true;
+            }
 
             // Send message
             SendGeneralMessage("Op code generation complete.");
 
+            // If not errors
+            if (!error)
+            {
+            
+                // Send message
+                SendGeneralMessage("Inserting memory locations...");
 
-            // Add final 00
-            //param.opCodes.Append("00 ");
-            //param.curByte++;
-            param.AddBytes(0x00);
+                // Fill in memory locations and jump sizes
+                programData = FillInTempOpCodeValues(param);
 
-            // Send message
-            SendGeneralMessage("Inserting memory locations...");
+                // Send message
+                SendGeneralMessage("Completed inserting memory locations.");
 
-            // Fill in memory locations and jump sizes
-            programData = FillInTempOpCodeValues(param);
+                // Send message
+                SendGeneralMessage("Code generation phase complete.");
 
-            // Send message
-            SendGeneralMessage("Completed inserting memory locations.");
+                // Send message
+                SendGeneralMessage("Compilation complete.");
 
-            // Send message
-            SendGeneralMessage("Code generation phase complete.");
+                // Set op code from string builder
+                opCodeData = param.opCodes.ToString();
 
-            // Send message
-            SendGeneralMessage("Compilation complete.");
-
-            // Set op code from string builder
-            opCodeData = param.opCodes.ToString();
-
-            // Set op code total bytes
-            opCodeBytes = programData.totalBytes;
+                // Set op code total bytes
+                opCodeBytes = programData.totalBytes;
+            }
 
             //Determine return value
             if (ErrorCount > 0)

@@ -117,8 +117,16 @@ namespace NFLanguageCompiler
             curNode = this.leftMostChild;
             while (curNode != null)
             {
-                // Call child statment gen op code method
-                bytesAdded += curNode.GenOpCodes(param);
+                try
+                {
+                    // Call child statment gen op code method
+                    bytesAdded += curNode.GenOpCodes(param);
+                }
+
+                catch (IndexOutOfRangeException ex)
+                {
+                    throw ex;
+                }
 
                 // Get next symbling
                 curNode = curNode.RightSibling;
