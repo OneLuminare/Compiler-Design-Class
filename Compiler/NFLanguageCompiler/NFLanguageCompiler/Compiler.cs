@@ -266,23 +266,38 @@ namespace NFLanguageCompiler
         // Takes source file as one string.
         public void Compile(String sourceText)
         {
+            // Inits
+            bool errors = false;
+
             //Reset data
             ResetData();
 
             //Lex
             LexerReturnValue = Lexer.LexFromString(sourceText);
+            if (LexerReturnValue == ProcessReturnValue.PRV_ERRORS)
+                errors = true;
 
             //Parse if no errors
-           if (LexerReturnValue != ProcessReturnValue.PRV_ERRORS)
+            if (!errors)
+            {
                 ParserReturnValue = Parser.Parse(Lexer.OutputTokenStream);
+                if (ParserReturnValue == ProcessReturnValue.PRV_ERRORS)
+                    errors = true;
+            }
+
+            
 
            // Analyze Symantics if no errors
-           if (ParserReturnValue != ProcessReturnValue.PRV_ERRORS)
-                 SymanticReturnValue = SymanticAnalyzer.AnalyzeSymantics(Parser.CSTRootNode);
+            if (!errors)
+            {
+                SymanticReturnValue = SymanticAnalyzer.AnalyzeSymantics(Parser.CSTRootNode);
+                if (SymanticReturnValue == ProcessReturnValue.PRV_ERRORS)
+                    errors = true;
+            }
 
             // Generate code if no errors
             
-           if (SymanticReturnValue != ProcessReturnValue.PRV_ERRORS)
+           if (!errors)
                OpCodeGenerationReturnValue = OpCodeGen.GenerateOpCodes(SymanticAnalyzer.RootASTNode
                    , SymanticAnalyzer.RootSymbolTableNode);
              

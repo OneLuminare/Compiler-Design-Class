@@ -111,6 +111,8 @@ namespace NFLanguageCompiler
 
         #region Parsing Methods
 
+        // Main parse method, parses from token stream 
+        // and outputs a CST.
         public ProcessReturnValue Parse(TokenStream tokenStream)
         {
             //Inits
@@ -166,16 +168,28 @@ namespace NFLanguageCompiler
             // Send message
             SendGeneralMessage("Completed CST.");
 
-            // Send message
-            SendGeneralMessage("Parse complete.");
+            
 
             //Determin return value
             if (ErrorCount > 0)
+            {
                 ret = ProcessReturnValue.PRV_ERRORS;
+
+                // Send message
+                SendGeneralMessage("Parse completed with errors.");
+            }
             else if (WarningCount > 0)
+            {
                 ret = ProcessReturnValue.PRV_WARNINGS;
+                // Send message
+                SendGeneralMessage("Parse completed with warnings.");
+            }
             else
+            {
                 ret = ProcessReturnValue.PRV_OK;
+                // Send message
+                SendGeneralMessage("Parse complete.");
+            }
 
             //Return code
             return ret;

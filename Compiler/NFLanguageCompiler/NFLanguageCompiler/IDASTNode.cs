@@ -102,13 +102,12 @@ namespace NFLanguageCompiler
 
                 }
 
+                // Catch over 256 byte error,
+                // and throw up
                 catch (IndexOutOfRangeException ex)
                 {
                     throw ex;
                 }
-
-                // Inc bytes
-                //param.curByte += 3;
             }
 
             // Return number of bytes
@@ -116,6 +115,7 @@ namespace NFLanguageCompiler
         }
 
         #endregion
+
 
     }
 }

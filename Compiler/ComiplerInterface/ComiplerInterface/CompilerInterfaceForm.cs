@@ -14,7 +14,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace CompilerInterface
 {
-
+    // Main compiler interface form.
     public partial class CompilerInterfaceForm : Form
     {
 
@@ -28,6 +28,7 @@ namespace CompilerInterface
         private int symtblMemory;
         private int block;
         private int displayedBytes;
+        private bool copyOpCodesToClipboard;
 
         #endregion
 
@@ -39,8 +40,6 @@ namespace CompilerInterface
             //Init controls
             InitializeComponent();
 
-            //checkBoxShowMessages.Checked = false;
-
             //Init comipiler
             compiler = new Compiler();
             symtblVars = 0;
@@ -49,7 +48,8 @@ namespace CompilerInterface
             symtblBools = 0;
             symtblMemory = 0;
             block = 0;
-            displayedBytes = 5;
+            displayedBytes = 8;
+            copyOpCodesToClipboard = false;
 
             //Register events
             compiler.Lexer.LexerGeneralMessageEvent += new MessageEventHandler(OutputGeneralMessages);
@@ -473,7 +473,6 @@ namespace CompilerInterface
             ResetSymanticOutput();
             ResetSymbolTableOutput();
             ResetOpCodeGenOutput();
-            ResetOptimizationOutput();
         }
 
         //Resets source tab
@@ -731,15 +730,6 @@ namespace CompilerInterface
 
                 curNode = curNode.RightSibling;
             }
-            /*
-            // Switch AST Node type
-            switch (node.NodeType)
-            {
-                // Case block
-                case ASTNodeType.ASTTYPE_BLOCK:
-                    break;
-            }
-             */
         }
 
         // Resets symbol table stat counters
@@ -810,6 +800,7 @@ namespace CompilerInterface
 
                 //Create a new block node title
                 newNode = treeNode.Nodes.Add(String.Format("Block {0}", block));
+               
 
                 //Call recursive function on child
                 OutputSymbolTableEntry(entry.GetChild(i), newNode);
@@ -819,26 +810,12 @@ namespace CompilerInterface
         // Toggle output op codes to file
         private void ToggleOutputOPCodesToFile(bool show)
         {
-            outputOpCodesToFileToolStripMenuItem.Checked = show;
             compiler.OpCodeGen.OutputOpCodesToFile = show;
-
-            checkBoxOutputOpCodesToFile.Checked = show;
-        }
-
-        // Toggles show parse error change option
-        private void ToggleShowParseErrorChain(bool show)
-        {
-            showParseErrorChainToolStripMenuItem.Checked = show;
-            compiler.Parser.ShowErrorChain = show;
-            checkBoxShowParseErrorChain.Checked = show;
         }
 
         // Toggles show messages option.
         private void ToggleShowMessages(bool show)
         {
-            // Toggle menu check
-            showMessagesToolStripMenuItem.Checked = show;
-
             if (show)
             {
                 //Register events
@@ -879,8 +856,6 @@ namespace CompilerInterface
                 compiler.OpCodeGen.OpCodeGenMessageEvent -= OutputGeneralMessages;
                 compiler.OpCodeGen.OpCodeGenMessageEvent -= OutputOpCodeGeneratorMessages;
             }
-
-            checkBoxShowMessages.Checked = show;
         }
 
         // Compile source code. Calls all comipler processes, outputs deliverables,
@@ -1033,11 +1008,12 @@ namespace CompilerInterface
                     if (compiler.OpCodeGen.OutputOpCodesToFile)
                         OutputOpCodesToFile();
 
+                    // Check if output op codes to clipboard option
+                    if (copyOpCodesToClipboard)
+                        CopyOpCodesToClipboard();
+
                     // Output program data
                     OutputProgramData();
-
-                    // Output optimizations
-                    OutputOptimizations();
                 }
 
                 // Set phase indiator
@@ -1153,10 +1129,6 @@ namespace CompilerInterface
                 }
             }
 
-
-
-            //TODO ERROR WARNING RETURN VALUES
-
             // Output total errors and warnings
             labelGeneralErrorTotal.Text = String.Format("{0,2}", compiler.ErrorCount);
             labelGeneralWarningTotal.Text = String.Format("{0,2}", compiler.WarningCount);
@@ -1190,7 +1162,60 @@ namespace CompilerInterface
         // Outputs generated op codes to file
         public void OutputOpCodesToFile()
         {
-            // # TODO
+            // Inits
+            String filePath = null;
+            StreamWriter sw = null;
+            FileStream file = null;
+
+            // Create save dialog, starting in MyDocuuments
+            SaveFileDialog dlgSave = new SaveFileDialog();
+            dlgSave.Title = "Save Op Codes To File";
+            dlgSave.InitialDirectory = Environment.SpecialFolder.MyDocuments.ToString();
+            dlgSave.Filter = "Text Files(*.txt) |*.txt";
+
+            //Open save dialog and check for ok
+            if (dlgSave.ShowDialog() == DialogResult.OK)
+            {
+                // Get save location
+                filePath = dlgSave.FileName;
+
+                try
+                {
+                    // Create file and open stream writer
+                    file = new FileStream(filePath, FileMode.Create);
+                    sw = new StreamWriter(file);
+
+                    // Save op code bytes
+                    for (int i = 0; i < compiler.OpCodeGen.ProgramData.totalBytes; i++)
+                    {
+                        sw.Write(String.Format("{0} ",
+                            compiler.OpCodeGen.OpCodeDataBytes[i].ToString("X2")));
+
+                        if ((i + 1) % displayedBytes == 0)
+                            sw.Write("\r\n");
+                    }
+                }
+
+                catch (IOException ex)
+                {
+                    //Show MessageBox describing error
+                    MessageBox.Show(String.Format("Error \"{0}\" occurred saving file '{1}'", ex.Message, filePath)
+                        , "File Error");
+                }
+
+                finally
+                {
+                    if (sw != null)
+                        sw.Close();
+                    file.Close();
+                }
+            }
+        }
+
+        // Copy op codes to clipboard
+        public void CopyOpCodesToClipboard()
+        {
+            System.Windows.Forms.Clipboard.SetText(compiler.OpCodeGen.GetOpCodeText(displayedBytes));
         }
 
         // Outputs program data
@@ -1201,18 +1226,6 @@ namespace CompilerInterface
             lblStackSize.Text = String.Format("{0}", compiler.OpCodeGen.ProgramData.stackSize);
             lblHeapStart.Text = String.Format("{0}", compiler.OpCodeGen.ProgramData.heapStart);
             lblHeapSize.Text = String.Format("{0}", compiler.OpCodeGen.ProgramData.heapSize);
-        }
-
-        // Outputs optimizations
-        public void OutputOptimizations()
-        {
-            // # TODO
-        }
-
-        // Resets optimization output
-        private void ResetOptimizationOutput()
-        {
-            // # TODO
         }
 
         #endregion
@@ -1235,17 +1248,13 @@ namespace CompilerInterface
         private void checkBoxOutputOpCodesToFile_CheckedChanged(object sender, EventArgs e)
         {
             ToggleOutputOPCodesToFile(checkBoxOutputOpCodesToFile.Checked);
-        }
-
-        //Toggles show all parse error chain or just first error
-        private void checkBoxShowParseErrorChain_CheckedChanged(object sender, EventArgs e)
-        {
-            ToggleShowParseErrorChain(checkBoxShowParseErrorChain.Checked);
+            outputOpCodesToFileToolStripMenuItem.Checked = checkBoxOutputOpCodesToFile.Checked;
         }
 
         //Toggles enabling message events to speed up compilation
         private void checkBoxShowMessages_CheckedChanged(object sender, EventArgs e)
         {
+            showMessagesToolStripMenuItem.Checked = checkBoxShowMessages.Checked;
             ToggleShowMessages(checkBoxShowMessages.Checked);
         }
 
@@ -1374,15 +1383,7 @@ namespace CompilerInterface
         // Toggles show messages compiler option
         private void showMessagesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            showMessagesToolStripMenuItem.Checked = !showMessagesToolStripMenuItem.Checked;
-            ToggleShowMessages(showMessagesToolStripMenuItem.Checked);
-        }
-
-        // Toggles show parse error chain compiler option
-        private void showParseErrorChainToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            showParseErrorChainToolStripMenuItem.Checked = !showParseErrorChainToolStripMenuItem.Checked;
-            ToggleShowParseErrorChain(showParseErrorChainToolStripMenuItem.Checked);
+            checkBoxShowMessages.Checked = !checkBoxShowMessages.Checked;
         }
 
         // Toggles output op codes to file compiler option
@@ -1392,16 +1393,11 @@ namespace CompilerInterface
             ToggleOutputOPCodesToFile(outputOpCodesToFileToolStripMenuItem.Checked);
         }
 
-        // Shows general help
-        private void generalHelpToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            // # TODO
-        }
 
         // Shows grammar 
         private void grammarToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // # TODO
+            System.Diagnostics.Process.Start(@"grammar.pdf");
         }
 
         // Resets all compiler tabs
@@ -1418,7 +1414,25 @@ namespace CompilerInterface
             OutputOpCodes();
         }
 
+        // Toggles output to clipboard option
+        private void checkBoxCopyOpCodesToClipboard_CheckedChanged(object sender, EventArgs e)
+        {
+            copyOpCodesToClipboard = !copyOpCodesToClipboard;
+            copyOpCodesToClipboardToolStripMenuItem.Checked = copyOpCodesToClipboard;
+        }
+
+        // Toggles otuput to clipboard option
+        private void copyOpCodesToClipboardToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            checkBoxCopyOpCodesToClipboard.Checked = !checkBoxCopyOpCodesToClipboard.Checked;
+            
+        }
+
         #endregion
+
+
+
+     
 
       
 

@@ -40,6 +40,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -65,6 +66,7 @@
     <Compile Include="IASTNodeValue.cs" />
     <Compile Include="IDASTNode.cs" />
     <Compile Include="IfStatementASTNode.cs" />
+    <Compile Include="InitValueEntry.cs" />
     <Compile Include="IntExprASTNode.cs" />
     <Compile Include="IntValASTNode.cs" />
     <Compile Include="IntOpASTNode.cs" />

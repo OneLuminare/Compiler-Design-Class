@@ -25,30 +25,6 @@ namespace NFLanguageCompiler
     // Interfaces: IASTNodeValue<>
     public class BooleanExprASTNode : ExprASTNode
     {
-        #region Data Members
-
-     
-        //private BOOLEXPR_TYPE value;
-
-        #endregion
-
-        #region Properties
-
-  /*
-        public BOOLEXPR_TYPE Value
-        {
-            get
-            {
-                return this.value;
-            }
-            set
-            {
-                this.value = value;
-            }
-        }
-   * */
-
-        #endregion
 
         #region Constructors
 
@@ -56,10 +32,9 @@ namespace NFLanguageCompiler
         public BooleanExprASTNode()
             : base(ASTNodeType.ASTTYPE_BOOLEANEXPR)
         {
-            //value = BOOLEXPR_TYPE.BET_ONE;
-
         }
 
+        // Set construcor
         public BooleanExprASTNode(ASTNodeType type)
             : base(type)
         {
@@ -69,6 +44,7 @@ namespace NFLanguageCompiler
 
         #region Object Overrides
 
+        // Overide of to string
         public override string ToString()
         {
             String ret = null;
@@ -79,5 +55,7 @@ namespace NFLanguageCompiler
         }
 
         #endregion
+
+       
     }
 }

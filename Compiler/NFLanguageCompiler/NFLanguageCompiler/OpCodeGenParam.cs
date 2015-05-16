@@ -22,6 +22,7 @@ namespace NFLanguageCompiler
         public int curHeapID;
         public bool firstBlock;
         public ArrayList insertBytes;
+        public int initVars;
 
         #endregion
 
@@ -35,6 +36,7 @@ namespace NFLanguageCompiler
             this.opCodeDataBytes = opCodeDataBytes;
             this.tables = tables;
             this.curSymbTable = curSymbTable;
+            this.initVars = 0;
             curByte = 0;
             curSymbTableIndex = 0;
             curBlockID = 0;
@@ -91,7 +93,10 @@ namespace NFLanguageCompiler
         public int AddByteForUpdate(char symbol, int id, int shift)
         {
             // Add symbol to insert table
-            insertBytes.Add(new TempByteData(curByte, String.Format("{0}{1}S{2}",symbol,id,shift)));
+            if( shift > 0 )
+                insertBytes.Add(new TempByteData(curByte, String.Format("{0}{1}S{2}", symbol, id, shift)));
+            else
+                insertBytes.Add(new TempByteData(curByte, String.Format("{0}{1}",symbol,id)));
 
             // Add byte
             opCodeDataBytes[curByte] = 0xEA;
@@ -101,6 +106,15 @@ namespace NFLanguageCompiler
 
             // Return 1
             return 1;
+        }
+
+        public void AddInsertByte( int index, char  symbol, int id, int shift )
+        {
+            // Add symbol to insert table
+            if (shift > 0)
+                insertBytes.Add(new TempByteData(index, String.Format("{0}{1}S{2}", symbol, id, shift)));
+            else
+                insertBytes.Add(new TempByteData(index, String.Format("{0}{1}", symbol, id)));
         }
 
         public byte GetByte(int index)

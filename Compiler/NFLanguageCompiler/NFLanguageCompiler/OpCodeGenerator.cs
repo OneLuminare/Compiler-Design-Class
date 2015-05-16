@@ -1,4 +1,5 @@
 ﻿using System;
+
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
@@ -25,7 +26,6 @@ namespace NFLanguageCompiler
         private int errorCount;
         private int warningCount;
         private int opCodeBytes;
-        private String opCodeData;
         private bool outputOpCodesToFile;
         private OpCodeGenTempTables tempTables;
         private StringBuilder tempOpCodeData;
@@ -48,13 +48,6 @@ namespace NFLanguageCompiler
         {
             get { return errorCount; }
             set { errorCount = value; }
-        }
-
-        // Op code data
-        public String OpCodeData
-        {
-            get { return opCodeData; }
-            set { opCodeData = value; }
         }
 
         // Ouput to file option
@@ -107,7 +100,6 @@ namespace NFLanguageCompiler
         {
             warningCount = 0;
             errorCount = 0;
-            opCodeData = "";
             opCodeDataBytes = null;
             outputOpCodesToFile = false;
             tempOpCodeData = null;
@@ -119,6 +111,7 @@ namespace NFLanguageCompiler
 
         #region Op Code Generation Methods
 
+        // Generates op codes from ast.
         public ProcessReturnValue GenerateOpCodes(ASTNode rootASTNode, DynamicBranchTreeNode<SymbolHashTable> rootSymbolTableNode)
         {
             // Inits
@@ -176,7 +169,7 @@ namespace NFLanguageCompiler
             // If not errors
             if (!error)
             {
-            
+
                 // Send message
                 SendGeneralMessage("Inserting memory locations...");
 
@@ -192,11 +185,14 @@ namespace NFLanguageCompiler
                 // Send message
                 SendGeneralMessage("Compilation complete.");
 
-                // Set op code from string builder
-                opCodeData = param.opCodes.ToString();
-
                 // Set op code total bytes
                 opCodeBytes = programData.totalBytes;
+            }
+            // Else send error message
+            else
+            {
+                // Send message
+                SendGeneralMessage("Compilation completed with errors.");
             }
 
             //Determine return value
@@ -232,6 +228,7 @@ namespace NFLanguageCompiler
             BlockSizeTableEntry blockEntry = null;
             OpCodeData programData = new OpCodeData();
             TempByteData byteData = null;
+            int location = 0;
 
             // Determin stack size
             programData.stackSize = param.tables.MaxVarUsage;
@@ -305,8 +302,12 @@ namespace NFLanguageCompiler
                     // Replace entry with address
                     if (varEntry != null)
                     {
-                        //strings[i] = String.Format("{0}", (programData.stackStart + varEntry.Offset).ToString("X2"));
-                        param.SetByte(byteData.Index, (byte)(programData.stackStart + varEntry.Offset));
+                        // Set location
+                        location = programData.stackStart + varEntry.Offset;
+                        param.SetByte(byteData.Index, (byte)(location));
+
+                        if( varEntry.VarEntry != null )
+                            varEntry.VarEntry.MemoryLocation = location;
                     }
                 }
                 // Check for H (heap)
@@ -442,6 +443,24 @@ namespace NFLanguageCompiler
             ErrorCount++;
         }
 
+        // Creates sring with hex value opcodes,
+        // with byte per line with set to option.
+        public String GetOpCodeText(int bytesPerLine)
+        {
+            StringBuilder sb = new StringBuilder(780);
+
+            for (int i = 0; i < programData.totalBytes; i++)
+            {
+                sb.AppendFormat("{0} ", opCodeDataBytes[i].ToString("X2"));
+                if (bytesPerLine > 0)
+                {
+                    if ((i + 1) % bytesPerLine == 0)
+                        sb.Append("\r\n");
+                }
+            }
+
+            return sb.ToString();
+        }
 
         #endregion
     }

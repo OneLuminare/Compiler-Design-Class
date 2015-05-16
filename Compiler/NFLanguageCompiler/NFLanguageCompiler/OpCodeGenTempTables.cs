@@ -16,6 +16,7 @@ namespace NFLanguageCompiler
         private ArrayList blockSizeTable;
         private ArrayList varTable;
         private ArrayList heapTable;
+        private ArrayList initValueTable;
         private int varsInUse;
         private int maxVarUsage;
         private int curTempVarID;
@@ -46,6 +47,7 @@ namespace NFLanguageCompiler
             blockSizeTable = new ArrayList();
             varTable = new ArrayList();
             heapTable = new ArrayList();
+            initValueTable = new ArrayList();
             curTempVarID = 50;
             varsInUse = 0;
             maxVarUsage = 0;
@@ -424,6 +426,125 @@ namespace NFLanguageCompiler
             return heapSize;
         }
    
+        #endregion
+
+        #region Init Value Table Methods
+
+        public void AddInitValueEntry(char id, int index, int blockID, DataType dataType)
+        {
+            initValueTable.Add(new InitValueEntry(id, index, blockID, dataType));
+        }
+
+        public bool RemoveLastInitValueEntry(char id, DataType dataType)
+        {
+            // Inits
+            bool found = false;
+            InitValueEntry entry = null;
+
+            // Cycle backwards through table
+            for (int i = initValueTable.Count - 1; (i >= 0) && !found; i--)
+            {
+                // Get entry
+                entry = (InitValueEntry)initValueTable[i];
+
+                // Check if equal id
+                if (entry.ID == id && entry.DataType == dataType)
+                {
+
+                    // Remove entry
+                    initValueTable.RemoveAt(i);
+
+                    // Set found flag
+                    found = true;
+                }
+            }
+
+            // Return true if removed
+            return found;
+        }
+
+        public bool RemoveLastInitValueEntry(InitValueEntry entry)
+        {
+            // Inits
+            bool found = false;
+            InitValueEntry entry2 = null;
+
+            // Cycle backwards through table
+            for (int i = initValueTable.Count - 1; (i >= 0) && !found; i--)
+            {
+                // Get entry
+                entry2 = (InitValueEntry)initValueTable[i];
+
+                // Check if equal id
+                if (entry2.ID == entry.ID && entry2.DataType == entry.DataType)
+                {
+
+                    // Remove entry
+                    initValueTable.RemoveAt(i);
+
+                    // Set found flag
+                    found = true;
+                }
+            }
+
+            // Return true if removed
+            return found;
+        }
+
+        public void RemoveBlockVarEntries(int blockID)
+        {
+            // Inits
+            InitValueEntry entry = null;
+
+            // Cycle backwards through table
+            for (int i = initValueTable.Count - 1; i >= 0; i--)
+            {
+                // Get entry
+                entry = (InitValueEntry)initValueTable[i];
+
+                // Check if equal id
+                if (entry.BlockID == blockID)
+                {
+
+                    // Remove entry
+                    initValueTable.RemoveAt(i);
+                }
+            }
+        }
+
+        public InitValueEntry GetLastInitValueEntry(char id, DataType dataType)
+        {
+            // Inits
+            bool found = false;
+            InitValueEntry entry = null;
+
+            // Cycle backwards through table
+            for (int i = initValueTable.Count - 1; (i >= 0) && !found; i--)
+            {
+                // Get entry
+                entry = (InitValueEntry)initValueTable[i];
+
+                // Check if equal id
+                if (entry.ID == id && entry.DataType == dataType)
+                {
+                    // Set found flag
+                    found = true;
+                }
+            }
+
+            // Check if not found, if not set to null
+            if (!found)
+                entry = null;
+
+            // Retur entry or null if not found
+            return entry;
+        }
+
+        public void ClearInitValueTable()
+        {
+            initValueTable.Clear();
+        }
+
         #endregion
 
         #region Helper Methods

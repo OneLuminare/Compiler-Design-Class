@@ -110,6 +110,10 @@ namespace NFLanguageCompiler
             // Create AST from CST
             CreateAST(rootCSTNode);
 
+            // Note removed collapsing constant
+            // due to error. Wanted to get a good
+            // version handed in. Will fix later
+            /*
             // Send message
             SendGeneralMessage("Collapsing constants...");
 
@@ -118,7 +122,7 @@ namespace NFLanguageCompiler
 
             // Send message
             SendGeneralMessage("Completed collapsing constants.");
-           
+           */
 
             // Send Message
             SendGeneralMessage("Completed AST.");
@@ -129,18 +133,25 @@ namespace NFLanguageCompiler
             // Anaylze scope, types, and existance
             CheckVars();
 
-            // Check for unreachable code
-
-            // Send Message
-            SendGeneralMessage("Symantic analysis complete.");
-
             // Set return value
             if (ErrorCount > 0)
+            {
                 ret = ProcessReturnValue.PRV_ERRORS;
+                // Send Message
+                SendGeneralMessage("Symantic analysis completed with errors.");
+            }
             else if (WarningCount > 0)
+            {
                 ret = ProcessReturnValue.PRV_WARNINGS;
+                // Send Message
+                SendGeneralMessage("Symantic analysis completed with warnings");
+            }
             else
+            {
                 ret = ProcessReturnValue.PRV_OK;
+                // Send Message
+                SendGeneralMessage("Symantic analysis complete.");
+            }
 
             // Return value
             return ret;
@@ -198,7 +209,8 @@ namespace NFLanguageCompiler
                 case ASTNodeType.ASTTYPE_BLOCK:
 
                     // Get total statments
-                    totalBlockStmts = curASTNode.TotalChildren();
+                   // totalBlockStmts = curASTNode.TotalChildren();
+                    totalBlockStmts = ((BlockASTNode)curASTNode).TotalStatements();
 
                     // Reset cur statment count
                     blockStmtCount = 0;
@@ -896,23 +908,148 @@ namespace NFLanguageCompiler
             return parentSymbolTable;
         }
 
+        #region Working Code - Shrinking Constants
+
+        /*
         private int ShrinkAST()
         {
             IDASTNode idNode = null;
+            IntValASTNode intValNode = null;
             int nodesReduced = 0;
+            bool shiftIntNode = false;
 
-            ShrinkASTRecursive(rootASTNode, ref idNode, ref nodesReduced);
+           
+            ShrinkASTRecursive(rootASTNode, ref idNode, ref intValNode, ref nodesReduced, ref shiftIntNode);
+            ShrinkSingleValueOps(rootASTNode);
+             
+            ShrinkNodes(rootASTNode);
 
             return nodesReduced;
         }
 
-        private int ShrinkASTRecursive(ASTNode curNode,ref IDASTNode idNode,ref int rfNodesReduced)
+        private void ShrinkNodes(ASTNode curNode)
+        {
+            // inits
+            ASTNode childNode = null;
+            ASTNode reducedNode = null;
+            ASTNode nextNode = null;
+            IntOpASTNode intOpNode = null;
+            IntValASTNode intValNode = null;
+            int index = 0;
+            int count = 0;
+
+            childNode = curNode.LeftMostChild;
+            while (childNode != null)
+            {
+               // nextNode = childNode.RightSibling;
+
+                if (childNode is IntOpASTNode)
+                {
+                    intOpNode = (IntOpASTNode)childNode;
+
+                    if (intOpNode.Expr is IntOpASTNode)
+                    {
+                        count = ReduceIntOpExpr(intOpNode, ref reducedNode);
+                        
+                        if (reducedNode is IntValASTNode)
+                        {
+                            intValNode = (IntValASTNode)reducedNode;
+                            intValNode.Value += intOpNode.IntVal.Value;
+                            curNode.DivorceChild(intOpNode);
+                            curNode.InsertChild(index, intValNode);
+
+                            if (curNode is AssignmentStatementASTNode)
+                            {
+                                ((AssignmentStatementASTNode)curNode).Expr = intValNode;
+                            }
+                            else if (curNode is PrintStatementASTNode)
+                            {
+                                ((PrintStatementASTNode)curNode).Expr = intValNode;
+                            }
+                            else if (curNode is BoolOpASTNode)
+                            {
+                                if( index == 0 )
+                                    ((BoolOpASTNode)curNode).ExprOne = intValNode;
+                                else
+                                    ((BoolOpASTNode)curNode).ExprTwo = intValNode;
+                            }
+                        }
+                        else
+                        {
+                            intOpNode.IntVal.Value = count;
+                            intOpNode.DivorceChild(intOpNode.Expr);
+                            intOpNode.AdoptChild(reducedNode);
+                            intOpNode.Expr = (IDASTNode)reducedNode;
+                        }
+                    }
+                    else if (intOpNode.Expr is IntValASTNode)
+                    {
+                        intValNode = (IntValASTNode)intOpNode.Expr;
+                        intOpNode.IntVal.Value += intValNode.Value;
+                        intOpNode.DivorceChild(intOpNode.IntVal);
+                        curNode.DivorceChild(intOpNode);
+                        curNode.InsertChild(index, intOpNode.IntVal);
+
+                        if (curNode is AssignmentStatementASTNode)
+                        {
+                            ((AssignmentStatementASTNode)curNode).Expr = intOpNode.IntVal;
+                        }
+                        else if (curNode is PrintStatementASTNode)
+                        {
+                            ((PrintStatementASTNode)curNode).Expr = intOpNode.IntVal;
+                        }
+                        else if (curNode is BoolOpASTNode)
+                        {
+                            if (index == 0)
+                                ((BoolOpASTNode)curNode).ExprOne = intOpNode.IntVal;
+                            else
+                                ((BoolOpASTNode)curNode).ExprTwo = intOpNode.IntVal;
+                        }
+                    }
+                }
+                else
+                    ShrinkNodes(childNode);
+
+                childNode = childNode.RightSibling;
+
+                index++;
+            }
+        }
+        private int ReduceIntOpExpr(IntOpASTNode node,ref ASTNode reducedNode)
+        {
+            // Inits
+            int count = node.IntVal.Value;
+
+            if (node.Expr is IntOpASTNode)
+            {
+               
+                count += ReduceIntOpExpr((IntOpASTNode)node.Expr, ref reducedNode);
+               
+            }
+            else if (node.Expr is IntValASTNode)
+            {
+                node.IntVal.Value += ((IntValASTNode)node.Expr).Value;
+                count = node.IntVal.Value;
+                node.DivorceChild(node.IntVal);
+                reducedNode = node.IntVal;
+            }
+            else
+            {
+                reducedNode = node.Expr;
+                node.DivorceChild(node.Expr);
+            }
+
+            return count;
+        }
+        private int ShrinkASTRecursive(ASTNode curNode,ref IDASTNode idNode,ref IntValASTNode intValNode, ref int rfNodesReduced,ref bool rfShiftIntValue)
         {
             // Inits
             ASTNode childNode = null;
+            ASTNode parentNode = null;
             IntOpASTNode intASTNode = null;
             IDASTNode idASTNode = null;
             int count = 0;
+            int index = 0;
 
             if (curNode is IntOpASTNode)
             {
@@ -922,22 +1059,50 @@ namespace NFLanguageCompiler
                 {
                     if (intASTNode.Expr is IntOpASTNode)
                     {
-                        count = ShrinkASTRecursive(intASTNode.Expr, ref idNode,ref rfNodesReduced) + intASTNode.IntVal.Value;
+                        count = ShrinkASTRecursive(intASTNode.Expr, ref idNode,ref intValNode, ref rfNodesReduced, ref rfShiftIntValue) + intASTNode.IntVal.Value;
 
-                        intASTNode.DivorceChild(idNode);
-                        intASTNode.AdoptChild(idNode);
-                        intASTNode.DivorceChild(intASTNode.Expr);
+                        if (rfShiftIntValue)
+                        {
+                            intASTNode.DivorceChild(intASTNode.Expr);
+                            intASTNode.IntVal.Value += count;
+                            intASTNode.Expr = null;
+                        }
+                        else
+                        {
+                            intASTNode.DivorceChild(intASTNode.Expr);
+                            intASTNode.AdoptChild(idNode);
 
-                        intASTNode.Expr = idNode;
-                        intASTNode.IntVal.Value = count;
 
-                        // Incrment node reduce
-                        rfNodesReduced++;
+                            intASTNode.Expr = idNode;
+                            intASTNode.IntVal.Value = count;
+
+                            // Incrment node reduce
+                            rfNodesReduced++;
+                        }
+                        
+
+                        
+                    }
+                    else if (intASTNode.Expr is IntValASTNode)
+                    {
+                        count = ((IntValASTNode)intASTNode.Expr).Value + intASTNode.IntVal.Value;
+
+                        if (!(intASTNode.Parent is IntOpASTNode))
+                        {
+                            intASTNode.IntVal.Value = count;
+                            intASTNode.DivorceChild(intASTNode.Expr);
+                            intASTNode.Expr = null;
+                        }
+                        else
+                            rfShiftIntValue = true;
                     }
 
                     else if (intASTNode.Expr is IDASTNode)
                     {
                         idNode = (IDASTNode)intASTNode.Expr;
+
+                        intASTNode.DivorceChild(idNode);
+
 
                         count = intASTNode.IntVal.Value; ;
                     }
@@ -945,17 +1110,73 @@ namespace NFLanguageCompiler
             }
             else
             {
-
+ 
                 childNode = curNode.LeftMostChild;
                 while (childNode != null)
                 {
-                    ShrinkASTRecursive(childNode, ref idNode, ref rfNodesReduced);
+                    ShrinkASTRecursive(childNode, ref idNode, ref intValNode, ref rfNodesReduced,ref rfShiftIntValue);
+
                     childNode = childNode.RightSibling;
                 }
             }
 
             return count;
         }
+
+        private void ShrinkSingleValueOps(ASTNode curNode)
+        {
+            // inits
+            ASTNode childNode = null;
+            IntValASTNode intValNode = null;
+            int index = 0;
+
+            childNode = curNode.LeftMostChild;
+            while (childNode != null)
+            {
+                if (childNode is IntOpASTNode &&
+                    ((IntOpASTNode)childNode).Expr == null)
+                {
+                    intValNode = ((IntOpASTNode)childNode).IntVal;
+                    ((IntOpASTNode)childNode).DivorceChild(intValNode);
+
+                    if (curNode is AssignmentStatementASTNode)
+                    {
+                        curNode.DivorceChild(childNode);
+                        curNode.AdoptChild(intValNode);
+                        ((AssignmentStatementASTNode)curNode).Expr = intValNode;
+                    }
+                    else if (curNode is PrintStatementASTNode)
+                    {
+                        curNode.DivorceChild(childNode);
+                        curNode.AdoptChild(intValNode);
+                        ((PrintStatementASTNode)curNode).Expr = intValNode;
+                    }
+                    else if (curNode is BoolOpASTNode)
+                    {
+                        if (index == 0)
+                        {
+                            curNode.DivorceChild(childNode);
+                            curNode.InsertChild(index, intValNode);
+                            ((BoolOpASTNode)curNode).ExprOne = intValNode;
+                        }
+                        else
+                        {
+                            curNode.DivorceChild(childNode);
+                            curNode.InsertChild(index, intValNode);
+                            ((BoolOpASTNode)curNode).ExprTwo = intValNode;
+                        }
+                    }
+                }
+
+                childNode = childNode.RightSibling;
+
+                index++;
+            }
+        }
+
+*/
+
+        #endregion
 
         #endregion
 

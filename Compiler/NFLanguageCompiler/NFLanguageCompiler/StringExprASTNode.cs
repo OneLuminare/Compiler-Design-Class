@@ -105,6 +105,8 @@ namespace NFLanguageCompiler
                 param.AddByteForUpdate('H', heapEntry.HeapID);
             }
 
+            // Catch over 256 byte error,
+            // and throw up
             catch (IndexOutOfRangeException ex)
             {
                 throw ex;
@@ -118,5 +120,6 @@ namespace NFLanguageCompiler
         }
 
         #endregion
+
     }
 }

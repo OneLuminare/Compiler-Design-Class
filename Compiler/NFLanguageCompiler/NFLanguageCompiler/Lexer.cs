@@ -851,18 +851,30 @@ namespace NFLanguageCompiler
                 WarningCount++;
             }
 
-            // Send message
-            SendGeneralMessage("Lex complete.");
+            
 
             //Determine return value
             if (OutputTokenStream.Count == 1)
                 ret = ProcessReturnValue.PRV_NONE;
             else if (ErrorCount > 0)
+            {
                 ret = ProcessReturnValue.PRV_ERRORS;
+
+                // Send message
+                SendGeneralMessage("Lex completed with errors.");
+            }
             else if (WarningCount > 0)
+            {
                 ret = ProcessReturnValue.PRV_WARNINGS;
+                // Send message
+                SendGeneralMessage("Lex completed with warnings.");
+            }
             else
+            {
                 ret = ProcessReturnValue.PRV_OK;
+                // Send message
+                SendGeneralMessage("Lex complete.");
+            }
 
             //Return value
             return ret;

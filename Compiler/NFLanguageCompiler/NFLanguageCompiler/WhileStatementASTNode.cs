@@ -190,6 +190,8 @@ namespace NFLanguageCompiler
 
             }
 
+            // Catch over 256 byte error,
+            // and throw up
             catch (IndexOutOfRangeException ex)
             {
                 throw ex;

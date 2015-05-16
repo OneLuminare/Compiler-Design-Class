@@ -210,26 +210,45 @@ namespace NFLanguageCompiler
         public void DivorceChild(ASTNode node)
         {
             ASTNode curNode = null;
+            ASTNode curNode2 = null;
             ASTNode leftMostNode = null;
+            ASTNode leftNode = null;
+            bool found = false;
 
             curNode = node.parent.leftMostChild;
-            while (curNode != null)
+            while (curNode != null && !found )
             {
-                if (curNode != node)
+                if( curNode == node )
                 {
-                    if (leftMostNode == null)
-                        leftMostNode = curNode;
+                    if (leftNode != null)
+                    {
+                        leftNode.rightSibling = node.rightSibling;
 
-                    curNode.leftMostSibling = leftMostNode;
+                    }
+                    else
+                    {
+                        leftMostNode = node.rightSibling;
+                        node.parent.leftMostChild = leftMostNode;
+
+                        curNode2 = leftMostNode;
+                        while( curNode2 != null )
+                        {
+                            curNode2.leftMostSibling = leftMostNode;
+                            curNode2 = curNode2.rightSibling;
+                        }
+                    }
+
+                    found = true;
                 }
 
-                if (curNode.rightSibling == node)
-                {
-                    curNode.rightSibling = node.rightSibling;
-                }
-
+                leftNode = curNode;
                 curNode = curNode.rightSibling;
             }
+
+
+            node.parent = null;
+            node.leftMostSibling = null;
+            node.rightSibling = null;
 
             /*
             if (node.LeftMostSibling != node)
@@ -249,9 +268,92 @@ namespace NFLanguageCompiler
             }
              * */
 
-            node.parent = null;
-            node.leftMostSibling = node;
-            node.rightSibling = null;
+            
+        }
+
+        public int ChildIndex(ASTNode node)
+        {
+            // Inits
+            int index = -1;
+            int counter = 0;
+            bool found = false;
+            ASTNode childNode = null;
+
+            // Check if parent not null
+            childNode = leftMostChild;
+            while (childNode != null && !found)
+            {
+                if (childNode == node)
+                {
+                    found = true;
+                    index = counter;
+                }
+
+                childNode = childNode.rightSibling;
+                counter++;
+            }
+
+            return index;
+        }
+
+        public int ParentChildIndex()
+        {
+            // Inits
+            int index = -1;
+
+            if (parent != null)
+                index = parent.ChildIndex(this);
+
+            return index;
+        }
+
+        public void InsertChild(int index, ASTNode node)
+        {
+            // Inits
+            bool found = false;
+            int counter = 0;
+            ASTNode childNode = null;
+            ASTNode childNode2 = null;
+            ASTNode leftNode = null;
+
+            childNode = leftMostChild;
+            while (childNode != null && !found)
+            {
+                if (index == counter)
+                {
+                    if (leftNode != null)
+                    {
+                        node.rightSibling = leftNode.rightSibling;
+                        leftNode.rightSibling = node;
+                        node.leftMostSibling = leftNode.leftMostSibling;
+                        node.parent = this;
+                    }
+                    else
+                    {
+                        node.rightSibling = this.leftMostChild;
+                        node.leftMostSibling = node;
+                        this.leftMostChild = node;
+                        node.parent = this;
+
+                        childNode2 = childNode.rightSibling;
+                        while (childNode2 != null)
+                        {
+                            childNode2.leftMostSibling = node;
+                            childNode2 = childNode2.rightSibling;
+                        }
+
+                    }
+
+                    found = true;
+                }
+
+                leftNode = childNode;
+                childNode = childNode.rightSibling;
+                counter++;
+            }
+
+            if (!found)
+                AdoptChild(node);
         }
 
         #region Object Overrides

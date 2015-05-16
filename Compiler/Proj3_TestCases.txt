@@ -12,6 +12,79 @@ print(s)
 
 {
 int a
+a = 5 + 7
+int b 
+b = 1 + 9 + 2 + a
+print(b)
+}$
+
+{
+boolean a
+a = true
+if( a == true )
+{
+   boolean b
+   b = ( (5 + 4 == 9) == false )
+   print(b)
+   if( b == true )
+   {
+     print("no")
+   }
+}
+}$
+
+{
+strings
+s="test"
+if( s == "test" )
+{ 
+  if( "natha" != "test" )
+  { 
+       print(s)
+  }
+}
+}$
+
+
+{
+strings
+s="test"
+stringr
+r = "natha"
+if( s != r )
+{ 
+   if( r == "test" )
+   {
+      print("no")
+   }
+   if( r == "natha" )
+   {
+      print("yes")
+   }
+}
+}$
+
+{
+string s
+s =""
+print(s)
+if( s == "" )
+{
+  print("yes")
+}
+}$
+
+{
+boolean b
+b = false
+if( ( true == true ) == ( (b == (true == false )) != false ) )
+{
+  print(b)
+}
+}$
+
+{
+int a
 a = 0
 boolean b
 b = false

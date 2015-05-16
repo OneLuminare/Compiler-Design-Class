@@ -96,9 +96,16 @@ namespace NFLanguageCompiler
             {
                 try
                 {
+                    
+
                     // Load accumlator with 0
                     //param.opCodes.Append("A9 00 ");
                     param.AddBytes(0xA9, 0x00);
+
+                    // Add var entry to init value table
+                    // for optimization
+                    param.tables.AddInitValueEntry(id.Value, param.curByte - 1, 
+                        param.curBlockID - 1,id.SymbolTableEntry.DataType);
 
                     // Copy to temp location in memory
                     //param.opCodes.AppendFormat("8D V{0} 00 ",varEntry.VarID);
@@ -107,6 +114,8 @@ namespace NFLanguageCompiler
                     param.AddBytes(0x00);
                 }
 
+                // Catch over 256 byte error,
+                // and throw up
                 catch (IndexOutOfRangeException ex)
                 {
                     throw ex;

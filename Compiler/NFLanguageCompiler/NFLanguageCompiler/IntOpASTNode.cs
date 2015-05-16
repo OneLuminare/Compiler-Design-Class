@@ -117,7 +117,6 @@ namespace NFLanguageCompiler
             try
             {
                 // Load accummulator with constant
-                //param.opCodes.AppendFormat("A9 0{0} ", intVal.Value);
                 param.AddBytes(0xA9, (byte)intVal.Value);
 
 
@@ -131,16 +130,12 @@ namespace NFLanguageCompiler
                 param.tables.IncVarIsUseCount();
 
                 // Store accumulator in stack location
-                //param.opCodes.AppendFormat("8D V{0} 00 ", varEntry.VarID);
                 param.AddBytes(0x8D);
                 param.AddByteForUpdate('V', varEntry.VarID);
                 param.AddBytes(0x00);
 
                 // Increment bytes
                 bytes += 5;
-
-                // Update bytes
-                // param.curByte += 5;
 
                 // Check if expr is not null
                 if (expr != null)
@@ -152,27 +147,19 @@ namespace NFLanguageCompiler
                 else
                 {
                     // Move 0 to accumulator
-                    //param.opCodes.Append("A9 00 ");
                     param.AddBytes(0xA9, 0x00);
 
                     // Increment bytes
                     bytes2 += 2;
-
-                    // Inc cur bytes
-                    //param.curByte += 2;
                 }
 
                 // Add temp var to accumulator
-                //param.opCodes.AppendFormat("6D V{0} 00 ", varEntry.VarID);
                 param.AddBytes(0x6D);
                 param.AddByteForUpdate('V', varEntry.VarID);
                 param.AddBytes(0x00);
 
                 // Increment bytes
                 bytes2 += 3;
-
-                // Update total bytes
-                //param.curByte += 3;
 
                 // Set temp var not in use
                 varEntry.InUse = false;
@@ -181,6 +168,8 @@ namespace NFLanguageCompiler
                 param.tables.DecVarInUseCount();
             }
 
+            // Catch over 256 byte error,
+            // and throw up
             catch (IndexOutOfRangeException ex)
             {
                 throw ex;

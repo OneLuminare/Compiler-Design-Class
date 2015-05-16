@@ -75,6 +75,7 @@ namespace NFLanguageCompiler
             // Inits
             int nextSymbIndex = 0;
             int bytesAdded = 0;
+            int block = 0;
             ASTNode curNode = null;
             BlockSizeTableEntry entry = null;
             VarTableEntry varEntry = null;
@@ -112,17 +113,20 @@ namespace NFLanguageCompiler
             entry = new BlockSizeTableEntry(param.curBlockID, param.curByte);
             param.tables.AddBlockSizeTableEntry(entry);
             param.curBlockID++;
+            block = param.curBlockID - 1;
 
             // Cycle through stmts calling their gen op code
             curNode = this.leftMostChild;
             while (curNode != null)
             {
+                // Try for over 256 bytes
                 try
                 {
                     // Call child statment gen op code method
                     bytesAdded += curNode.GenOpCodes(param);
                 }
 
+                // Catch over 256 bytes
                 catch (IndexOutOfRangeException ex)
                 {
                     throw ex;
@@ -140,6 +144,9 @@ namespace NFLanguageCompiler
 
             // Set end byte of block
             entry.EndByte = param.curByte - 1;
+
+            // Remove out of scope vars from init var table
+            param.tables.RemoveBlockVarEntries(block);
 
             // Cycle through symbol table
             symbEntries = curSymbTable.GetAllItems();
@@ -159,11 +166,41 @@ namespace NFLanguageCompiler
                 }
             }
 
-            // Update bytes added
-            //param.curByte += bytesAdded;
-
             // Return number of bytes 
  	        return bytesAdded;
         }
+
+        // Returns total statments in block and sub blocks.
+        //
+        // Returns: Total statements in block and sub blocks.
+        public int TotalStatements()
+        {
+            return TotalStatementsRecursive(this);
+        }
+
+        // Recursive check statment method.
+        //
+        // Returns: Total statments below.
+        private int TotalStatementsRecursive(ASTNode curNode)
+        {
+            // Inits
+            ASTNode childNode = null;
+            int total = 0;
+
+            // If node is statment
+            if (curNode is StatementASTNode)
+                total++;
+
+            childNode = curNode.LeftMostChild;
+            while (childNode != null)
+            {
+                total += TotalStatementsRecursive(childNode);
+                childNode = childNode.RightSibling;
+            }
+
+            return total;
+        }
     }
+
+    
 }
